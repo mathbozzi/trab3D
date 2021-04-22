@@ -7,29 +7,70 @@
 #include <ctime>
 #include "input.h"
 #include "lutador.h"
+#include "utils.h"
 #include "arena.h"
 
 using namespace std;
 Arena *arenaSVG = NULL;
 Lutador *lutadorPrincipal = NULL;
 
+//Controles gerais
+int zoom = 150;
+int lookatToggle = 1;
+double camXYAngle=0;
+double camXZAngle=0;
+int lastX = 0;
+int lastY = 0;
+int buttonDown=0;
+
 void init()
 {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    //glShadeModel (GL_FLAT);
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, (GLsizei)arenaSVG->get_width(),
-               (GLsizei)arenaSVG->get_height());
-    glMatrixMode(GL_PROJECTION);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_LIGHT0);
+}
+
+
+void reshape (int w, int h)
+{
+    //Ajusta o tamanho da tela com a janela de visualizacao
+    glViewport (0, 0, (GLsizei) w, (GLsizei) h);
+    glMatrixMode (GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45,
-                   (GLfloat)arenaSVG->get_width() / (GLfloat)arenaSVG->get_height(),
-                   1, 1000);
+    if (w <= h)
+        gluPerspective (45, (GLfloat)h/(GLfloat)w, 1, 1000);
+    else
+        gluPerspective (45, (GLfloat)w/(GLfloat)h, 1, 1000);
+    glMatrixMode(GL_MODELVIEW);
+    glutPostRedisplay();
+}
+
+void mouse(int button, int state, int x, int y){
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
+        lastX = x;
+        lastY = y;
+        buttonDown = 1;
+    }
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+        buttonDown = 0;
+    }
+    glutPostRedisplay();
+}
+
+void mouse_motion(int x, int y)
+{
+    if (!buttonDown)
+        return;
+    
+    camXZAngle -= x - lastX;
+    camXYAngle += y - lastY;
+
+    lastX = x;
+    lastY = y;
+    glutPostRedisplay();
 }
 
 void DrawAxes(double size)
@@ -93,28 +134,68 @@ void DrawObj(double size)
 
 void display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT |
-            GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_MODELVIEW);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(0, 100, 1, 0, 0, 0, 0, 1, 0);
 
-    GLfloat light_position[] = {0.0, 0.0, 10.0, 1.0};
+    // PrintText(0.1, 0.1, "Movable Camera", 0,1,0);
+    
+
+    //Utiliza uma esfera de raio zoom para guiar a posicao da camera
+    //baseada em dois angulos (do plano XZ e do plano XY)
+    // gluLookAt(zoom * sin(camXZAngle * M_PI / 180) * cos((camXYAngle * M_PI / 180)),
+    //           zoom * sin((camXYAngle * M_PI / 180)),
+    //           zoom * cos(camXZAngle * M_PI / 180) * cos((camXYAngle * M_PI / 180)),
+    //           0, 0, 0,
+    //           0, 1, 0);
+
+    // if (cameraToggle == 1)
+    // {
+    //     displayPrimeiraPessoa();
+    // }
+    // else if (cameraToggle == 2)
+    // {
+    //     displayTerceiraPessoa();
+    // }
+    // else
+    //     displayOlho();
+
+    // glFlush();
+
+    gluLookAt((arenaSVG->get_width() - arenaSVG->get_width() * 0.2), arenaSVG->get_height() / 2, 0, 0, 0, 0, 0, 1, 0);
+
+    GLfloat light_position[] = {20.0, 3.0, 0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-    glPushMatrix();
-    glTranslatef(0, 0, 3); // put in one end
-    DrawAxes(1.5);
-    DrawObj(1.0);
-    glPopMatrix();
-
     DrawAxes(1.5);
 
-    DrawObj(1.0);
+    arenaSVG->desenhaArena();
 
     glutSwapBuffers();
 }
+
+void keyboard(unsigned char key, int x, int y)
+{
+    // static bool textureEnebled = true;
+    // static bool lightingEnebled = true;
+    // static bool smoothEnebled = true;
+    switch (key)
+    {
+    
+    case '+':
+        zoom++;
+        break;
+    case '-':
+        zoom--;
+        break;
+    case 27:
+        exit(0);
+        break;
+    }
+    glutPostRedisplay();
+}
+
 
 int main(int argc, char **argv)
 {
@@ -144,6 +225,10 @@ int main(int argc, char **argv)
         glutCreateWindow("RING");
         init();
         glutDisplayFunc(display);
+        glutReshapeFunc(reshape);
+        glutKeyboardFunc(keyboard);
+        glutMotionFunc(mouse_motion);
+        glutMouseFunc(mouse);
         glutMainLoop();
         return 0;
     }

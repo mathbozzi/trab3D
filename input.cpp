@@ -67,7 +67,7 @@ void parseRect(XMLElement *ret)
     cor = {0.0, 1.0, 0.0};
   }
 
-  Arena *arena = new Arena(x, y, 0, 500, 500, cor);
+  Arena *arena = new Arena(x, y, 0, width, height, cor);
   arenaSVG = arena;
 }
 

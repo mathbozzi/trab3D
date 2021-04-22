@@ -4,7 +4,6 @@
 #include <iostream>
 #include <stdio.h>
 
-
 using namespace std;
 
 typedef struct tPoint
@@ -34,7 +33,7 @@ public:
 	Arena(float x, float y,float z, float width, float height, Cor c);
 	Point ObtemPos();
 	Cor ObtemCor();
-	void desenhaArena(float width, float height, Cor c);
+	void desenhaArena();
 	void set_vertex(Point p);
 	void set_altura(float h);
 	float get_width();
