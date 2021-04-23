@@ -16,7 +16,7 @@ class INPUT
     public:
         INPUT(const std::string path);
         bool isLoaded;
-        Arena getArena(double _velTiro, double _velHelicoptero, double _tempoDeVoo, double _velInimigo, double _freqTiro);
+        Arena getArena();
         tinyxml2::XMLDocument input;
         std::vector<Rect> getRects();
         std::vector<Circle> getCircles();

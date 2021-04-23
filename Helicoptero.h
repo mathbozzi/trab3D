@@ -29,54 +29,54 @@ public:
     void girarDireita();                 // OK
     void girarEsquerda();                // OK
 
-    void moverCanhao(int incrementoYaw, int incrementoPitch);
-    void girarHelice();              // OK
-    void decolar();                  // OK
-    void pousar();                   // OK
-    void subir();                    // OK
-    void descer();                   // OK
-    void aumentarVelocidadeHelice(); // OK
-    void diminuirVelocidadeHelice(); // OK
-    void mirar(Ponto alvo);
-    Tiro atirar();
-    bool estaVoando();                           // OK
-    void consumirCombustivel(GLdouble timeDiff); // OK
-    void reabastercer();                         // OK
-    bool resgatar(Circle objeto);                // OK
-    double getNivelCombustivel();                // OK
+    //void moverCanhao(int incrementoYaw, int incrementoPitch);
+    //void girarHelice();              // OK
+    //void decolar();                  // OK
+    //void pousar();                   // OK
+    //void subir();                    // OK
+    //void descer();                   // OK
+    //void aumentarVelocidadeHelice(); // OK
+    //void diminuirVelocidadeHelice(); // OK
+    //void mirar(Ponto alvo);
+    //Tiro atirar();
+    //bool estaVoando();                           // OK
+    //void consumirCombustivel(GLdouble timeDiff); // OK
+    //void reabastercer();                         // OK
+    //bool resgatar(Circle objeto);                // OK
+    //double getNivelCombustivel();                // OK
     void ajustarAngulo();
 
     // desenho
-    void desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores);                 // OK
-    void desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos);                               // OK
-    void desenharHelice(Textura *textura);                                                                // OK
+    //void desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores);                 // OK
+    //void desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos);                               // OK
+    //void desenharHelice(Textura *textura);                                                                // OK
     void desenharCorpo(Textura *textura);                                                                 // OK
-    void desenharCanhao(Textura *textura);                                                                // OK
+    //void desenharCanhao(Textura *textura);                                                                // OK
     void Draw(int flag = DRAW_2D, Textura *corpo = NULL, Textura *helice = NULL, Textura *canhao = NULL); // OK
     void desenharEsfera() { desenhaEsfera = !desenhaEsfera; }                                             // OK
 
     Circle area;
     std::string id;
-    float velocidadeHelicoptero, velocidadeTiro;
-    float tempoMaximoDeVoo, tempoAtualDeVoo;
+    float velocidadeHelicoptero;
+    //float tempoMaximoDeVoo, tempoAtualDeVoo;
     float angulo;
-    int objetosResgatados;
+    //int objetosResgatados;
     Cor corCorpo;
     Textura texturaCorpo, texturaHelice, texturaCanhao;
 
     Ponto getPosicao() { return area.posicao; };
     Ponto getDirecao();
     Ponto getProximaPosicao(GLdouble timeDiff);
-    void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
+    //void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
 
 protected:
 private:
     float anguloCanhaoYaw, anguloCanhaoPitch, anguloHelice;
-    float velocidadeHelice;
-    bool voando;
+    //float velocidadeHelice;
+    //bool voando;
     bool draw3d = false;
     bool desenhaEsfera = false;
 };
-void displayCabeca(GLuint textureSun);
+//void displayCabeca(GLuint textureSun);
 
 #endif // HELICOPTERO_H

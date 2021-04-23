@@ -1,5 +1,5 @@
-<input xmlns="http://www.w3.org/2000/input" version="1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
   <rect x="0" y="0" width="800" height="700" fill="white" stroke-width="4" stroke="black" id="Arena"/>
   <circle cx="125" cy="125" r="30" fill="green" id="Jogador" />
-  <circle cx="625" cy="125" r="30" fill="red" id="Inimigo" />
-</input>
+  <circle cx="625" cy="500" r="30" fill="red" id="Inimigo" />
+</svg>

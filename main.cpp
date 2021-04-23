@@ -1,5 +1,5 @@
 #include <iostream>
-#include <limits>
+//#include <limits>
 #include <stdlib.h>
 #include <time.h>
 
@@ -7,18 +7,18 @@
 
 #include "input.h"
 #include "Arena.h"
-#include "Tiro.h"
+//#include "Tiro.h"
 #include "EstruturasBasicas.h"
 #include "imageloader.h"
 
-#define INTERVALO_MUDANCA_ANGULO_INIMIGOS 4
+//#define INTERVALO_MUDANCA_ANGULO_INIMIGOS 4
 
 using namespace std;
 
 INPUT *input;
 Arena arena;
 bool isDrawn = false;
-bool desativarInimigos = false;
+//bool desativarOponente = false;
 bool keystates[256];
 int mouseUltimoX;
 int mouseUltimoY;
@@ -41,8 +41,6 @@ void mouseMotion(int x, int y);
 void mouseClickMotion(int x, int y);
 void idle();
 void projecao(double _near, double _far, Rect viewport, double angulo = 90.0);
-void help();
-void sair(string mensagem = "");
 
 int main(int argc, char **argv)
 {
@@ -54,7 +52,7 @@ int main(int argc, char **argv)
     else
     {
         cout << "Digite o caminho da arena" << endl;
-        cout << "Exemplo: ./trabalhocg arenas/arena_1.input" << endl;
+        cout << "Exemplo: ./trabalhocg arenas/arena_1.svg" << endl;
         return 0;
     }
     if (arquivo != "")
@@ -63,11 +61,7 @@ int main(int argc, char **argv)
         input = new INPUT(arquivo);
 
         // monta a arena
-        arena = input->getArena(0.2,     // velo tiro
-                              0.1,     // velo helicoptero
-                              20,      // tempo voo
-                              0.1,     // velo inimigo
-                              0.0001); // freq tiro inimigo
+        arena = input->getArena(); 
         arena.MostraDados();
 
         // glut init
@@ -106,7 +100,7 @@ void init()
     arena.texturas["chao"] = Textura("grama.bmp");
     arena.texturas["tiro"] = Textura("lava.bmp");
     arena.texturas["objetos"] = Textura("earth.bmp");
-    arena.texturas["posto"] = Textura("madeira.bmp");
+    arena.texturas["posto"] = Textura("ring2.bmp");
     arena.texturas["ceu"] = Textura("ceu-claro.bmp");
     arena.texturas["jogadorCorpo"] = Textura("azul.bmp");
     arena.texturas["jogadorCanhao"] = Textura("azul.bmp");
@@ -184,17 +178,12 @@ void idle()
     previousTime = currentTime;                  //Update previous time
 
     // modifica a velocidade da helice de acordo com o status
-    if (arena.jogador.estaVoando())
-        arena.jogador.aumentarVelocidadeHelice();
-    else
-        arena.jogador.diminuirVelocidadeHelice();
-    for (unsigned int i = 0; i < 1; i++)
-    {
-        if (arena.inimigo.estaVoando())
-            arena.inimigo.aumentarVelocidadeHelice();
-        else
-            arena.inimigo.diminuirVelocidadeHelice();
-    }
+    //if (arena.jogador.estaVoando()) arena.jogador.aumentarVelocidadeHelice();
+    // else arena.jogador.diminuirVelocidadeHelice();
+    // for (unsigned int i = 0; i < arena.inimigos.size(); i++) {
+    //     if (arena.inimigos[i].estaVoando()) arena.inimigos[i].aumentarVelocidadeHelice();
+    //     else arena.inimigos[i].diminuirVelocidadeHelice();
+    // }
 
     // não precisa atualizar nada, se a partida não estiver em andamento
     if (arena.statusPartida != EM_ANDAMENTO)
@@ -203,80 +192,69 @@ void idle()
         return;
     }
 
-    // verifica se o jogador ganhou (restadou todos objetos e matou todos inimigos)
-    if (arena.statusPartida == EM_ANDAMENTO && arena.jogador.objetosResgatados == arena.nObjetos && 1 == 0)
-    {
-        arena.statusPartida = GANHOU;
-        cout << "Parabéns! Você ganhou a partida!!!" << endl;
-        return;
-    }
+    // // verifica se o jogador ganhou (restadou todos objetos e matou todos inimigos)
+    // if (arena.statusPartida == EM_ANDAMENTO && arena.jogador.objetosResgatados == arena.nObjetos && arena.inimigos.size() == 0) {
+    //     arena.statusPartida = GANHOU;
+    //     cout << "Parabéns! Você ganhou a partida!!!" << endl;
+    //     return;
+    // }
 
     // verifica se o jogador perdeu por causa da falta de combustível
-    if (arena.jogador.getNivelCombustivel() <= 0)
-    {
-        arena.statusPartida = PERDEU;
-        cout << "Você perdeu por falta de combustível! Que vergonha..." << endl;
-        return;
-    }
+    // if (arena.jogador.getNivelCombustivel() <= 0) {
+    //     arena.statusPartida = PERDEU;
+    //     cout << "Você perdeu por falta de combustível! Que vergonha..." << endl;
+    //     return;
+    // }
 
     // consumir combustível e atualizar mostrador
-    arena.jogador.consumirCombustivel(timeDifference);
+    //arena.jogador.consumirCombustivel(timeDifference);
 
-    // reabastecimento
-    if (!arena.jogador.estaVoando() && arena.postoAbastecimento.estaDentro(arena.jogador.getPosicao()))
-    {
-        if (arena.jogador.getNivelCombustivel() != 1.0)
-            cout << "O jogador reabasteceu! (" << (arena.jogador.getNivelCombustivel() * 100.0) << "% -> 100%)" << endl;
-        arena.jogador.reabastercer();
-    }
+    // // reabastecimento
+    // if (!arena.jogador.estaVoando() && arena.postoAbastecimento.estaDentro(arena.jogador.getPosicao())) {
+    //     if (arena.jogador.getNivelCombustivel() != 1.0) cout << "O jogador reabasteceu! (" << (arena.jogador.getNivelCombustivel() * 100.0) << "% -> 100%)" << endl;
+    //     arena.jogador.reabastercer();
+    // }
 
     // interação dos tiros
-    for (unsigned int i = 0; i < arena.tiros.size(); i++)
-    {
+    // for (unsigned int i = 0; i < arena.tiros.size(); i++) {
 
-        // remove os tiros que não estão dentro da janela, senão apenas os move
-        if (arena.estaDentro(arena.tiros[i]))
-            arena.tiros[i].Mover(timeDifference);
-        else
-        {
-            arena.tiros.erase(arena.tiros.begin() + i);
-            cout << "1 tiro saiu da tela! Restam " << arena.tiros.size() << " tiros na arena..." << endl;
-        }
-
-        // verifica se algum inimigo foi atingido pelos tiros do jogador
-        for (unsigned int j = 0; j < 1; j++)
-        {
-            if (arena.tiros[i].id_jogador == "Jogador" && arena.inimigo.area.estaDentro(arena.tiros[i].posicao) && arena.inimigo.estaVoando())
-            {
-                // arena.inimigo.erase(arena.inimigo + j);
-                cout << "1 inimigo foi destruido! Restam " << 1 << " inimigos na arena..." << endl;
-                arena.tiros.erase(arena.tiros.begin() + i);
-            }
-        }
-
-        // verifica se algum tiro inimigo acertou o jogador e declara derrota
-        if (arena.tiros[i].id_jogador == "Inimigo" && arena.jogador.area.estaDentro(arena.tiros[i].posicao) && arena.jogador.estaVoando())
-        {
-            arena.statusPartida = PERDEU;
-            cout << "Você foi atingido por um tiro inimigo!" << endl;
-            // mostra o tiro que acertou o jogador em vermelho
-            arena.tiros[i].setCor(Cor("darkred"));
-        }
-    }
+    //     // remove os tiros que não estão dentro da janela, senão apenas os move
+    //     if (arena.estaDentro(arena.tiros[i])) arena.tiros[i].Mover(timeDifference);
+    //     else {
+    //         arena.tiros.erase(arena.tiros.begin() + i);
+    //         cout << "1 tiro saiu da tela! Restam " << arena.tiros.size() << " tiros na arena..." << endl;
+    //     }
+    //
+    //     // verifica se algum inimigo foi atingido pelos tiros do jogador
+    //     for (unsigned int j = 0; j < arena.inimigos.size(); j++) {
+    //         if (arena.tiros[i].id_jogador == "Jogador" && arena.inimigos[j].area.estaDentro(arena.tiros[i].posicao) && arena.inimigos[j].estaVoando()){
+    //             arena.inimigos.erase(arena.inimigos.begin() + j);
+    //             cout << "1 inimigo foi destruido! Restam " << arena.inimigos.size() << " inimigos na arena..." << endl;
+    //             arena.tiros.erase(arena.tiros.begin() + i);
+    //         }
+    //     }
+    //
+    //     // verifica se algum tiro inimigo acertou o jogador e declara derrota
+    //     if (arena.tiros[i].id_jogador == "Inimigo" && arena.jogador.area.estaDentro(arena.tiros[i].posicao) && arena.jogador.estaVoando()){
+    //         arena.statusPartida = PERDEU;
+    //         cout << "Você foi atingido por um tiro inimigo!" << endl;
+    //         // mostra o tiro que acertou o jogador em vermelho
+    //         arena.tiros[i].setCor(Cor("darkred"));
+    //     }
+    // }
 
     // ação de resgate
-    for (unsigned int i = 0; i < arena.objetosResgate.size(); i++)
-    {
-        if (arena.jogador.resgatar(arena.objetosResgate[i]))
-        {
-            arena.objetosResgate.erase(arena.objetosResgate.begin() + i);
-            cout << "1 objeto foi resgatado! Restam " << arena.objetosResgate.size() << " objetos na arena..." << endl;
-        }
-    }
+    // for (unsigned int i = 0; i < arena.objetosResgate.size(); i++) {
+    //     if (arena.jogador.resgatar(arena.objetosResgate[i])) {
+    //         arena.objetosResgate.erase(arena.objetosResgate.begin() + i);
+    //         cout << "1 objeto foi resgatado! Restam " << arena.objetosResgate.size() << " objetos na arena..." << endl;
+    //     }
+    // }
 
-    arena.jogador.girarHelice();
-    for (unsigned int i = 0; i < 1; i++)
-        arena.inimigo.girarHelice();
+    //arena.jogador.girarHelice();
+    //for (unsigned int i = 0; i < arena.inimigos.size(); i++) arena.inimigos[i].girarHelice();
+
+    arena.oponente.moverTras(timeDifference);
 
     if (keystates['a'])
         arena.jogador.girarEsquerda();
@@ -286,10 +264,8 @@ void idle()
         arena.jogador.moverFrente(timeDifference);
     if (keystates['s'])
         arena.jogador.moverTras(timeDifference);
-    if (keystates['-'])
-        arena.jogador.descer();
-    if (keystates['+'] && arena.jogador.area.posicao.z < (arena.jogador.area.raio * 5) - ALTURA_HELICOPTERO)
-        arena.jogador.subir();
+    //if (keystates['-']) arena.jogador.descer();
+    //if (keystates['+'] && arena.jogador.area.posicao.z < (arena.jogador.area.raio * 5) - ALTURA_HELICOPTERO) arena.jogador.subir();
 
     // colisao: jogador com os limites da arena, resposta: impede passagem
     Ponto jogadorNovoP = arena.jogador.getPosicao();
@@ -303,71 +279,79 @@ void idle()
     if (jogadorNovoP.y > arena.mapa.altura - jogadorRaio)
         arena.jogador.area.posicao.y = arena.mapa.altura - jogadorRaio;
 
-    // desativa as ações dos inimigos para demonstrar algum funcionalidade
-    if (desativarInimigos)
+    // colisao: oponente com os limites da arena, resposta: impede passagem
+    Ponto oponenteNovoP = arena.oponente.getPosicao();
+    int oponenteRaio = arena.oponente.area.raio;
+    if (oponenteNovoP.x < oponenteRaio)
+        arena.oponente.area.posicao.x = oponenteRaio;
+    if (oponenteNovoP.x > arena.mapa.largura - oponenteRaio)
+        arena.oponente.area.posicao.x = arena.mapa.largura - oponenteRaio;
+    if (oponenteNovoP.y < oponenteRaio)
+        arena.oponente.area.posicao.y = oponenteRaio;
+    if (oponenteNovoP.y > arena.mapa.altura - oponenteRaio)
+        arena.oponente.area.posicao.y = arena.mapa.altura - oponenteRaio;
+
+    // colisao: entre personagens
+    Circle cOponente = arena.oponente.area;
+    if (arena.jogador.area.estaTocando(cOponente))
     {
-        glutPostRedisplay();
-        return;
+        arena.jogador.moverTras(timeDifference);
     }
 
-    // mover inimigos
-    accTimeMover += timeDifference / 1000.0;
-    bool mudarAngulo = false;
-    if (accTimeMover >= INTERVALO_MUDANCA_ANGULO_INIMIGOS)
-    {
-        mudarAngulo = true;
-        accTimeMover = 0;
-    }
-    accTimeAtirar += timeDifference;
-    bool atirarNoJogador = false;
-    if (accTimeAtirar >= arena.getIntervaloEntreTiros())
-    {
-        atirarNoJogador = true;
-        accTimeAtirar = 0;
-    }
-    for (unsigned int i = 0; i < 1; i++)
-    {
+    // // desativa as ações dos inimigos para demonstrar algum funcionalidade
+    // if (desativarOponente) {
+    //     glutPostRedisplay();
+    //     return;
+    // }
 
-        if (mudarAngulo)
-            arena.inimigo.angulo += (rand() % 90) - 90;
+    // // mover inimigos
+    // accTimeMover += timeDifference / 1000.0;
+    // bool mudarAngulo = false;
+    // if (accTimeMover >= INTERVALO_MUDANCA_ANGULO_INIMIGOS) {
+    //     mudarAngulo = true;
+    //     accTimeMover = 0;
+    // }
+    // accTimeAtirar += timeDifference;
+    // bool atirarNoJogador = false;
+    // if (accTimeAtirar >= arena.getIntervaloEntreTiros()) {
+    //     atirarNoJogador = true;
+    //     accTimeAtirar = 0;
+    // }
+    // for (unsigned int i = 0; i < arena.inimigos.size(); i++) {
 
-        Ponto novoP = arena.inimigo.getProximaPosicao(timeDifference);
-        int _raio = arena.inimigo.area.raio;
+    //     if (mudarAngulo) arena.inimigos[i].angulo += (rand() % 90) - 90;
 
-        // colisao: limites da arena, resposta: inverte ângulo no eixo relativo
-        if ((novoP.x < _raio) || (novoP.x > arena.mapa.largura - _raio))
-        {
-            arena.inimigo.angulo = 180 - arena.inimigo.angulo;
-        }
-        if ((novoP.y < _raio) || (novoP.y > arena.mapa.altura - _raio))
-        {
-            arena.inimigo.angulo = 360 - arena.inimigo.angulo;
-        }
+    //     Ponto novoP = arena.inimigos[i].getProximaPosicao(timeDifference);
+    //     int _raio = arena.inimigos[i].area.raio;
 
-        // colisao: outros helicopteros, resposta: +180º
-        for (unsigned int j = 0; j < 1; j++)
-        {
-            double distanciaMinima = arena.inimigo.area.raio + arena.inimigo.area.raio;
-            if (i != j && calculaDistancia(arena.inimigo.getProximaPosicao(timeDifference), novoP) < distanciaMinima)
-            {
-                arena.inimigo.angulo = arena.inimigo.angulo + 180;
-                break;
-            }
-        }
-        double distanciaMinima = arena.jogador.area.raio + arena.inimigo.area.raio;
-        if (calculaDistancia(arena.jogador.getProximaPosicao(timeDifference), novoP) < distanciaMinima)
-        {
-            arena.inimigo.angulo = arena.inimigo.angulo + 180;
-        }
+    //     // colisao: limites da arena, resposta: inverte ângulo no eixo relativo
+    //     if ((novoP.x < _raio) || (novoP.x > arena.mapa.largura - _raio)) {
+    //         arena.inimigos[i].angulo = 180 - arena.inimigos[i].angulo;
+    //     }
+    //     if ((novoP.y < _raio) || (novoP.y > arena.mapa.altura - _raio)) {
+    //         arena.inimigos[i].angulo = 360 - arena.inimigos[i].angulo;
+    //     }
 
-        if (atirarNoJogador)
-        {
-            arena.inimigo.mirar(arena.jogador.getPosicao());
-            arena.tiros.push_back(arena.inimigo.atirar());
-        }
+    //     // colisao: outros helicopteros, resposta: +180º
+    //     for (unsigned int j = 0; j < arena.inimigos.size(); j++) {
+    //         double distanciaMinima = arena.inimigos[i].area.raio + arena.inimigos[j].area.raio;
+    //         if (i != j && calculaDistancia(arena.inimigos[j].getProximaPosicao(timeDifference), novoP) < distanciaMinima){
+    //             arena.inimigos[i].angulo = arena.inimigos[i].angulo + 180;
+    //             break;
+    //         }
+    //     }
+    //     double distanciaMinima = arena.jogador.area.raio + arena.inimigos[i].area.raio;
+    //     if (calculaDistancia(arena.jogador.getProximaPosicao(timeDifference), novoP) < distanciaMinima){
+    //         arena.inimigos[i].angulo = arena.inimigos[i].angulo + 180;
+    //     }
 
-        arena.inimigo.moverFrente(timeDifference);
-    }
+    //     if (atirarNoJogador) {
+    //         arena.inimigos[i].mirar(arena.jogador.getPosicao());
+    //         arena.tiros.push_back(arena.inimigos[i].atirar());
+    //     }
+
+    //     arena.inimigos[i].moverFrente(timeDifference);
+    // }
 
     glutPostRedisplay();
 }
@@ -379,12 +363,11 @@ void mouse(int button, int state, int x, int y)
 
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && arena.statusPartida != PAUSADO)
     {
-        // atira
-        if (arena.jogador.estaVoando())
-        {
-            arena.tiros.push_back(arena.jogador.atirar());
-            cout << "O jogador atirou!" << endl;
-        }
+        // // atira
+        // if (arena.jogador.estaVoando()) {
+        //     arena.tiros.push_back(arena.jogador.atirar());
+        //     cout << "O jogador atirou!" << endl;
+        // }
     }
 
     // movimenta câmera ao redor do helicóptero
@@ -405,10 +388,8 @@ void mouseMotion(int x, int y)
     if (arena.statusPartida != EM_ANDAMENTO && arena.statusPartida != PAUSADO)
         return;
 
-    if (x != mouseUltimoX)
-        arena.jogador.moverCanhao((x - mouseUltimoX) / 2, 0);
-    if (y != mouseUltimoY)
-        arena.jogador.moverCanhao(0, (y - mouseUltimoY) / 2);
+    // if (x != mouseUltimoX) arena.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
+    // if (y != mouseUltimoY) arena.jogador.moverCanhao(0, (y - mouseUltimoY)/2);
     // atualiza o valor do ultimo x
     mouseUltimoX = x;
     mouseUltimoY = y;
@@ -442,7 +423,7 @@ void keyboard(unsigned char key, int x, int y)
 {
     keystates[key] = true;
     if (key == 27)
-        sair("Keyboard: ESC");
+        exit(0);
 
     static bool textureEnabled = true;
     static bool lightingEnabled = true;
@@ -501,16 +482,8 @@ void keyboard(unsigned char key, int x, int y)
     case 'm':
         arena.mostrarMinimapa = !arena.mostrarMinimapa;
         break;
-    case 'i':
-        desativarInimigos = !desativarInimigos;
-        break;
+        // case 'b':
+        //     desativarOponente = !desativarOponente;
+        //     break;
     }
-}
-
-void sair(string mensagem)
-{
-    cout << endl
-         << mensagem << endl
-         << "Saindo..." << endl;
-    exit(0);
 }

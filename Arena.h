@@ -23,9 +23,10 @@ class Arena
         Rect ceu;
         Rect postoAbastecimento;
         Helicoptero jogador;
-        Helicoptero inimigo;
-        std::vector<Circle> objetosResgate;
-        std::vector<Tiro> tiros;
+        Helicoptero oponente;
+        //std::vector<Helicoptero> inimigos;
+        //std::vector<Circle> objetosResgate;
+        //std::vector<Tiro> tiros;
         std::map<std::string, Textura> texturas;
 
         int camera;
@@ -39,22 +40,22 @@ class Arena
 
         std::map<std::string, Cor> mapaCorID;
 
-        int nObjetos;
-        int nInimigos;
+        // int nObjetos;
+        // int nInimigos;
         int statusPartida;
-        double frequenciaTiro; // tiros por milissegundos
-        double getIntervaloEntreTiros() { return 1.0 / frequenciaTiro; };
+        // double frequenciaTiro; // tiros por milissegundos
+        //double getIntervaloEntreTiros() { return 1.0 / frequenciaTiro; };
 
         void Draw(bool cockpitPermanente = false);
         void DrawArena();
-        void DrawIndicadores();
+        //void DrawIndicadores();
         void DrawMiniMapa(float _w, float _h);
         void DrawOrtho(void (Arena::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
         void DrawResultado();
         void MostraDados();
         void ImprimeElemento(Cor corElemento);
         void exibeResultado();
-        bool estaDentro(Tiro tiro);
+        // bool estaDentro(Tiro tiro);
         bool mostrarCameraCockpit = false;
         bool ativaLuz0 = true;
         bool ativaLuz1 = true;
