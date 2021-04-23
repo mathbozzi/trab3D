@@ -5,6 +5,9 @@
 
 GLuint LoadTextureRAW( const char * filename );
 void DisplayPlane (GLuint texture);
+void DrawObj(double size);
+void DrawAxes(double size);
+
 
 
 #endif /*UTILS_H_*/

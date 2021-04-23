@@ -15,7 +15,7 @@ Arena *arenaSVG = NULL;
 Lutador *lutadorPrincipal = NULL;
 
 //Controles gerais
-int zoom = 150;
+int zoom = 100;
 int lookatToggle = 1;
 double camXYAngle=0;
 double camXZAngle=0;
@@ -40,10 +40,10 @@ void reshape (int w, int h)
     glViewport (0, 0, (GLsizei) w, (GLsizei) h);
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity();
-    if (w <= h)
-        gluPerspective (45, (GLfloat)h/(GLfloat)w, 1, 1000);
-    else
-        gluPerspective (45, (GLfloat)w/(GLfloat)h, 1, 1000);
+    // if (w <= h)
+    //     gluPerspective (45, (GLfloat)h/(GLfloat)w, 1, 1000);
+    // else
+        gluPerspective (90, (GLfloat)w/(GLfloat)h, 1, 1000);
     glMatrixMode(GL_MODELVIEW);
     glutPostRedisplay();
 }
@@ -73,65 +73,6 @@ void mouse_motion(int x, int y)
     glutPostRedisplay();
 }
 
-void DrawAxes(double size)
-{
-    GLfloat mat_ambient_r[] = {1.0, 0.0, 0.0, 1.0};
-    GLfloat mat_ambient_g[] = {0.0, 1.0, 0.0, 1.0};
-    GLfloat mat_ambient_b[] = {0.0, 0.0, 1.0, 1.0};
-    GLfloat no_mat[] = {0.0, 0.0, 0.0, 1.0};
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
-                 no_mat);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat);
-    glMaterialfv(GL_FRONT, GL_SHININESS, no_mat);
-
-    //x axis red
-    glPushMatrix();
-    glMaterialfv(GL_FRONT, GL_EMISSION,
-                 mat_ambient_r);
-    glColor3fv(mat_ambient_r);
-    glScalef(size, size * 0.1, size * 0.1);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(1.0);
-    glPopMatrix();
-
-    //y axis green
-    glPushMatrix();
-    glMaterialfv(GL_FRONT, GL_EMISSION,
-                 mat_ambient_g);
-    glColor3fv(mat_ambient_g);
-    glRotatef(90, 0, 0, 1);
-    glScalef(size, size * 0.1, size * 0.1);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(1.0);
-    glPopMatrix();
-
-    //z axis blue
-    glPushMatrix();
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_ambient_b);
-    glColor3fv(mat_ambient_b);
-    glRotatef(-90, 0, 1, 0);
-    glScalef(size, size * 0.1, size * 0.1);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(1.0);
-    glPopMatrix();
-}
-
-void DrawObj(double size)
-{
-    GLfloat materialEmission[] = {0.00, 0.00, 0.00, 1.0};
-    GLfloat materialColor[] = {1.0, 1.0, 0.0, 1.0};
-    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat mat_shininess[] = {128};
-    glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, materialColor);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialColor);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-    glColor3f(1, 0, 0);
-    //glutSolidCube(size);
-    glutSolidSphere(size, 20, 10);
-}
-
 void display(void)
 {
 
@@ -144,11 +85,11 @@ void display(void)
 
     //Utiliza uma esfera de raio zoom para guiar a posicao da camera
     //baseada em dois angulos (do plano XZ e do plano XY)
-    // gluLookAt(zoom * sin(camXZAngle * M_PI / 180) * cos((camXYAngle * M_PI / 180)),
-    //           zoom * sin((camXYAngle * M_PI / 180)),
-    //           zoom * cos(camXZAngle * M_PI / 180) * cos((camXYAngle * M_PI / 180)),
-    //           0, 0, 0,
-    //           0, 1, 0);
+    gluLookAt(zoom * sin(camXZAngle * M_PI / 180) * cos((camXYAngle * M_PI / 180)),
+              zoom * sin((camXYAngle * M_PI / 180)),
+              zoom * cos(camXZAngle * M_PI / 180) * cos((camXYAngle * M_PI / 180)),
+              0, 0, 0,
+              0, 1, 0);
 
     // if (cameraToggle == 1)
     // {
@@ -163,7 +104,7 @@ void display(void)
 
     // glFlush();
 
-    gluLookAt((arenaSVG->get_width() - arenaSVG->get_width() * 0.2), arenaSVG->get_height() / 2, 0, 0, 0, 0, 0, 1, 0);
+    // gluLookAt((arenaSVG->get_width() - arenaSVG->get_width() * 0.2), arenaSVG->get_height() / 2, 0, 0, 0, 0, 0, 1, 0);
 
     GLfloat light_position[] = {20.0, 3.0, 0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
