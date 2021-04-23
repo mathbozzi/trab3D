@@ -25,8 +25,8 @@ void Arena::Draw(bool cockpitPermanente)
 
     desenhaOrigemDoSC();
 
-    for (Helicoptero h : inimigos)
-        h.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
+    // for (Helicoptero h : inimigo)
+    inimigo.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
     jogador.Draw(DRAW_3D, &texturas["jogadorCorpo"], &texturas["jogadorHelice"], &texturas["jogadorCanhao"]);
 
     DrawArena();
@@ -61,8 +61,8 @@ void Arena::DrawMiniMapa(float _w, float _h)
         c.Draw(DRAW_2D);
     for (Tiro t : tiros)
         t.Draw(DRAW_2D);
-    for (Helicoptero h : inimigos)
-        h.area.Draw(DRAW_2D);
+    // for (Helicoptero h : inimigo)
+    inimigo.area.Draw(DRAW_2D);
     jogador.area.Draw(DRAW_2D);
 
     glPopMatrix();
@@ -195,7 +195,8 @@ void Arena::MostraDados()
     cout << " - " << ((mapa.id == "Arena") ? 1 : 0) << " mapa" << endl;
     cout << " - " << ((postoAbastecimento.id == "PostoAbastecimento") ? 1 : 0) << " posto de abastecimento" << endl;
     cout << " - " << ((jogador.area.id == "Jogador") ? 1 : 0) << " jogador" << endl;
-    cout << " - " << (inimigos.size()) << " inimigo(s)" << endl;
+    cout << " - "
+         << "1 inimigo" << endl;
     cout << " - " << (objetosResgate.size()) << " objeto(s) de resgate" << endl
          << endl;
 }

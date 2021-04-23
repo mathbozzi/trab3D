@@ -23,7 +23,7 @@ class Arena
         Rect ceu;
         Rect postoAbastecimento;
         Helicoptero jogador;
-        std::vector<Helicoptero> inimigos;
+        Helicoptero inimigo;
         std::vector<Circle> objetosResgate;
         std::vector<Tiro> tiros;
         std::map<std::string, Textura> texturas;

@@ -1,5 +1,5 @@
-#ifndef SVG_H
-#define SVG_H
+#ifndef input_H
+#define input_H
 
 #include <iostream>
 #include <string>
@@ -11,17 +11,15 @@
 #include "Rect.h"
 #include "Circle.h"
 
-class SVG
+class INPUT
 {
     public:
-        SVG(const std::string path);
+        INPUT(const std::string path);
         bool isLoaded;
         Arena getArena(double _velTiro, double _velHelicoptero, double _tempoDeVoo, double _velInimigo, double _freqTiro);
-    protected:
-    private:
-        tinyxml2::XMLDocument svg;
+        tinyxml2::XMLDocument input;
         std::vector<Rect> getRects();
         std::vector<Circle> getCircles();
 };
 
-#endif // SVG_H
+#endif // input_H

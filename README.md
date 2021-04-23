@@ -37,24 +37,24 @@ configurações necessárias para suas tarefas. O arquivo de configurações dev
 será fornecido juntamente com a especificação do trabalho. A localização do arquivo “config.xml” será
 fornecida pela linha de comando ao chamar o programa. Por exemplo, se o arquivo estiver dentro de uma
 pasta chamada “Test1” localizada na raiz, basta chamar o programa com “/Test1/” como argumento. As
-informações contidas nesse arquivo servirão para ler o arquivo SVG contendo as informações da arena.
+informações contidas nesse arquivo servirão para ler o arquivo input contendo as informações da arena.
 Esse trabalho utilizará as tags já especificadas nos trabalhos anteriores.
 
 Após ler as informações do arquivo de configurações, o programa deverá carregar os elementos da arena
-do arquivo do tipo SVG respectivo e um helicóptero verde ao invés de um círculo verde, helicópteros
+do arquivo do tipo input respectivo e um helicóptero verde ao invés de um círculo verde, helicópteros
 vermelhos ao invés de círculos vermelhos, esferas azuis, ou outros objetos a seu gosto, ao invés dos
 círculos azuis, e um retângulo cinza. A janela de visualização deverá ter 500x500 pixels.
 
 ##### Arena
 
 Assim como no trabalho curto 4, o programa deverá criar uma arena virtual, porém desta vez em 3D. O
-plano x e y terá informações idênticas às lidas do arquivo "svg" (assim como os trabalhos anteriores). A
+plano x e y terá informações idênticas às lidas do arquivo "input" (assim como os trabalhos anteriores). A
 altura da arena, z, deverá ser 5 vezes a altura do helicóptero (a ser definido adiante).
 
 ##### Helicóptero
 O helicóptero deverá ter os mesmos componentes dos trabalhos anteriores (base, hélice e canhão). Utilize
 a criatividade para construir o helicóptero! Ele continuará sendo delimitado pelo círculo definido no
-”svg”, porém agora ao invés de ser envolvido por um círculo, ele será envolvido por uma esfera de raio
+”input”, porém agora ao invés de ser envolvido por um círculo, ele será envolvido por uma esfera de raio
 igual ao do círculo. Portanto, o helicóptero deverá estar contido nessa esfera. Perceba que essa esfera é
 “virtual”, ela serve apenas para calcular a colisão e não deve ser mostrado na tela. A hélice deverá girar
 seguindo os mesmos princípios dos trabalhos anteriores. O canhão também deverá seguir os mesmos
