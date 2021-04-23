@@ -12,7 +12,6 @@ INPUT::INPUT(const string path)
 	this->isLoaded = (error == 0);
 }
 
-
 Arena INPUT::getArena()
 {
     Arena arena;

@@ -27,7 +27,6 @@ class Circle
         std::unique_ptr<OBJ> criaEsfera();
         void DrawEsfera();
     
-    
 };
 
 #endif // CIRCLE_H

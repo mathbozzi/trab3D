@@ -2,8 +2,6 @@
 
 using namespace std;
 
-//#define NUMERO_DE_MARCADORES_COMBUSTIVEL 5
-
 Arena::Arena()
 {
     this->statusPartida = EM_ANDAMENTO;

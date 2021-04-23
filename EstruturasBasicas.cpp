@@ -154,7 +154,6 @@ void drawBox(GLfloat tamanho, GLfloat textureS)
     }
 }
 
-
 OBJ * CreateSphere (double R, double space) 
 {
     OBJ *obj = new OBJ;

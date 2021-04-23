@@ -1,6 +1,5 @@
 #include "Helicoptero.h"
 
-
 OBJ *cabeca;
 
 Helicoptero::Helicoptero()
@@ -43,8 +42,6 @@ void Helicoptero::Draw(int flag, Textura *corpo, Textura *helice, Textura *canha
     glPopMatrix();
 }
 
-
-
 void Helicoptero::desenharCorpo(Textura *textura)
 {
     if (!draw3d)
@@ -59,86 +56,75 @@ void Helicoptero::desenharCorpo(Textura *textura)
     else
     {
         glPushMatrix();
-        glColor3f(corCorpo.r, corCorpo.g, corCorpo.b);
-        if (textura != NULL)
-            glBindTexture(GL_TEXTURE_2D, textura->get());
+        {
+            glColor3f(corCorpo.r, corCorpo.g, corCorpo.b);
+            if (textura != NULL)
+                glBindTexture(GL_TEXTURE_2D, textura->get());
 
-        //perna direita cima
-        glPushMatrix();
-        glTranslatef(0, ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 8);
-        glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
-        drawBox(1.0, 1);
-        glPopMatrix();
+            //perna direita cima
+            glPushMatrix();
+            {
+                glTranslatef(0, ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 8);
+                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                drawBox(1.0, 1);
+            }
+            glPopMatrix();
 
-        //perna direita baixo
-        glPushMatrix();
-        glTranslatef(0, ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 3);
-        glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
-        drawBox(1.0, 1);
-        glPopMatrix();
+            //perna direita baixo
+            glPushMatrix();
+            {
+                glTranslatef(0, ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 3);
+                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                drawBox(1.0, 1);
+            }
+            glPopMatrix();
 
-        //perna esquerda cima
-        glPushMatrix();
-        glTranslatef(0, -ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 8);
-        glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
-        drawBox(1.0, 1);
-        glPopMatrix();
+            //perna esquerda cima
+            glPushMatrix();
+            {
+                glTranslatef(0, -ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 8);
+                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                drawBox(1.0, 1);
+            }
+            glPopMatrix();
 
-        //perna esquerda baixo
-        glPushMatrix();
-        glTranslatef(0, -ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 3);
-        glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
-        drawBox(1.0, 1);
-        glPopMatrix();
+            //perna esquerda baixo
+            glPushMatrix();
+            {
+                glTranslatef(0, -ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 3);
+                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                drawBox(1.0, 1);
+            }
+            glPopMatrix();
 
-        // corpo
-        glPushMatrix();
-        glTranslatef(0, 0, ALTURA_HELICOPTERO / 4);
-        glScalef(ALTURA_HELICOPTERO/2, ALTURA_HELICOPTERO, ALTURA_HELICOPTERO / 2);
-        drawBox(1.0, 1);
-        glPopMatrix();
+            // tronco
+            glPushMatrix();
+            {
+                glTranslatef(0, 0, ALTURA_HELICOPTERO / 4);
+                glScalef(ALTURA_HELICOPTERO / 2, ALTURA_HELICOPTERO, ALTURA_HELICOPTERO / 2);
+                drawBox(1.0, 1);
+            }
+            glPopMatrix();
 
-        //cabeca = CreateSphere(1, 1);
-        //Circle(Ponto(x, 0), mostradorRaio, cor).Draw();
-        //desenha cabeca
-        glPushMatrix();
+            glPushMatrix();
             glColor3f(1.0, 0.5, 0.5);
             glTranslatef(0, 0, ALTURA_HELICOPTERO * 3 / 4);
-            
-            //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-            OBJ *obj = CreateSphere(ALTURA_HELICOPTERO/4, 10);
-            glBegin(GL_TRIANGLE_STRIP);
-            for (int i = 0; i < obj->numVtx; i++)
-            {
-                glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
-                glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
-                glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
-            }
-            delete[] obj->vtx;
-            glEnd();
-        glPopMatrix();
 
-        // cauda
-        // glPushMatrix();
-        //     glTranslatef(-40, -3, 0);
-        //     glScalef(25, 6, 6);
-        //     glTranslatef(0.5, 0.5, 0);
-        //     drawBox(1.0, 1);
-        // glPopMatrix();
-        // // cauda direita
-        // glPushMatrix();
-        //     glTranslatef(-50, -7, 0);
-        //     glScalef(15,3,6);
-        //     glTranslatef(0.5, 0.5, 0);
-        //     drawBox(1.0, 1);
-        // glPopMatrix();
-        // cauda esquerda
-        // glPushMatrix();
-        //     glTranslatef(-50, 4, 0);
-        //     glScalef(15,3,6);
-        //     glTranslatef(0.5, 0.5, 0);
-        //     drawBox(1.0, 1);
-        // glPopMatrix();
+            //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
+            OBJ *obj = CreateSphere(ALTURA_HELICOPTERO / 4, 10);
+            glBegin(GL_TRIANGLE_STRIP);
+            {
+                for (int i = 0; i < obj->numVtx; i++)
+                {
+                    glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
+                    glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
+                    glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
+                }
+                delete[] obj->vtx;
+                glEnd();
+            }
+            glPopMatrix();
+        }
         glPopMatrix();
     }
 }

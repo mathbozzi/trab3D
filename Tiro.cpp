@@ -12,7 +12,8 @@ Tiro::Tiro(Ponto _posicao, Ponto _direcao, std::string _id_jogador, double _velo
 
 void Tiro::Draw(int flag, Textura *_textura)
 {
-    if (_textura != NULL) this->textura = *_textura;
+    if (_textura != NULL)
+        this->textura = *_textura;
 
     Circle t = Circle(posicao, raio, cor);
     t.textura = textura;

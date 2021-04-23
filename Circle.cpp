@@ -50,7 +50,6 @@ bool Circle::estaTocando(Circle c)
     return (calculaDistancia(c.posicao, this->posicao) < (this->raio + c.raio));
 }
 
-
 std::unique_ptr<OBJ> Circle::criaEsfera()
 {
 	std::unique_ptr<OBJ> obj (new OBJ);

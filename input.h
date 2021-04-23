@@ -13,13 +13,13 @@
 
 class INPUT
 {
-    public:
-        INPUT(const std::string path);
-        bool isLoaded;
-        Arena getArena();
-        tinyxml2::XMLDocument input;
-        std::vector<Rect> getRects();
-        std::vector<Circle> getCircles();
+public:
+    INPUT(const std::string path);
+    bool isLoaded;
+    Arena getArena();
+    tinyxml2::XMLDocument input;
+    std::vector<Rect> getRects();
+    std::vector<Circle> getCircles();
 };
 
 #endif // input_H

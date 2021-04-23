@@ -49,8 +49,6 @@ class Cor
         GLfloat g;
         GLfloat b;
         inline bool operator==(const Cor& c){ return (this->r == c.r && this->g == c.g && this->b == c.b); }
-    protected:
-    private:
 };
 
 class Textura

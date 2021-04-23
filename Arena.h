@@ -28,7 +28,6 @@ class Arena
         //std::vector<Circle> objetosResgate;
         //std::vector<Tiro> tiros;
         std::map<std::string, Textura> texturas;
-
         int camera;
         double camYaw;
         double camPitch;

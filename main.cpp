@@ -61,7 +61,7 @@ int main(int argc, char **argv)
         input = new INPUT(arquivo);
 
         // monta a arena
-        arena = input->getArena(); 
+        arena = input->getArena();
         arena.MostraDados();
 
         // glut init
