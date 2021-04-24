@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 
         // monta a arena
         arena = input->getArena();
-        arena.MostraDados();
+        // arena.MostraDados();
 
         // glut init
         glutInit(&argc, argv);
@@ -98,22 +98,22 @@ void init()
 
     // carrega as texturas
     arena.texturas["chao"] = Textura("grama.bmp");
-    arena.texturas["tiro"] = Textura("lava.bmp");
-    arena.texturas["objetos"] = Textura("earth.bmp");
-    arena.texturas["posto"] = Textura("ring2.bmp");
+    // arena.texturas["tiro"] = Textura("lava.bmp");
+    // arena.texturas["objetos"] = Textura("earth.bmp");
+    arena.texturas["posto"] = Textura("ring1.bmp");
     arena.texturas["ceu"] = Textura("ceu-claro.bmp");
     arena.texturas["jogadorCorpo"] = Textura("azul.bmp");
-    arena.texturas["jogadorCanhao"] = Textura("azul.bmp");
-    arena.texturas["jogadorHelice"] = Textura("azul-claro.bmp");
+    // arena.texturas["jogadorCanhao"] = Textura("azul.bmp");
+    // arena.texturas["jogadorHelice"] = Textura("azul-claro.bmp");
     arena.texturas["inimigoCorpo"] = Textura("vermelho.bmp");
-    arena.texturas["inimigoCanhao"] = Textura("vermelho.bmp");
-    arena.texturas["inimigoHelice"] = Textura("vermelho-claro.bmp");
+    // arena.texturas["inimigoCanhao"] = Textura("vermelho.bmp");
+    // arena.texturas["inimigoHelice"] = Textura("vermelho-claro.bmp");
 }
 
 void display(void)
 {
     glClearColor(1, 1, 1, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear all pixels both buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
     if (arena.statusPartida == GANHOU || arena.statusPartida == PERDEU)
@@ -463,7 +463,7 @@ void keyboard(unsigned char key, int x, int y)
     case 'k':
         arena.ativaLuz1 = !arena.ativaLuz1;
         break;
-    case 's':
+    case 'r':
         if (smoothEnabled)
             glShadeModel(GL_FLAT);
         else

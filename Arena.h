@@ -52,7 +52,7 @@ class Arena
         void DrawOrtho(void (Arena::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
         void DrawResultado();
         void MostraDados();
-        void ImprimeElemento(Cor corElemento);
+        // void ImprimeElemento(Cor corElemento);
         void exibeResultado();
         // bool estaDentro(Tiro tiro);
         bool mostrarCameraCockpit = false;

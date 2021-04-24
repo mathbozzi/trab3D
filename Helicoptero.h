@@ -67,14 +67,14 @@ public:
     Ponto getPosicao() { return area.posicao; };
     Ponto getDirecao();
     Ponto getProximaPosicao(GLdouble timeDiff);
-    //void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
+    void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
 
 protected:
 private:
     float anguloCanhaoYaw, anguloCanhaoPitch, anguloHelice;
     //float velocidadeHelice;
     //bool voando;
-    bool draw3d = false;
+    // bool draw3d = false;
     bool desenhaEsfera = false;
 };
 //void displayCabeca(GLuint textureSun);

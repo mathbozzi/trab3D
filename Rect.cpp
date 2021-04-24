@@ -6,16 +6,16 @@ Rect::Rect()
 {
 }
 
-Rect::Rect(int _x, int _y, int _largura, int _altura, Cor _cor)
+Rect::Rect(int x, int y, int width, int height, Cor cor)
 {
-    posicao.x = _x;
-    posicao.y = _y;
-    posicao.z = 0;
-    altura = _altura;
-    largura = _largura;
-    cor = _cor;
-    strokeLargura = 1;
-    strokeCor = Cor(127, 127, 127);
+    this->posicao.x = x;
+    this->posicao.y = y;
+    this->posicao.z = 0;
+    this->altura = height;
+    this->largura = width;
+    this->cor = cor;
+    // strokeLargura = 1;
+    // strokeCor = Cor(127, 127, 127);
 }
 
 void Rect::Draw(int flag, Textura *_textura, bool drawStroke)
@@ -23,35 +23,35 @@ void Rect::Draw(int flag, Textura *_textura, bool drawStroke)
     if (_textura != NULL)
         this->textura = *_textura;
 
-    if (flag == DRAW_2D)
+    // if (flag == DRAW_2D)
+    // {
+    //     vector<Ponto> vertices = getVertices();
+
+    //     // desenha o poligono
+    //     if (vertices.size() == 4)
+    //     {
+    //         glBegin(GL_POLYGON);
+    //         glColor3f(cor.r, cor.g, cor.b);
+    //         for (Ponto v : vertices)
+    //             glVertex2f(v.x, v.y);
+    //         glEnd();
+    //     }
+
+    //     // desenha as arestas
+    //     if (drawStroke && vertices.size() == 4)
+    //     {
+    //         glPointSize(strokeLargura);
+    //         glBegin(GL_LINE_LOOP);
+    //         glColor3f(strokeCor.r, strokeCor.g, strokeCor.b);
+    //         for (Ponto v : vertices)
+    //             glVertex2f(v.x, v.y);
+    //         glEnd();
+    //     }
+    // }
+    // else
     {
         vector<Ponto> vertices = getVertices();
-
-        // desenha o poligono
-        if (vertices.size() == 4)
-        {
-            glBegin(GL_POLYGON);
-            glColor3f(cor.r, cor.g, cor.b);
-            for (Ponto v : vertices)
-                glVertex2f(v.x, v.y);
-            glEnd();
-        }
-
-        // desenha as arestas
-        if (drawStroke && vertices.size() == 4)
-        {
-            glPointSize(strokeLargura);
-            glBegin(GL_LINE_LOOP);
-            glColor3f(strokeCor.r, strokeCor.g, strokeCor.b);
-            for (Ponto v : vertices)
-                glVertex2f(v.x, v.y);
-            glEnd();
-        }
-    }
-    else
-    {
-        vector<Ponto> vertices = getVertices();
-        double textureS = fatorRepeticaoTextura; // Bigger than 1, repeat
+        double textureS = 1; // Bigger than 1, repeat
         glPushMatrix();
         glColor3f(cor.r, cor.g, cor.b);
         if (_textura != NULL)
@@ -74,7 +74,7 @@ void Rect::Draw(int flag, Textura *_textura, bool drawStroke)
 void Rect::DrawArestas()
 {
     vector<Ponto> vertices = getVertices();
-    glPointSize(strokeLargura);
+    //  glPointSize(strokeLargura);
     glBegin(GL_LINE_LOOP);
     Cor c = Cor("lightgray");
     glColor3f(c.r, c.g, c.b);
@@ -103,8 +103,8 @@ bool Rect::estaDentro(Ponto p)
 void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
 {
     Ponto _posicao = r->posicao;
-    float _altura = r->altura;
-    float _largura = r->largura;
+    float height = r->altura;
+    float width = r->largura;
     int inverterNormal = 1;
 
     glPushMatrix();
@@ -120,9 +120,9 @@ void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
     glTexCoord2f(textureS, textureS);
     glVertex3f(_posicao.x, _posicao.y, profundidade);
     glTexCoord2f(0, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y, profundidade);
+    glVertex3f(_posicao.x + width, _posicao.y, profundidade);
     glTexCoord2f(0, 0);
-    glVertex3f(_posicao.x + _largura, _posicao.y, 0.0f);
+    glVertex3f(_posicao.x + width, _posicao.y, 0.0f);
     glEnd();
 
     glBegin(GL_POLYGON); /* f2: bottom */
@@ -131,37 +131,37 @@ void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
     glTexCoord2f(textureS, 0);
     glVertex3f(_posicao.x, _posicao.y, 0.0f);
     glTexCoord2f(textureS, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y, 0.0f);
+    glVertex3f(_posicao.x + width, _posicao.y, 0.0f);
     glTexCoord2f(0, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y + _altura, 0.0f);
+    glVertex3f(_posicao.x + width, _posicao.y + height, 0.0f);
     glTexCoord2f(0, 0);
-    glVertex3f(_posicao.x, _posicao.y + _altura, 0.0f);
+    glVertex3f(_posicao.x, _posicao.y + height, 0.0f);
     glEnd();
 
     glBegin(GL_POLYGON); /* f3:back */
     glNormal3f(1.0f * inverterNormal, 0.0f, 0.0f);
 
     glTexCoord2f(textureS, 0);
-    glVertex3f(_posicao.x + _largura, _posicao.y + _altura, 0.0f);
+    glVertex3f(_posicao.x + width, _posicao.y + height, 0.0f);
     glTexCoord2f(textureS, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y + _altura, profundidade);
+    glVertex3f(_posicao.x + width, _posicao.y + height, profundidade);
     glTexCoord2f(0, textureS);
-    glVertex3f(_posicao.x, _posicao.y + _altura, profundidade);
+    glVertex3f(_posicao.x, _posicao.y + height, profundidade);
     glTexCoord2f(0, 0);
-    glVertex3f(_posicao.x, _posicao.y + _altura, 0.0f);
+    glVertex3f(_posicao.x, _posicao.y + height, 0.0f);
     glEnd();
 
     glBegin(GL_POLYGON); /* f4: top */
     glNormal3f(0.0f, 0.0f, 1.0f * inverterNormal);
 
     glTexCoord2f(textureS, 0);
-    glVertex3f(_posicao.x + _largura, _posicao.y + _altura, profundidade);
+    glVertex3f(_posicao.x + width, _posicao.y + height, profundidade);
     glTexCoord2f(textureS, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y, profundidade);
+    glVertex3f(_posicao.x + width, _posicao.y, profundidade);
     glTexCoord2f(0, textureS);
     glVertex3f(_posicao.x, _posicao.y, profundidade);
     glTexCoord2f(0, 0);
-    glVertex3f(_posicao.x, _posicao.y + _altura, profundidade);
+    glVertex3f(_posicao.x, _posicao.y + height, profundidade);
     glEnd();
 
     glBegin(GL_POLYGON); /* f5: left */
@@ -170,9 +170,9 @@ void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
     glTexCoord2f(0, 0);
     glVertex3f(_posicao.x, _posicao.y, 0.0f);
     glTexCoord2f(textureS, 0);
-    glVertex3f(_posicao.x, _posicao.y + _altura, 0.0f);
+    glVertex3f(_posicao.x, _posicao.y + height, 0.0f);
     glTexCoord2f(textureS, textureS);
-    glVertex3f(_posicao.x, _posicao.y + _altura, profundidade);
+    glVertex3f(_posicao.x, _posicao.y + height, profundidade);
     glTexCoord2f(0, textureS);
     glVertex3f(_posicao.x, _posicao.y, profundidade);
     glEnd();
@@ -181,13 +181,13 @@ void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
     glNormal3f(0.0f, -1.0f * inverterNormal, 0.0f);
 
     glTexCoord2f(textureS, 0);
-    glVertex3f(_posicao.x + _largura, _posicao.y, 0.0f);
+    glVertex3f(_posicao.x + width, _posicao.y, 0.0f);
     glTexCoord2f(textureS, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y, profundidade);
+    glVertex3f(_posicao.x + width, _posicao.y, profundidade);
     glTexCoord2f(0, textureS);
-    glVertex3f(_posicao.x + _largura, _posicao.y + _altura, profundidade);
+    glVertex3f(_posicao.x + width, _posicao.y + height, profundidade);
     glTexCoord2f(0, 0);
-    glVertex3f(_posicao.x + _largura, _posicao.y + _altura, 0.0f);
+    glVertex3f(_posicao.x + width, _posicao.y + height, 0.0f);
     glEnd();
     glPopMatrix();
 }

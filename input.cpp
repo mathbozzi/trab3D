@@ -51,6 +51,11 @@ Arena INPUT::getArena()
     arena.jogador.area = areaJogador;
     arena.jogador.id = areaJogador.id;
     arena.jogador.velocidadeHelicoptero = velocidadeLutador;
+    // printf("%d\n",arena.jogador.area.raio/2);
+    // printf("%d\n",ALTURA_HELICOPTERO / 2.0);
+    // printf("%f\n",areaJogador.posicao.z);
+    // areaJogador.posicao.z = ((GLfloat)arena.jogador.area.raio) /2.0;
+    
     //arena.jogador.velocidadeTiro = _velTiro;
     //arena.jogador.tempoMaximoDeVoo = _tempoDeVoo;
     arena.jogador.corCorpo = Cor("lightgreen");
@@ -60,6 +65,8 @@ Arena INPUT::getArena()
     arena.oponente.area = areaOponente;
     arena.oponente.id = areaOponente.id;
     arena.oponente.velocidadeHelicoptero = velocidadeOponente;
+    // areaOponente.posicao.z = arena.oponente.area.raio/2.0;
+
     // //arena.jogador.velocidadeTiro = _velTiro;
     // //arena.jogador.tempoMaximoDeVoo = _tempoDeVoo;
     arena.oponente.corCorpo = Cor("darkgreen");
@@ -101,8 +108,8 @@ vector<Rect> INPUT::getRects()
         rect->QueryIntAttribute("width", &r.largura);
         rect->QueryIntAttribute("height", &r.altura);
         r.cor = Cor(rect->Attribute("fill"));
-        if (rect->Attribute("stroke-width")) rect->QueryIntAttribute("stroke-width", &r.strokeLargura);
-        if (rect->Attribute("stroke")) r.strokeCor = Cor(rect->Attribute("stroke"));
+        // if (rect->Attribute("stroke-width")) rect->QueryIntAttribute("stroke-width", &r.strokeLargura);
+        // if (rect->Attribute("stroke")) r.strokeCor = Cor(rect->Attribute("stroke"));
         r.id = rect->Attribute("id");
         r.posicao.x = _x;
         r.posicao.y = _y;

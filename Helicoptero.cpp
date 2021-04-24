@@ -1,14 +1,16 @@
 #include "Helicoptero.h"
+#include <stdio.h>
 
 OBJ *cabeca;
 
 Helicoptero::Helicoptero()
 {
-    area.posicao.z = ALTURA_HELICOPTERO / 2.0;
+    area.posicao.z = this->area.raio / 2.0;
     anguloHelice = 0;
     angulo = 0;
     anguloCanhaoYaw = 0;
     anguloCanhaoPitch = 0;
+
     //voando = false;
     //velocidadeHelice = 1;
     //tempoAtualDeVoo = 0;
@@ -18,7 +20,7 @@ Helicoptero::Helicoptero()
 
 void Helicoptero::Draw(int flag, Textura *corpo, Textura *helice, Textura *canhao)
 {
-    draw3d = (flag == DRAW_2D) ? false : true;
+    // draw3d = (flag == DRAW_2D) ? false : true;
 
     if (desenhaEsfera)
         area.Draw(DRAW_3D);
@@ -44,16 +46,16 @@ void Helicoptero::Draw(int flag, Textura *corpo, Textura *helice, Textura *canha
 
 void Helicoptero::desenharCorpo(Textura *textura)
 {
-    if (!draw3d)
-    {
-        glPushMatrix();
-        Rect(-15, -15, 35, 30, corCorpo).Draw(DRAW_2D, NULL, WITH_STROKE); // corpo
-        Rect(-40, -3, 25, 6, corCorpo).Draw(DRAW_2D, NULL, WITH_STROKE);   // cauda
-        Rect(-50, 4, 15, 3, corCorpo).Draw(DRAW_2D);                       // cauda direita
-        Rect(-50, -7, 15, 3, corCorpo).Draw(DRAW_2D);                      // cauda esquerda
-        glPopMatrix();
-    }
-    else
+    // if (!draw3d)
+    // {
+    //     glPushMatrix();
+    //     Rect(-15, -15, 35, 30, corCorpo).Draw(DRAW_2D, NULL, WITH_STROKE); // corpo
+    //     Rect(-40, -3, 25, 6, corCorpo).Draw(DRAW_2D, NULL, WITH_STROKE);   // cauda
+    //     Rect(-50, 4, 15, 3, corCorpo).Draw(DRAW_2D);                       // cauda direita
+    //     Rect(-50, -7, 15, 3, corCorpo).Draw(DRAW_2D);                      // cauda esquerda
+    //     glPopMatrix();
+    // }
+    // else
     {
         glPushMatrix();
         {
@@ -62,19 +64,20 @@ void Helicoptero::desenharCorpo(Textura *textura)
                 glBindTexture(GL_TEXTURE_2D, textura->get());
 
             //perna direita cima
+            // printf("%d\n",this->area.raio);
             glPushMatrix();
             {
-                glTranslatef(0, ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 8);
-                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                glTranslatef(0, this->area.raio / 4, -this->area.raio / 8);
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
                 drawBox(1.0, 1);
             }
             glPopMatrix();
-
+            
             //perna direita baixo
             glPushMatrix();
             {
-                glTranslatef(0, ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 3);
-                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                glTranslatef(0, this->area.raio / 4, -this->area.raio / 3);
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
                 drawBox(1.0, 1);
             }
             glPopMatrix();
@@ -82,8 +85,8 @@ void Helicoptero::desenharCorpo(Textura *textura)
             //perna esquerda cima
             glPushMatrix();
             {
-                glTranslatef(0, -ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 8);
-                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                glTranslatef(0, -this->area.raio / 4, -this->area.raio / 8);
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
                 drawBox(1.0, 1);
             }
             glPopMatrix();
@@ -91,8 +94,8 @@ void Helicoptero::desenharCorpo(Textura *textura)
             //perna esquerda baixo
             glPushMatrix();
             {
-                glTranslatef(0, -ALTURA_HELICOPTERO / 4, -ALTURA_HELICOPTERO / 3);
-                glScalef(ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4, ALTURA_HELICOPTERO / 4);
+                glTranslatef(0, -this->area.raio / 4, -this->area.raio / 3);
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
                 drawBox(1.0, 1);
             }
             glPopMatrix();
@@ -100,18 +103,18 @@ void Helicoptero::desenharCorpo(Textura *textura)
             // tronco
             glPushMatrix();
             {
-                glTranslatef(0, 0, ALTURA_HELICOPTERO / 4);
-                glScalef(ALTURA_HELICOPTERO / 2, ALTURA_HELICOPTERO, ALTURA_HELICOPTERO / 2);
+                glTranslatef(0, 0, this->area.raio / 4);
+                glScalef(this->area.raio / 2, this->area.raio, this->area.raio / 2);
                 drawBox(1.0, 1);
             }
             glPopMatrix();
 
             glPushMatrix();
             glColor3f(1.0, 0.5, 0.5);
-            glTranslatef(0, 0, ALTURA_HELICOPTERO * 3 / 4);
+            glTranslatef(0, 0, this->area.raio * 3 / 4);
 
             //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-            OBJ *obj = CreateSphere(ALTURA_HELICOPTERO / 4, 10);
+            OBJ *obj = CreateSphere(this->area.raio / 4, 10);
             glBegin(GL_TRIANGLE_STRIP);
             {
                 for (int i = 0; i < obj->numVtx; i++)
@@ -392,24 +395,24 @@ void Helicoptero::moverTras(GLdouble timeDiff)
 //     return Tiro(pontaCanhao, direcao, id, this->velocidadeTiro);
 // }
 
-// void Helicoptero::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
-// {
-//     double degree2rad = M_PI / 180.0;
+void Helicoptero::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
+{
+    double degree2rad = M_PI / 180.0;
 
-//     double direcao_x = cos((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
-//     double direcao_y = sin((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
-//     double direcao_z = cos((anguloCanhaoPitch + 90) * degree2rad);
-//     direcao = Ponto(direcao_x, direcao_y, direcao_z);
+    double direcao_x = cos((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
+    double direcao_y = sin((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
+    double direcao_z = cos((anguloCanhaoPitch + 90) * degree2rad);
+    direcao = Ponto(direcao_x, direcao_y, direcao_z);
 
-//     Ponto baseCanhao = Ponto((area.raio * 4 / 9) * cos(angulo * degree2rad), (area.raio * 4 / 9) * sin(angulo * degree2rad));
+    Ponto baseCanhao = Ponto((area.raio * 4 / 9) * cos(angulo * degree2rad), (area.raio * 4 / 9) * sin(angulo * degree2rad));
 
-//     Ponto pontaCanhaoInicial;
-//     double tamanho = area.raio * 2 / 3;
-//     pontaCanhaoInicial.x = baseCanhao.x + tamanho * cos((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad);
-//     pontaCanhaoInicial.y = baseCanhao.y + tamanho * sin((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad);
-//     pontaCanhaoInicial.z = baseCanhao.y + tamanho * cos((anguloCanhaoPitch + 90) * M_PI / 180.0);
-//     pontaCanhao = Ponto(this->area.posicao.x + pontaCanhaoInicial.x, this->area.posicao.y + pontaCanhaoInicial.y, this->area.posicao.z + pontaCanhaoInicial.z);
-// }
+    Ponto pontaCanhaoInicial;
+    double tamanho = area.raio * 2 / 3;
+    pontaCanhaoInicial.x = baseCanhao.x + tamanho * cos((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad);
+    pontaCanhaoInicial.y = baseCanhao.y + tamanho * sin((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad);
+    pontaCanhaoInicial.z = baseCanhao.y + tamanho * cos((anguloCanhaoPitch + 90) * M_PI / 180.0);
+    pontaCanhao = Ponto(this->area.posicao.x + pontaCanhaoInicial.x, this->area.posicao.y + pontaCanhaoInicial.y, this->area.posicao.z + pontaCanhaoInicial.z);
+}
 
 void Helicoptero::ajustarAngulo()
 {

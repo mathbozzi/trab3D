@@ -74,56 +74,70 @@ void Arena::DrawMiniMapa(float _w, float _h)
 
 void Arena::DrawArena()
 {
-    int alturaArena = jogador.area.raio * 5;
+    int alturaArena = jogador.area.raio *3.5;
     Textura *texturaParede = &texturas["posto"];
 
-    glPushMatrix();
-
-    // desenha o chão
-    mapa.posicao.z = 0;
-    mapa.cor = Cor("lightgray");
-    mapa.Draw(DRAW_3D, &texturas["chao"]);
-
-    // desenha o céu
-    glPushMatrix();
-    ceu = mapa;
-    ceu.posicao.z = -alturaArena; // sinal negativo significa inversão da Normal
-    ceu.fatorRepeticaoTextura = 1;
-    ceu.Draw(DRAW_3D, &texturas["ceu"]);
-    glPopMatrix();
-
-    // desenha as paredes
-    glPushMatrix();
-    Rect parede1 = Rect(-alturaArena, 0, alturaArena, mapa.altura);
-    glRotatef(90, 0, 1, 0);
-    parede1.Draw(DRAW_3D, texturaParede);
-    glPopMatrix();
+    // GLuint chao = Lo
 
     glPushMatrix();
-    Rect parede2 = Rect(0, -alturaArena, mapa.largura, alturaArena);
-    glRotatef(-90, 1, 0, 0);
-    parede2.Draw(DRAW_3D, texturaParede);
-    glPopMatrix();
+    {
 
-    glPushMatrix();
-    Rect parede3 = Rect(0, 0, alturaArena, mapa.altura);
-    glTranslatef(mapa.largura, 0, 0);
-    glRotatef(-90, 0, 1, 0);
-    parede3.Draw(DRAW_3D, texturaParede);
-    glPopMatrix();
+        // desenha o chão
+        mapa.posicao.z = 0;
+        mapa.cor = Cor("lightgray");
+        mapa.Draw(DRAW_3D, &texturas["chao"]);  // mudar ARENA
 
-    glPushMatrix();
-    Rect parede4 = Rect(0, 0, mapa.largura, alturaArena);
-    glTranslatef(0, mapa.altura, 0);
-    glRotatef(90, 1, 0, 0);
-    parede4.Draw(DRAW_3D, texturaParede);
-    glPopMatrix();
+        // desenha o céu
+        glPushMatrix();
+        {
+            ceu = mapa;
+            ceu.posicao.z = -alturaArena; // sinal negativo significa inversão da Normal
+            // ceu.fatorRepeticaoTextura = 1;
+            ceu.Draw(DRAW_3D, &texturas["ceu"]);
+        }
+        glPopMatrix();
 
-    //desenha o posto de abastecimento
-    // glPushMatrix();
-    // glTranslatef(0, 0, 0.2);
-    // postoAbastecimento.Draw(DRAW_3D, &texturas["posto"]);
-    // glPopMatrix();
+        // desenha as paredes
+        glPushMatrix();
+        {
+            Rect parede1 = Rect(-alturaArena, 0, alturaArena, mapa.altura);
+            glRotatef(90, 0, 1, 0);
+            parede1.Draw(DRAW_3D, texturaParede);
+        }
+        glPopMatrix();
+
+        glPushMatrix();
+        {
+            Rect parede2 = Rect(0, -alturaArena, mapa.largura, alturaArena);
+            glRotatef(-90, 1, 0, 0);
+            parede2.Draw(DRAW_3D, texturaParede);
+        }
+        glPopMatrix();
+
+        glPushMatrix();
+        {
+            Rect parede3 = Rect(0, 0, alturaArena, mapa.altura);
+            glTranslatef(mapa.largura, 0, 0);
+            glRotatef(-90, 0, 1, 0);
+            parede3.Draw(DRAW_3D, texturaParede);
+        }
+        glPopMatrix();
+
+        glPushMatrix();
+        {
+            Rect parede4 = Rect(0, 0, mapa.largura, alturaArena);
+            glTranslatef(0, mapa.altura, 0);
+            glRotatef(90, 1, 0, 0);
+            parede4.Draw(DRAW_3D, texturaParede);
+        }
+        glPopMatrix();
+
+        //desenha o posto de abastecimento
+        // glPushMatrix();
+        // glTranslatef(0, 0, 0.2);
+        // postoAbastecimento.Draw(DRAW_3D, &texturas["posto"]);
+        // glPopMatrix();
+    }
     glPopMatrix();
 }
 
@@ -197,17 +211,17 @@ void Arena::MostraDados()
     cout << " - " << ((jogador.area.id == "Jogador") ? 1 : 0) << " jogador" << endl;
     //cout << " - " << (oponente.size()) << " inimigo(s)" << endl;
     //cout << " - " << (objetosResgate.size()) << " objeto(s) de resgate" << endl
-         //<< endl;
+    //<< endl;
 }
 
-void Arena::ImprimeElemento(Cor corElemento)
-{
-    for (auto i : this->mapaCorID)
-    {
-        if (i.second == corElemento)
-            cout << "Voce clicou em '" << i.first << "'!" << endl;
-    }
-}
+// void Arena::ImprimeElemento(Cor corElemento)
+// {
+//     for (auto i : this->mapaCorID)
+//     {
+//         if (i.second == corElemento)
+//             cout << "Voce clicou em '" << i.first << "'!" << endl;
+//     }
+// }
 
 void Arena::defineCamera(bool desenhaCockpit)
 {
@@ -226,9 +240,11 @@ void Arena::defineCamera(bool desenhaCockpit)
         posicaoCamera.z += camDistanciaHelicoptero * -direcaoCamera.z;
 
         // limita a câmera para não passar do chão
-        if (posicaoCamera.z < ALTURA_HELICOPTERO)
+        if (posicaoCamera.z <  ALTURA_HELICOPTERO)
+        // if (posicaoCamera.z <  this->jogador.area.raio)
         {
             posicaoCamera.z = ALTURA_HELICOPTERO;
+            // posicaoCamera.z = this->jogador.area.raio;
             direcaoCamera.x = sin(camYaw * M_PI / 180.0);
             direcaoCamera.y = cos(camYaw * M_PI / 180.0);
         }
@@ -247,7 +263,7 @@ void Arena::defineCamera(bool desenhaCockpit)
     {
 
         Ponto posicaoCamera, direcaoCamera;
-        //jogador.getInfoCanhao(posicaoCamera, direcaoCamera);
+        jogador.getInfoCanhao(posicaoCamera, direcaoCamera);
 
         // move a camera para cima do canhao
         posicaoCamera.z += 10;
