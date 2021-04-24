@@ -10,6 +10,8 @@ Helicoptero::Helicoptero()
     angulo = 0;
     anguloCanhaoYaw = 0;
     anguloCanhaoPitch = 0;
+    // texturaLutador = LoadTextureRAW2("images/earth.bmp");
+    // texturaOponente = LoadTextureRAW2("images/earth.bmp");
 
     //voando = false;
     //velocidadeHelice = 1;
@@ -18,12 +20,12 @@ Helicoptero::Helicoptero()
     corCorpo = Cor("darkred");
 }
 
-void Helicoptero::Draw(int flag, Textura *corpo, Textura *helice, Textura *canhao)
+void Helicoptero::Draw()
 {
     // draw3d = (flag == DRAW_2D) ? false : true;
 
-    if (desenhaEsfera)
-        area.Draw(DRAW_3D);
+    // if (desenhaEsfera)
+    //     area.Draw();
 
     glPushMatrix();
 
@@ -38,13 +40,13 @@ void Helicoptero::Draw(int flag, Textura *corpo, Textura *helice, Textura *canha
     glRotatef(angulo, 0, 0, 1);
 
     //desenharCanhao(canhao);
-    desenharCorpo(corpo);
+    desenharCorpo();
     //desenharHelice(helice);
 
     glPopMatrix();
 }
 
-void Helicoptero::desenharCorpo(Textura *textura)
+void Helicoptero::desenharCorpo()
 {
     // if (!draw3d)
     // {
@@ -60,8 +62,12 @@ void Helicoptero::desenharCorpo(Textura *textura)
         glPushMatrix();
         {
             glColor3f(corCorpo.r, corCorpo.g, corCorpo.b);
-            if (textura != NULL)
-                glBindTexture(GL_TEXTURE_2D, textura->get());
+
+            // GLuint paredeTextura = LoadTextureRAW2("images/earth.bmp");
+            glBindTexture(GL_TEXTURE_2D, this->textura);
+
+            // if (textura != NULL)
+            // glBindTexture(GL_TEXTURE_2D, textura->get());
 
             //perna direita cima
             // printf("%d\n",this->area.raio);
@@ -72,7 +78,7 @@ void Helicoptero::desenharCorpo(Textura *textura)
                 drawBox(1.0, 1);
             }
             glPopMatrix();
-            
+
             //perna direita baixo
             glPushMatrix();
             {
@@ -440,3 +446,4 @@ Ponto Helicoptero::getDirecao()
 {
     return Ponto(cos((angulo)*M_PI / 180.0), sin((angulo)*M_PI / 180.0));
 }
+

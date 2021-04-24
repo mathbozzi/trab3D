@@ -26,8 +26,8 @@ void Arena::Draw(bool cockpitPermanente)
     // for (Helicoptero h : inimigos)
     //     h.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
 
-    jogador.Draw(DRAW_3D, &texturas["jogadorCorpo"], &texturas["jogadorHelice"], &texturas["jogadorCanhao"]);
-    oponente.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
+    jogador.Draw();
+    oponente.Draw();
 
     DrawArena();
 
@@ -62,8 +62,8 @@ void Arena::DrawMiniMapa(float _w, float _h)
     // for (Tiro t : tiros)
     //     t.Draw(DRAW_2D);
     //for (Helicoptero h : inimigos)
-    oponente.area.Draw(DRAW_2D);
-    jogador.area.Draw(DRAW_2D);
+    oponente.area.Draw2d();
+    jogador.area.Draw2d();
 
     glPopMatrix();
     glEnable(GL_LIGHTING);
@@ -75,7 +75,7 @@ void Arena::DrawMiniMapa(float _w, float _h)
 void Arena::DrawArena()
 {
     int alturaArena = jogador.area.raio *3.5;
-    Textura *texturaParede = &texturas["posto"];
+    // Textura *texturaParede = &texturas["posto"];
 
     // GLuint chao = Lo
 
@@ -85,7 +85,7 @@ void Arena::DrawArena()
         // desenha o chão
         mapa.posicao.z = 0;
         mapa.cor = Cor("lightgray");
-        mapa.Draw(DRAW_3D, &texturas["chao"]);  // mudar ARENA
+        mapa.Draw(this->texturaChao);  // mudar ARENA
 
         // desenha o céu
         glPushMatrix();
@@ -93,7 +93,7 @@ void Arena::DrawArena()
             ceu = mapa;
             ceu.posicao.z = -alturaArena; // sinal negativo significa inversão da Normal
             // ceu.fatorRepeticaoTextura = 1;
-            ceu.Draw(DRAW_3D, &texturas["ceu"]);
+            ceu.Draw(this->texturaCeu);
         }
         glPopMatrix();
 
@@ -102,7 +102,7 @@ void Arena::DrawArena()
         {
             Rect parede1 = Rect(-alturaArena, 0, alturaArena, mapa.altura);
             glRotatef(90, 0, 1, 0);
-            parede1.Draw(DRAW_3D, texturaParede);
+            parede1.Draw(this->texturaParede);
         }
         glPopMatrix();
 
@@ -110,7 +110,7 @@ void Arena::DrawArena()
         {
             Rect parede2 = Rect(0, -alturaArena, mapa.largura, alturaArena);
             glRotatef(-90, 1, 0, 0);
-            parede2.Draw(DRAW_3D, texturaParede);
+            parede2.Draw(this->texturaParede);
         }
         glPopMatrix();
 
@@ -119,7 +119,7 @@ void Arena::DrawArena()
             Rect parede3 = Rect(0, 0, alturaArena, mapa.altura);
             glTranslatef(mapa.largura, 0, 0);
             glRotatef(-90, 0, 1, 0);
-            parede3.Draw(DRAW_3D, texturaParede);
+            parede3.Draw(this->texturaParede);
         }
         glPopMatrix();
 
@@ -128,7 +128,7 @@ void Arena::DrawArena()
             Rect parede4 = Rect(0, 0, mapa.largura, alturaArena);
             glTranslatef(0, mapa.altura, 0);
             glRotatef(90, 1, 0, 0);
-            parede4.Draw(DRAW_3D, texturaParede);
+            parede4.Draw(this->texturaParede);
         }
         glPopMatrix();
 

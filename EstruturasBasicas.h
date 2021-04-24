@@ -91,6 +91,8 @@ typedef struct
 
 void drawBox(GLfloat tamanho, GLfloat textureS = 1);
 OBJ * CreateSphere (double R, double space);
+GLuint LoadTextureRAW2(const char *filename);
+
 
 
 #endif // ESTRUTURASBASICAS_H

@@ -21,9 +21,11 @@ class Circle
 
         bool estaDentro(Ponto p);
         bool estaTocando(Circle c);
-        void Draw(int flag = DRAW_2D, Textura *_textura = NULL);
+        // void Draw(int flag = DRAW_2D, Textura *_textura = NULL);
+        // void Draw();
+        void Draw2d();
 
-        int numeroDePontos;
+        // int numeroDePontos;
         std::unique_ptr<OBJ> criaEsfera();
         void DrawEsfera();
     

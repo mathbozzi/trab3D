@@ -22,10 +22,12 @@ public:
     Textura textura;
     // int fatorRepeticaoTextura = 1;
     bool estaDentro(Ponto p);
-    void Draw(int flag = DRAW_2D, Textura *_textura = NULL, bool drawStroke = NO_STROKE);
+    void Draw(GLuint textura);
+
+    // void Draw(int flag = DRAW_2D, Textura *_textura = NULL, bool drawStroke = NO_STROKE);
     void DrawArestas();
     static void DrawCubo(Rect *r, float profundidade, float textureS = 1);
-    std::vector<Ponto> getVertices();
+    // std::vector<Ponto> getVertices();
 };
 
 #endif // RECT_H

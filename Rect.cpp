@@ -18,10 +18,10 @@ Rect::Rect(int x, int y, int width, int height, Cor cor)
     // strokeCor = Cor(127, 127, 127);
 }
 
-void Rect::Draw(int flag, Textura *_textura, bool drawStroke)
+void Rect::Draw(GLuint textura)
 {
-    if (_textura != NULL)
-        this->textura = *_textura;
+    // if (_textura != NULL)
+    //     this->textura = *_textura;
 
     // if (flag == DRAW_2D)
     // {
@@ -49,31 +49,43 @@ void Rect::Draw(int flag, Textura *_textura, bool drawStroke)
     //     }
     // }
     // else
-    {
-        vector<Ponto> vertices = getVertices();
-        double textureS = 1; // Bigger than 1, repeat
-        glPushMatrix();
-        glColor3f(cor.r, cor.g, cor.b);
-        if (_textura != NULL)
-            glBindTexture(GL_TEXTURE_2D, this->textura.get());
-        glBegin(GL_POLYGON);
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(0, 0);
-        glVertex3f(vertices[0].x, vertices[0].y, std::abs(vertices[0].z));
-        glTexCoord2f(0, textureS);
-        glVertex3f(vertices[1].x, vertices[1].y, std::abs(vertices[1].z));
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(vertices[2].x, vertices[2].y, std::abs(vertices[2].z));
-        glTexCoord2f(textureS, 0);
-        glVertex3f(vertices[3].x, vertices[3].y, std::abs(vertices[3].z));
-        glEnd();
-        glPopMatrix();
-    }
+
+    // vector<Ponto> vertices = getVertices();
+
+    vector<Ponto> vertices;
+    vertices.push_back(posicao);
+    vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
+    vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
+    vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
+
+    double textureS = 1; 
+    glPushMatrix();
+    glColor3f(cor.r, cor.g, cor.b);
+    // if (_textura != NULL)
+    glBindTexture(GL_TEXTURE_2D, textura);
+    glBegin(GL_POLYGON);
+    glNormal3f(0, 0, 1);
+    glTexCoord2f(0, 0);
+    glVertex3f(vertices[0].x, vertices[0].y, std::abs(vertices[0].z));
+    glTexCoord2f(0, textureS);
+    glVertex3f(vertices[1].x, vertices[1].y, std::abs(vertices[1].z));
+    glTexCoord2f(textureS, textureS);
+    glVertex3f(vertices[2].x, vertices[2].y, std::abs(vertices[2].z));
+    glTexCoord2f(textureS, 0);
+    glVertex3f(vertices[3].x, vertices[3].y, std::abs(vertices[3].z));
+    glEnd();
+    glPopMatrix();
 }
 
 void Rect::DrawArestas()
 {
-    vector<Ponto> vertices = getVertices();
+    // vector<Ponto> vertices = getVertices();
+    vector<Ponto> vertices;
+    vertices.push_back(posicao);
+    vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
+    vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
+    vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
+
     //  glPointSize(strokeLargura);
     glBegin(GL_LINE_LOOP);
     Cor c = Cor("lightgray");
@@ -83,15 +95,15 @@ void Rect::DrawArestas()
     glEnd();
 }
 
-vector<Ponto> Rect::getVertices()
-{
-    vector<Ponto> vertices;
-    vertices.push_back(posicao);
-    vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
-    vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
-    vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
-    return vertices;
-}
+// vector<Ponto> Rect::getVertices()
+// {
+//     vector<Ponto> vertices;
+//     vertices.push_back(posicao);
+//     vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
+//     vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
+//     vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
+//     return vertices;
+// }
 
 bool Rect::estaDentro(Ponto p)
 {

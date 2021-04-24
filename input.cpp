@@ -51,10 +51,10 @@ Arena INPUT::getArena()
     arena.jogador.area = areaJogador;
     arena.jogador.id = areaJogador.id;
     arena.jogador.velocidadeHelicoptero = velocidadeLutador;
-    // printf("%d\n",arena.jogador.area.raio/2);
-    // printf("%d\n",ALTURA_HELICOPTERO / 2.0);
+    // printf("%f\n",arena.jogador.area.raio/2.0);
+    // printf("%f\n", ALTURA_HELICOPTERO / 2.0);
     // printf("%f\n",areaJogador.posicao.z);
-    // areaJogador.posicao.z = ((GLfloat)arena.jogador.area.raio) /2.0;
+    // areaJogador.posicao.z = arena.jogador.area.raio/2.0;
     
     //arena.jogador.velocidadeTiro = _velTiro;
     //arena.jogador.tempoMaximoDeVoo = _tempoDeVoo;

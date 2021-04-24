@@ -27,7 +27,8 @@ class Arena
         //std::vector<Helicoptero> inimigos;
         //std::vector<Circle> objetosResgate;
         //std::vector<Tiro> tiros;
-        std::map<std::string, Textura> texturas;
+        GLuint texturaChao, texturaParede, texturaCeu;
+        // std::map<std::string, Textura> texturas;
         int camera;
         double camYaw;
         double camPitch;

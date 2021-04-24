@@ -42,6 +42,7 @@ void mouseClickMotion(int x, int y);
 void idle();
 void projecao(double _near, double _far, Rect viewport, double angulo = 90.0);
 
+
 int main(int argc, char **argv)
 {
     string arquivo;
@@ -97,15 +98,20 @@ void init()
     glEnable(GL_TEXTURE_2D);
 
     // carrega as texturas
-    arena.texturas["chao"] = Textura("grama.bmp");
+    arena.jogador.textura = LoadTextureRAW2("images/earth.bmp");
+    arena.oponente.textura = LoadTextureRAW2("images/stars1.bmp");
+    arena.texturaChao = LoadTextureRAW2("images/grama.bmp");
+    arena.texturaParede = LoadTextureRAW2("images/ring1.bmp");
+    arena.texturaCeu = LoadTextureRAW2("images/ceu-claro.bmp");
+    // arena.texturas["chao"] = Textura("grama.bmp");
     // arena.texturas["tiro"] = Textura("lava.bmp");
     // arena.texturas["objetos"] = Textura("earth.bmp");
-    arena.texturas["posto"] = Textura("ring1.bmp");
-    arena.texturas["ceu"] = Textura("ceu-claro.bmp");
-    arena.texturas["jogadorCorpo"] = Textura("azul.bmp");
+    // arena.texturas["posto"] = Textura("ring1.bmp");
+    // arena.texturas["ceu"] = Textura("ceu-claro.bmp");
+    // arena.texturas["jogadorCorpo"] = Textura("azul.bmp");
     // arena.texturas["jogadorCanhao"] = Textura("azul.bmp");
     // arena.texturas["jogadorHelice"] = Textura("azul-claro.bmp");
-    arena.texturas["inimigoCorpo"] = Textura("vermelho.bmp");
+    // arena.texturas["inimigoCorpo"] = Textura("vermelho.bmp");
     // arena.texturas["inimigoCanhao"] = Textura("vermelho.bmp");
     // arena.texturas["inimigoHelice"] = Textura("vermelho-claro.bmp");
 }
