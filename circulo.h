@@ -6,21 +6,21 @@
 #include <GL/glut.h>
 #include <memory>
 
-#include "EstruturasBasicas.h"
+#include "utils.h"
 
-class Circle
+class Circulo
 {
     public:
-        Circle();
-        Circle(Ponto posicao, int _raio, Cor _cor);
+        Circulo();
+        Circulo(Ponto posicao, int _raio, Cor _cor);
         Ponto posicao;
         Cor cor;
         std::string id;
         int raio;
-        Textura textura;
+        // Textura textura;
 
         bool estaDentro(Ponto p);
-        bool estaTocando(Circle c);
+        bool estaTocando(Circulo c);
         // void Draw(int flag = DRAW_2D, Textura *_textura = NULL);
         // void Draw();
         void Draw2d();

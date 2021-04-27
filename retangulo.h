@@ -5,13 +5,13 @@
 #include <GL/glut.h>
 #include <cmath>
 
-#include "EstruturasBasicas.h"
+#include "utils.h"
 
-class Rect
+class Retangulo
 {
 public:
-    Rect();
-    Rect(int x, int y, int width, int height, Cor cor = Cor("white"));
+    Retangulo();
+    Retangulo(int x, int y, int width, int height, Cor cor = Cor("white"));
     Ponto posicao;
     Cor cor;
     std::string id;
@@ -19,14 +19,14 @@ public:
     int largura;
     // int strokeLargura;
     // Cor strokeCor;
-    Textura textura;
+    //Textura textura;
     // int fatorRepeticaoTextura = 1;
     bool estaDentro(Ponto p);
     void Draw(GLuint textura);
 
     // void Draw(int flag = DRAW_2D, Textura *_textura = NULL, bool drawStroke = NO_STROKE);
     void DrawArestas();
-    static void DrawCubo(Rect *r, float profundidade, float textureS = 1);
+    static void DrawCubo(Retangulo *r, float profundidade, float textureS = 1);
     // std::vector<Ponto> getVertices();
 };
 

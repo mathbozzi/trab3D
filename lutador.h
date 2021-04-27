@@ -4,10 +4,10 @@
 #include <GL/glut.h>
 #include <math.h>
 
-#include "Rect.h"
-#include "Circle.h"
-#include "Tiro.h"
-#include "EstruturasBasicas.h"
+#include "retangulo.h"
+#include "circulo.h"
+// #include "Tiro.h"
+#include "utils.h"
 
 /** CORES (RGB)
  * Verde claro:     155, 187, 89
@@ -19,11 +19,11 @@
 // #define HELICE_VEL_MAXIMA 3.0
 // #define HELICE_VEL_MINIMA 0.0
 
-class Helicoptero
+class Lutador
 {
 public:
-    Helicoptero();
-    //Helicoptero(float _velocidadeHelice, float _velocidadeHelicoptero, float _velocidadeTiro);
+    Lutador();
+    //Lutador(float _velocidadeHelice, float _velocidadeHelicoptero, float _velocidadeTiro);
     void moverFrente(GLdouble timeDiff); // OK
     void moverTras(GLdouble timeDiff);   // OK
     void girarDireita();                 // OK
@@ -42,7 +42,7 @@ public:
     //bool estaVoando();                           // OK
     //void consumirCombustivel(GLdouble timeDiff); // OK
     //void reabastercer();                         // OK
-    //bool resgatar(Circle objeto);                // OK
+    //bool resgatar(Circulo objeto);                // OK
     //double getNivelCombustivel();                // OK
     void ajustarAngulo();
 
@@ -55,14 +55,14 @@ public:
     void Draw(); // OK
     void desenharEsfera() { desenhaEsfera = !desenhaEsfera; }                                             // OK
 
-    Circle area;
-    std::string id;
-    float velocidadeHelicoptero;
+    Circulo area;
+    //std::string id;
+    float velocidade;
     //float tempoMaximoDeVoo, tempoAtualDeVoo;
     float angulo;
     //int objetosResgatados;
     Cor corCorpo;
-    Textura texturaCorpo;
+    //Textura texturaCorpo;
     // Textura texturaCorpo, texturaHelice, texturaCanhao;
 
     GLuint textura;

@@ -1,20 +1,20 @@
-#include "Arena.h"
+#include "jogo.h"
 
 using namespace std;
 
-Arena::Arena()
+Jogo::Jogo()
 {
-    this->statusPartida = EM_ANDAMENTO;
+    this->statusPartida = jogoON;
     camera = CAMERA_3;
     camYaw = 90;
     camPitch = 135;
-    camDistanciaHelicoptero = 100;
+    camDistanciaJogador = 100;
 }
 
-void Arena::Draw(bool cockpitPermanente)
+void Jogo::Draw(bool cockpitPermanente)
 {
     // if (!cockpitPermanente)
-    //     DrawOrtho(&Arena::DrawIndicadores);
+    //     DrawOrtho(&Jogo::DrawIndicadores);
 
     glPushMatrix();
     defineCamera(mostrarCameraCockpit);
@@ -23,7 +23,7 @@ void Arena::Draw(bool cockpitPermanente)
 
     desenhaOrigemDoSC();
 
-    // for (Helicoptero h : inimigos)
+    // for (Lutador h : inimigos)
     //     h.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
 
     jogador.Draw();
@@ -39,7 +39,7 @@ void Arena::Draw(bool cockpitPermanente)
     glPopMatrix();
 }
 
-void Arena::DrawMiniMapa(float _w, float _h)
+void Jogo::DrawMiniMapa(float _w, float _h)
 {
     if (!mostrarMinimapa)
         return;
@@ -61,7 +61,7 @@ void Arena::DrawMiniMapa(float _w, float _h)
     //     c.Draw(DRAW_2D);
     // for (Tiro t : tiros)
     //     t.Draw(DRAW_2D);
-    //for (Helicoptero h : inimigos)
+    //for (Lutador h : inimigos)
     oponente.area.Draw2d();
     jogador.area.Draw2d();
 
@@ -72,7 +72,7 @@ void Arena::DrawMiniMapa(float _w, float _h)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Arena::DrawArena()
+void Jogo::DrawArena()
 {
     int alturaArena = jogador.area.raio *3.5;
     // Textura *texturaParede = &texturas["posto"];
@@ -85,7 +85,7 @@ void Arena::DrawArena()
         // desenha o chão
         mapa.posicao.z = 0;
         mapa.cor = Cor("lightgray");
-        mapa.Draw(this->texturaChao);  // mudar ARENA
+        mapa.Draw(this->texturaChao);  // mudar Jogo
 
         // desenha o céu
         glPushMatrix();
@@ -100,7 +100,7 @@ void Arena::DrawArena()
         // desenha as paredes
         glPushMatrix();
         {
-            Rect parede1 = Rect(-alturaArena, 0, alturaArena, mapa.altura);
+            Retangulo parede1 = Retangulo(-alturaArena, 0, alturaArena, mapa.altura);
             glRotatef(90, 0, 1, 0);
             parede1.Draw(this->texturaParede);
         }
@@ -108,7 +108,7 @@ void Arena::DrawArena()
 
         glPushMatrix();
         {
-            Rect parede2 = Rect(0, -alturaArena, mapa.largura, alturaArena);
+            Retangulo parede2 = Retangulo(0, -alturaArena, mapa.largura, alturaArena);
             glRotatef(-90, 1, 0, 0);
             parede2.Draw(this->texturaParede);
         }
@@ -116,7 +116,7 @@ void Arena::DrawArena()
 
         glPushMatrix();
         {
-            Rect parede3 = Rect(0, 0, alturaArena, mapa.altura);
+            Retangulo parede3 = Retangulo(0, 0, alturaArena, mapa.altura);
             glTranslatef(mapa.largura, 0, 0);
             glRotatef(-90, 0, 1, 0);
             parede3.Draw(this->texturaParede);
@@ -125,7 +125,7 @@ void Arena::DrawArena()
 
         glPushMatrix();
         {
-            Rect parede4 = Rect(0, 0, mapa.largura, alturaArena);
+            Retangulo parede4 = Retangulo(0, 0, mapa.largura, alturaArena);
             glTranslatef(0, mapa.altura, 0);
             glRotatef(90, 1, 0, 0);
             parede4.Draw(this->texturaParede);
@@ -141,13 +141,13 @@ void Arena::DrawArena()
     glPopMatrix();
 }
 
-// void Arena::DrawIndicadores()
+// void Jogo::DrawIndicadores()
 // {
 //     jogador.desenharCombustivel(10, mapa.altura - 10, NUMERO_DE_MARCADORES_COMBUSTIVEL);
 //     jogador.desenharResgates(10, mapa.altura - 50, nObjetos);
 // }
 
-void Arena::DrawOrtho(void (Arena::*funcao)(), bool desabilitarTextura, bool desabilitarLuz)
+void Jogo::DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura, bool desabilitarLuz)
 {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -164,16 +164,16 @@ void Arena::DrawOrtho(void (Arena::*funcao)(), bool desabilitarTextura, bool des
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Arena::DrawResultado()
+void Jogo::DrawResultado()
 {
     GLuint t;
     switch (statusPartida)
     {
-    case GANHOU:
-        t = Textura("win.bmp").get();
+    case 1: //jogador ganhou
+        //t = Textura("win.bmp").get();
         break;
-    case PERDEU:
-        t = Textura("lose.bmp").get();
+    case 2: //jogador perdeu
+        //t = Textura("lose.bmp").get();
         break;
     }
 
@@ -203,16 +203,16 @@ void Arena::DrawResultado()
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Arena::MostraDados()
-{
-    cout << "A arena foi criada com:" << endl;
-    cout << " - " << ((mapa.id == "Arena") ? 1 : 0) << " mapa" << endl;
-    cout << " - " << ((postoAbastecimento.id == "PostoAbastecimento") ? 1 : 0) << " posto de abastecimento" << endl;
-    cout << " - " << ((jogador.area.id == "Jogador") ? 1 : 0) << " jogador" << endl;
-    //cout << " - " << (oponente.size()) << " inimigo(s)" << endl;
-    //cout << " - " << (objetosResgate.size()) << " objeto(s) de resgate" << endl
-    //<< endl;
-}
+// void Arena::MostraDados()
+// {
+//     cout << "A arena foi criada com:" << endl;
+//     cout << " - " << ((mapa.id == "Arena") ? 1 : 0) << " mapa" << endl;
+//     cout << " - " << ((postoAbastecimento.id == "PostoAbastecimento") ? 1 : 0) << " posto de abastecimento" << endl;
+//     cout << " - " << ((jogador.area.id == "Jogador") ? 1 : 0) << " jogador" << endl;
+//     //cout << " - " << (oponente.size()) << " inimigo(s)" << endl;
+//     //cout << " - " << (objetosResgate.size()) << " objeto(s) de resgate" << endl
+//     //<< endl;
+// }
 
 // void Arena::ImprimeElemento(Cor corElemento)
 // {
@@ -223,7 +223,7 @@ void Arena::MostraDados()
 //     }
 // }
 
-void Arena::defineCamera(bool desenhaCockpit)
+void Jogo::defineCamera(bool desenhaCockpit)
 {
     if (camera == CAMERA_3)
     {
@@ -237,7 +237,7 @@ void Arena::defineCamera(bool desenhaCockpit)
         // desloca a camera em uma 'esfera virtual'
         Ponto direcaoCamera;
         direcaoCamera.z = cos(camPitch * M_PI / 180.0);
-        posicaoCamera.z += camDistanciaHelicoptero * -direcaoCamera.z;
+        posicaoCamera.z += camDistanciaJogador * -direcaoCamera.z;
 
         // limita a câmera para não passar do chão
         if (posicaoCamera.z <  ALTURA_HELICOPTERO)
@@ -253,8 +253,8 @@ void Arena::defineCamera(bool desenhaCockpit)
             direcaoCamera.x = sin(camYaw * M_PI / 180.0) * sin(camPitch * M_PI / 180.0);
             direcaoCamera.y = cos(camYaw * M_PI / 180.0) * sin(camPitch * M_PI / 180.0);
         }
-        posicaoCamera.x += camDistanciaHelicoptero * -direcaoCamera.x;
-        posicaoCamera.y += camDistanciaHelicoptero * -direcaoCamera.y;
+        posicaoCamera.x += camDistanciaJogador * -direcaoCamera.x;
+        posicaoCamera.y += camDistanciaJogador * -direcaoCamera.y;
 
         // posiciona a camera olhando para o jogador
         gluLookAt(posicaoCamera.x, posicaoCamera.y, posicaoCamera.z, jogador.area.posicao.x, jogador.area.posicao.y, jogador.area.posicao.z, 0, 0, -1);
@@ -315,7 +315,7 @@ void Arena::defineCamera(bool desenhaCockpit)
     glPopMatrix();
 }
 
-void Arena::defineLuz0()
+void Jogo::defineLuz0()
 {
     if (!ativaLuz0)
     {
@@ -337,7 +337,7 @@ void Arena::defineLuz0()
     glPopMatrix();
 }
 
-void Arena::defineLuz1()
+void Jogo::defineLuz1()
 {
     if (!ativaLuz1)
     {
@@ -361,7 +361,7 @@ void Arena::defineLuz1()
     glPopMatrix();
 }
 
-void Arena::desenhaOrigemDoSC()
+void Jogo::desenhaOrigemDoSC()
 {
     GLfloat mat_ambient_r[] = {1.0, 0.0, 0.0, 1.0};
     GLfloat mat_ambient_g[] = {0.0, 1.0, 0.0, 1.0};
@@ -376,7 +376,7 @@ void Arena::desenhaOrigemDoSC()
     glColor3fv(mat_ambient_r);
     glScalef(5, 0.3, 0.3);
     glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(1.0);
+    glutSolidCube(50.0);
     glPopMatrix();
 
     //y axis
@@ -385,7 +385,7 @@ void Arena::desenhaOrigemDoSC()
     glRotatef(90, 0, 0, 1);
     glScalef(5, 0.3, 0.3);
     glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(1.0);
+    glutSolidCube(50.0);
     glPopMatrix();
 
     //z axis
@@ -394,12 +394,12 @@ void Arena::desenhaOrigemDoSC()
     glRotatef(-90, 0, 1, 0);
     glScalef(5, 0.3, 0.3);
     glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(1.0);
+    glutSolidCube(50.0);
     glPopMatrix();
     glPopAttrib();
 }
 
-// bool Arena::estaDentro(Tiro tiro)
+// bool Jogo::estaDentro(Tiro tiro)
 // {
 //     Ponto p = tiro.posicao;
 //     int r = tiro.raio;

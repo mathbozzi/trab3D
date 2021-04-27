@@ -1,13 +1,13 @@
-#include "Helicoptero.h"
+#include "lutador.h"
 #include <stdio.h>
 
 OBJ *cabeca;
 
-Helicoptero::Helicoptero()
+Lutador::Lutador()
 {
     area.posicao.z = this->area.raio / 2.0;
-    anguloHelice = 0;
-    angulo = 0;
+    //anguloHelice = 0;
+    //angulo = 180;
     anguloCanhaoYaw = 0;
     anguloCanhaoPitch = 0;
     // texturaLutador = LoadTextureRAW2("images/earth.bmp");
@@ -20,7 +20,7 @@ Helicoptero::Helicoptero()
     corCorpo = Cor("darkred");
 }
 
-void Helicoptero::Draw()
+void Lutador::Draw()
 {
     // draw3d = (flag == DRAW_2D) ? false : true;
 
@@ -46,7 +46,7 @@ void Helicoptero::Draw()
     glPopMatrix();
 }
 
-void Helicoptero::desenharCorpo()
+void Lutador::desenharCorpo()
 {
     // if (!draw3d)
     // {
@@ -138,7 +138,7 @@ void Helicoptero::desenharCorpo()
     }
 }
 
-// void Helicoptero::desenharCanhao(Textura *textura)
+// void Lutador::desenharCanhao(Textura *textura)
 // {
 //     if (!draw3d)
 //     {
@@ -167,7 +167,7 @@ void Helicoptero::desenharCorpo()
 //     }
 // }
 
-// void Helicoptero::desenharHelice(Textura *textura)
+// void Lutador::desenharHelice(Textura *textura)
 // {
 //     if (!draw3d)
 //     {
@@ -195,7 +195,7 @@ void Helicoptero::desenharCorpo()
 //         glVertex2f(0.0, 0.0);
 //         glVertex2f(-3.0, -40.0);
 //         glEnd();
-//         Circle(Ponto(0, 0), 3, Cor("darkgreen")).Draw();
+//         Circulo(Ponto(0, 0), 3, Cor("darkgreen")).Draw();
 //         glPopMatrix();
 //     }
 //     else
@@ -215,12 +215,12 @@ void Helicoptero::desenharCorpo()
 //         glScalef(3, 80, altura_helice);
 //         drawBox(1.0, 1);
 //         glPopMatrix();
-//         Circle(Ponto(0, 0), 2, Cor("darkgreen")).Draw(DRAW_3D, textura);
+//         Circulo(Ponto(0, 0), 2, Cor("darkgreen")).Draw(DRAW_3D, textura);
 //         glPopMatrix();
 //     }
 // }
 
-// void Helicoptero::desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores)
+// void Lutador::desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores)
 // {
 //     int mostradorAltura = 15;
 //     int mostradorLargura = 10;
@@ -239,20 +239,20 @@ void Helicoptero::desenharCorpo()
 //     glPopMatrix();
 // }
 
-// void Helicoptero::consumirCombustivel(GLdouble timeDiff)
+// void Lutador::consumirCombustivel(GLdouble timeDiff)
 // {
 //     if (estaVoando() && tempoAtualDeVoo <= tempoMaximoDeVoo)
 //         tempoAtualDeVoo += timeDiff / 1000.0;
 // }
 
-// double Helicoptero::getNivelCombustivel()
+// double Lutador::getNivelCombustivel()
 // {
 //     return 1 - (tempoAtualDeVoo / tempoMaximoDeVoo);
 // }
 
-// void Helicoptero::reabastercer() { tempoAtualDeVoo = 0; }
+// void Lutador::reabastercer() { tempoAtualDeVoo = 0; }
 
-// bool Helicoptero::resgatar(Circle objeto)
+// bool Lutador::resgatar(Circulo objeto)
 // {
 //     if (!objeto.estaTocando(this->area))
 //         return false;
@@ -260,7 +260,7 @@ void Helicoptero::desenharCorpo()
 //     return true;
 // }
 
-// void Helicoptero::desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos)
+// void Lutador::desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos)
 // {
 //     int mostradorRaio = 7;
 //     int mostradorEspaco = 5;
@@ -272,12 +272,12 @@ void Helicoptero::desenharCorpo()
 //     {
 //         int x = i * ((2 * mostradorRaio) + mostradorEspaco);
 //         Cor cor = (i < objetosResgatados) ? Cor("green") : Cor("blue");
-//         Circle(Ponto(x, 0), mostradorRaio, cor).Draw();
+//         Circulo(Ponto(x, 0), mostradorRaio, cor).Draw();
 //     }
 //     glPopMatrix();
 // }
 
-// void Helicoptero::girarHelice()
+// void Lutador::girarHelice()
 // {
 //     if (anguloHelice != 360)
 //         anguloHelice += 5 * velocidadeHelice;
@@ -285,64 +285,64 @@ void Helicoptero::desenharCorpo()
 //         anguloHelice = 0;
 // }
 
-//bool Helicoptero::estaVoando() { return (area.posicao.z > ALTURA_HELICOPTERO / 2.0); };
-//void Helicoptero::decolar() { voando = true; }
-//void Helicoptero::pousar() { voando = false; }
-// void Helicoptero::subir() { area.posicao.z++; }
-// void Helicoptero::descer()
+//bool Lutador::estaVoando() { return (area.posicao.z > ALTURA_HELICOPTERO / 2.0); };
+//void Lutador::decolar() { voando = true; }
+//void Lutador::pousar() { voando = false; }
+// void Lutador::subir() { area.posicao.z++; }
+// void Lutador::descer()
 // {
 //     if (estaVoando())
 //         area.posicao.z--;
 // }
 
-void Helicoptero::girarDireita()
+void Lutador::girarDireita()
 {
     // if (!estaVoando())
     //     return;
     angulo += 1.5;
 }
-void Helicoptero::girarEsquerda()
+void Lutador::girarEsquerda()
 {
     // if (!estaVoando())
     //     return;
     angulo -= 1.5;
 }
 
-Ponto Helicoptero::getProximaPosicao(GLdouble timeDiff)
+Ponto Lutador::getProximaPosicao(GLdouble timeDiff)
 {
     Ponto novaPosicao;
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
-    novaPosicao.x = area.posicao.x + cos(alphaRadians) * velocidadeHelicoptero * timeDiff;
-    novaPosicao.y = area.posicao.y - sin(alphaRadians) * velocidadeHelicoptero * timeDiff;
+    novaPosicao.x = area.posicao.x + cos(alphaRadians) * velocidade * timeDiff;
+    novaPosicao.y = area.posicao.y - sin(alphaRadians) * velocidade * timeDiff;
     return novaPosicao;
 }
 
-void Helicoptero::moverFrente(GLdouble timeDiff)
+void Lutador::moverFrente(GLdouble timeDiff)
 {
     // if (!estaVoando())
     //     return;
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
-    area.posicao.x += cos(alphaRadians) * velocidadeHelicoptero * timeDiff;
-    area.posicao.y -= sin(alphaRadians) * velocidadeHelicoptero * timeDiff;
+    area.posicao.x += cos(alphaRadians) * velocidade * timeDiff;
+    area.posicao.y -= sin(alphaRadians) * velocidade * timeDiff;
 }
 
-void Helicoptero::moverTras(GLdouble timeDiff)
+void Lutador::moverTras(GLdouble timeDiff)
 {
     // if (!estaVoando())
     //     return;
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
-    area.posicao.x -= cos(alphaRadians) * velocidadeHelicoptero * timeDiff;
-    area.posicao.y += sin(alphaRadians) * velocidadeHelicoptero * timeDiff;
+    area.posicao.x -= cos(alphaRadians) * velocidade * timeDiff;
+    area.posicao.y += sin(alphaRadians) * velocidade * timeDiff;
 }
 
-// void Helicoptero::aumentarVelocidadeHelice()
+// void Lutador::aumentarVelocidadeHelice()
 // {
 //     if (velocidadeHelice <= HELICE_VEL_MAXIMA - 0.03)
 //         velocidadeHelice += 0.03;
 //     else
 //         velocidadeHelice = HELICE_VEL_MAXIMA;
 // }
-// void Helicoptero::diminuirVelocidadeHelice()
+// void Lutador::diminuirVelocidadeHelice()
 // {
 //     if (velocidadeHelice >= HELICE_VEL_MINIMA + 0.03)
 //         velocidadeHelice -= 0.03;
@@ -350,7 +350,7 @@ void Helicoptero::moverTras(GLdouble timeDiff)
 //         velocidadeHelice = HELICE_VEL_MINIMA;
 // }
 
-// void Helicoptero::mirar(Ponto alvo)
+// void Lutador::mirar(Ponto alvo)
 // {
 
 //     // mira - yaw
@@ -394,14 +394,14 @@ void Helicoptero::moverTras(GLdouble timeDiff)
 //         anguloCanhaoPitch = 45;
 // }
 
-// Tiro Helicoptero::atirar()
+// Tiro Lutador::atirar()
 // {
 //     Ponto direcao, pontaCanhao;
 //     getInfoCanhao(pontaCanhao, direcao);
 //     return Tiro(pontaCanhao, direcao, id, this->velocidadeTiro);
 // }
 
-void Helicoptero::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
+void Lutador::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
 {
     double degree2rad = M_PI / 180.0;
 
@@ -420,12 +420,12 @@ void Helicoptero::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
     pontaCanhao = Ponto(this->area.posicao.x + pontaCanhaoInicial.x, this->area.posicao.y + pontaCanhaoInicial.y, this->area.posicao.z + pontaCanhaoInicial.z);
 }
 
-void Helicoptero::ajustarAngulo()
+void Lutador::ajustarAngulo()
 {
     this->angulo = (this->angulo > 360) ? (int)this->angulo % 360 : this->angulo;
 }
 
-// void Helicoptero::moverCanhao(int incrementoYaw, int incrementoPitch)
+// void Lutador::moverCanhao(int incrementoYaw, int incrementoPitch)
 // {
 //     // yaw
 //     anguloCanhaoYaw += incrementoYaw;
@@ -442,7 +442,7 @@ void Helicoptero::ajustarAngulo()
 //         anguloCanhaoPitch = 45;
 // }
 
-Ponto Helicoptero::getDirecao()
+Ponto Lutador::getDirecao()
 {
     return Ponto(cos((angulo)*M_PI / 180.0), sin((angulo)*M_PI / 180.0));
 }

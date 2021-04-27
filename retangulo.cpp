@@ -1,12 +1,12 @@
-#include "Rect.h"
+#include "retangulo.h"
 
 using namespace std;
 
-Rect::Rect()
+Retangulo::Retangulo()
 {
 }
 
-Rect::Rect(int x, int y, int width, int height, Cor cor)
+Retangulo::Retangulo(int x, int y, int width, int height, Cor cor)
 {
     this->posicao.x = x;
     this->posicao.y = y;
@@ -18,7 +18,7 @@ Rect::Rect(int x, int y, int width, int height, Cor cor)
     // strokeCor = Cor(127, 127, 127);
 }
 
-void Rect::Draw(GLuint textura)
+void Retangulo::Draw(GLuint textura)
 {
     // if (_textura != NULL)
     //     this->textura = *_textura;
@@ -77,7 +77,7 @@ void Rect::Draw(GLuint textura)
     glPopMatrix();
 }
 
-void Rect::DrawArestas()
+void Retangulo::DrawArestas()
 {
     // vector<Ponto> vertices = getVertices();
     vector<Ponto> vertices;
@@ -95,7 +95,7 @@ void Rect::DrawArestas()
     glEnd();
 }
 
-// vector<Ponto> Rect::getVertices()
+// vector<Ponto> Retangulo::getVertices()
 // {
 //     vector<Ponto> vertices;
 //     vertices.push_back(posicao);
@@ -105,14 +105,14 @@ void Rect::DrawArestas()
 //     return vertices;
 // }
 
-bool Rect::estaDentro(Ponto p)
+bool Retangulo::estaDentro(Ponto p)
 {
     bool h = (p.x >= posicao.x && p.x <= posicao.x + largura);
     bool v = (p.y >= posicao.y && p.y <= posicao.y + altura);
     return (h && v);
 }
 
-void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
+void Retangulo::DrawCubo(Retangulo *r, float profundidade, float textureS)
 {
     Ponto _posicao = r->posicao;
     float height = r->altura;
@@ -122,7 +122,7 @@ void Rect::DrawCubo(Rect *r, float profundidade, float textureS)
     glPushMatrix();
     glTranslatef(0, 0, _posicao.z * inverterNormal);
     glColor3f(r->cor.r, r->cor.g, r->cor.b);
-    glBindTexture(GL_TEXTURE_2D, r->textura.get());
+    glBindTexture(GL_TEXTURE_2D, textureS);
 
     glBegin(GL_POLYGON); /* f1: front */
     glNormal3f(-1.0f * inverterNormal, 0.0f, 0.0f);

@@ -1,11 +1,11 @@
-#include "Circle.h"
+#include "circulo.h"
 
-Circle::Circle()
+Circulo::Circulo()
 {
 	// this->numeroDePontos = 360;
 }
 
-Circle::Circle(Ponto posicao, int _raio, Cor _cor)
+Circulo::Circulo(Ponto posicao, int _raio, Cor _cor)
 {
 	this->posicao = posicao;
 	this->raio = _raio;
@@ -13,7 +13,7 @@ Circle::Circle(Ponto posicao, int _raio, Cor _cor)
 	// this->numeroDePontos = 360;
 }
 
-// void Circle::Draw()
+// void Circulo::Draw()
 // {
 // 	// if (_textura != NULL)
 // 	// 	textura = *_textura;
@@ -27,7 +27,7 @@ Circle::Circle(Ponto posicao, int _raio, Cor _cor)
 // 	glPopMatrix();
 // }
 
-// void Circle::Draw(int flag, Textura *_textura)
+// void Circulo::Draw(int flag, Textura *_textura)
 // {
 // 	if (_textura != NULL)
 // 		textura = *_textura;
@@ -41,7 +41,7 @@ Circle::Circle(Ponto posicao, int _raio, Cor _cor)
 // 	glPopMatrix();
 // }
 
-void Circle::Draw2d()
+void Circulo::Draw2d()
 {
 
 	// calcula os pontos de acordo com a quantidade escolhida e desenha o círculo
@@ -59,17 +59,17 @@ void Circle::Draw2d()
 	glEnd();
 }
 
-bool Circle::estaDentro(Ponto p)
+bool Circulo::estaDentro(Ponto p)
 {
 	return (calculaDistancia(p, this->posicao) < this->raio);
 }
 
-bool Circle::estaTocando(Circle c)
+bool Circulo::estaTocando(Circulo c)
 {
 	return (calculaDistancia(c.posicao, this->posicao) < (this->raio + c.raio));
 }
 
-std::unique_ptr<OBJ> Circle::criaEsfera()
+std::unique_ptr<OBJ> Circulo::criaEsfera()
 {
 	std::unique_ptr<OBJ> obj(new OBJ);
 	double space = 18;
@@ -145,7 +145,7 @@ std::unique_ptr<OBJ> Circle::criaEsfera()
 	return obj;
 }
 
-void Circle::DrawEsfera()
+void Circulo::DrawEsfera()
 {
 	std::unique_ptr<OBJ> obj = criaEsfera();
 	glBegin(GL_TRIANGLE_STRIP);

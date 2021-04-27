@@ -4,90 +4,36 @@
 #include <time.h>
 
 #include <GL/glut.h>
-
-#include "input.h"
-#include "Arena.h"
+#include "tinyxml2.h"
+//#include "input.h"
+#include "jogo.h"
+#include "retangulo.h"
+#include "circulo.h"
 //#include "Tiro.h"
-#include "EstruturasBasicas.h"
+#include "utils.h"
 #include "imageloader.h"
 
-//#define INTERVALO_MUDANCA_ANGULO_INIMIGOS 4
-
 using namespace std;
+using namespace tinyxml2;
 
-INPUT *input;
-Arena arena;
-bool isDrawn = false;
+Jogo jogo;
+float velocidadeLutador = 0.2;
+float velocidadeOponente = 0.1;
+//bool isDrawn = false;
 //bool desativarOponente = false;
 bool keystates[256];
 int mouseUltimoX;
 int mouseUltimoY;
 
-// janela
-int width = 500, height = 500;
+
+
+int width = 500;
+int height = 500;
 
 // camera controls
 int lastX = 0;
 int lastY = 0;
 int buttonDown = 0;
-
-void init();
-void display(void);
-void reshape(int w, int h);
-void keyboard(unsigned char c, int x, int y);
-void keyup(unsigned char key, int x, int y);
-void mouse(int button, int state, int x, int y);
-void mouseMotion(int x, int y);
-void mouseClickMotion(int x, int y);
-void idle();
-void projecao(double _near, double _far, Rect viewport, double angulo = 90.0);
-
-
-int main(int argc, char **argv)
-{
-    string arquivo;
-    if (argc > 1)
-    {
-        arquivo = argv[1];
-    }
-    else
-    {
-        cout << "Digite o caminho da arena" << endl;
-        cout << "Exemplo: ./trabalhocg arenas/arena_1.svg" << endl;
-        return 0;
-    }
-    if (arquivo != "")
-    {
-
-        input = new INPUT(arquivo);
-
-        // monta a arena
-        arena = input->getArena();
-        // arena.MostraDados();
-
-        // glut init
-        glutInit(&argc, argv);
-        glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
-        glutInitWindowSize(width, height + 200);
-        glutInitWindowPosition(100, 100);
-        glutCreateWindow("RING");
-        init();
-
-        // event 'binding'
-        glutDisplayFunc(display);
-        glutKeyboardFunc(keyboard);
-        glutKeyboardUpFunc(keyup);
-        glutMouseFunc(mouse);
-        glutIdleFunc(idle);
-        glutPassiveMotionFunc(mouseMotion);
-        glutMotionFunc(mouseClickMotion);
-        glutReshapeFunc(reshape);
-
-        // glut main loop
-        glutMainLoop();
-    }
-    return 0;
-}
 
 void init()
 {
@@ -98,11 +44,11 @@ void init()
     glEnable(GL_TEXTURE_2D);
 
     // carrega as texturas
-    arena.jogador.textura = LoadTextureRAW2("images/earth.bmp");
-    arena.oponente.textura = LoadTextureRAW2("images/stars1.bmp");
-    arena.texturaChao = LoadTextureRAW2("images/grama.bmp");
-    arena.texturaParede = LoadTextureRAW2("images/ring1.bmp");
-    arena.texturaCeu = LoadTextureRAW2("images/ceu-claro.bmp");
+    jogo.jogador.textura = LoadTextureRAW2("images/earth.bmp");
+    jogo.oponente.textura = LoadTextureRAW2("images/lava.bmp");
+    jogo.texturaChao = LoadTextureRAW2("images/madeira.bmp");
+    jogo.texturaParede = LoadTextureRAW2("images/ring1.bmp");
+    jogo.texturaCeu = LoadTextureRAW2("images/stars1.bmp");
     // arena.texturas["chao"] = Textura("grama.bmp");
     // arena.texturas["tiro"] = Textura("lava.bmp");
     // arena.texturas["objetos"] = Textura("earth.bmp");
@@ -116,46 +62,7 @@ void init()
     // arena.texturas["inimigoHelice"] = Textura("vermelho-claro.bmp");
 }
 
-void display(void)
-{
-    glClearColor(1, 1, 1, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
-    if (arena.statusPartida == GANHOU || arena.statusPartida == PERDEU)
-    {
-        glViewport(0, 0, width, height);
-        glLoadIdentity();
-        arena.DrawResultado();
-    }
-    else
-    {
-        arena.DrawMiniMapa(width, height);
-        // cockpit permanente
-        int cameraAtual = arena.camera;
-        arena.camera = CAMERA_1; // seta a camera do cockpit
-        projecao(5, 1000, Rect(0, height - 200, width, 200), 60);
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
-        arena.Draw(true);
-
-        // câmera escolhida
-        arena.camera = cameraAtual;
-        projecao(5, 1000, Rect(0, 0, width, height - 200), 90);
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
-        arena.Draw();
-    }
-
-    glutSwapBuffers();
-    glutPostRedisplay();
-}
-
-void reshape(int w, int h)
-{
-    width = w;
-    height = h;
-}
-
-void projecao(double _near, double _far, Rect viewport, double angulo)
+void projecao(double _near, double _far, Retangulo viewport, double angulo)
 {
     glMatrixMode(GL_PROJECTION);
 
@@ -167,6 +74,45 @@ void projecao(double _near, double _far, Rect viewport, double angulo)
 
     glViewport(viewport.posicao.x, viewport.posicao.y, viewport.largura, viewport.altura);
     glLoadIdentity();
+}
+
+void display(void)
+{
+    glClearColor(1, 1, 1, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+
+    if (jogo.statusPartida == jogadorGanhou || jogo.statusPartida == oponenteGanhou)
+    {
+        glViewport(0, 0, width, height);
+        glLoadIdentity();
+        jogo.DrawResultado();
+    }
+    else
+    {
+        jogo.DrawMiniMapa(width, height);
+        // cockpit permanente
+        int cameraAtual = jogo.camera;
+        jogo.camera = CAMERA_1; // seta a camera do cockpit
+        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 60);
+        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        jogo.Draw(true);
+
+        // câmera escolhida
+        jogo.camera = cameraAtual;
+        projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        jogo.Draw();
+    }
+
+    glutSwapBuffers();
+    glutPostRedisplay();
+}
+
+void reshape(int w, int h)
+{
+    width = w;
+    height = h;
 }
 
 void idle()
@@ -184,124 +130,129 @@ void idle()
     previousTime = currentTime;                  //Update previous time
 
     // modifica a velocidade da helice de acordo com o status
-    //if (arena.jogador.estaVoando()) arena.jogador.aumentarVelocidadeHelice();
-    // else arena.jogador.diminuirVelocidadeHelice();
-    // for (unsigned int i = 0; i < arena.inimigos.size(); i++) {
-    //     if (arena.inimigos[i].estaVoando()) arena.inimigos[i].aumentarVelocidadeHelice();
-    //     else arena.inimigos[i].diminuirVelocidadeHelice();
+    //if (jogo.jogador.estaVoando()) jogo.jogador.aumentarVelocidadeHelice();
+    // else jogo.jogador.diminuirVelocidadeHelice();
+    // for (unsigned int i = 0; i < jogo.inimigos.size(); i++) {
+    //     if (jogo.inimigos[i].estaVoando()) jogo.inimigos[i].aumentarVelocidadeHelice();
+    //     else jogo.inimigos[i].diminuirVelocidadeHelice();
     // }
 
     // não precisa atualizar nada, se a partida não estiver em andamento
-    if (arena.statusPartida != EM_ANDAMENTO)
+    if (jogo.statusPartida != jogoON)
     {
         glutPostRedisplay();
         return;
     }
 
-    // // verifica se o jogador ganhou (restadou todos objetos e matou todos inimigos)
-    // if (arena.statusPartida == EM_ANDAMENTO && arena.jogador.objetosResgatados == arena.nObjetos && arena.inimigos.size() == 0) {
-    //     arena.statusPartida = GANHOU;
-    //     cout << "Parabéns! Você ganhou a partida!!!" << endl;
+    // // verifica se o jogador jogadorGanhou (restadou todos objetos e matou todos inimigos)
+    // if (jogo.statusPartida == jogoON && jogo.jogador.objetosResgatados == jogo.nObjetos && jogo.inimigos.size() == 0) {
+    //     jogo.statusPartida = jogadorGanhou;
+    //     cout << "Parabéns! Você jogadorGanhou a partida!!!" << endl;
     //     return;
     // }
 
-    // verifica se o jogador perdeu por causa da falta de combustível
-    // if (arena.jogador.getNivelCombustivel() <= 0) {
-    //     arena.statusPartida = PERDEU;
-    //     cout << "Você perdeu por falta de combustível! Que vergonha..." << endl;
+    // verifica se o jogador oponenteGanhou por causa da falta de combustível
+    // if (jogo.jogador.getNivelCombustivel() <= 0) {
+    //     jogo.statusPartida = oponenteGanhou;
+    //     cout << "Você oponenteGanhou por falta de combustível! Que vergonha..." << endl;
     //     return;
     // }
 
     // consumir combustível e atualizar mostrador
-    //arena.jogador.consumirCombustivel(timeDifference);
+    //jogo.jogador.consumirCombustivel(timeDifference);
 
     // // reabastecimento
-    // if (!arena.jogador.estaVoando() && arena.postoAbastecimento.estaDentro(arena.jogador.getPosicao())) {
-    //     if (arena.jogador.getNivelCombustivel() != 1.0) cout << "O jogador reabasteceu! (" << (arena.jogador.getNivelCombustivel() * 100.0) << "% -> 100%)" << endl;
-    //     arena.jogador.reabastercer();
+    // if (!jogo.jogador.estaVoando() && jogo.postoAbastecimento.estaDentro(jogo.jogador.getPosicao())) {
+    //     if (jogo.jogador.getNivelCombustivel() != 1.0) cout << "O jogador reabasteceu! (" << (jogo.jogador.getNivelCombustivel() * 100.0) << "% -> 100%)" << endl;
+    //     jogo.jogador.reabastercer();
     // }
 
     // interação dos tiros
-    // for (unsigned int i = 0; i < arena.tiros.size(); i++) {
+    // for (unsigned int i = 0; i < jogo.tiros.size(); i++) {
 
     //     // remove os tiros que não estão dentro da janela, senão apenas os move
-    //     if (arena.estaDentro(arena.tiros[i])) arena.tiros[i].Mover(timeDifference);
+    //     if (jogo.estaDentro(jogo.tiros[i])) jogo.tiros[i].Mover(timeDifference);
     //     else {
-    //         arena.tiros.erase(arena.tiros.begin() + i);
-    //         cout << "1 tiro saiu da tela! Restam " << arena.tiros.size() << " tiros na arena..." << endl;
+    //         jogo.tiros.erase(jogo.tiros.begin() + i);
+    //         cout << "1 tiro saiu da tela! Restam " << jogo.tiros.size() << " tiros na jogo..." << endl;
     //     }
     //
     //     // verifica se algum inimigo foi atingido pelos tiros do jogador
-    //     for (unsigned int j = 0; j < arena.inimigos.size(); j++) {
-    //         if (arena.tiros[i].id_jogador == "Jogador" && arena.inimigos[j].area.estaDentro(arena.tiros[i].posicao) && arena.inimigos[j].estaVoando()){
-    //             arena.inimigos.erase(arena.inimigos.begin() + j);
-    //             cout << "1 inimigo foi destruido! Restam " << arena.inimigos.size() << " inimigos na arena..." << endl;
-    //             arena.tiros.erase(arena.tiros.begin() + i);
+    //     for (unsigned int j = 0; j < jogo.inimigos.size(); j++) {
+    //         if (jogo.tiros[i].id_jogador == "Jogador" && jogo.inimigos[j].area.estaDentro(jogo.tiros[i].posicao) && jogo.inimigos[j].estaVoando()){
+    //             jogo.inimigos.erase(jogo.inimigos.begin() + j);
+    //             cout << "1 inimigo foi destruido! Restam " << jogo.inimigos.size() << " inimigos na jogo..." << endl;
+    //             jogo.tiros.erase(jogo.tiros.begin() + i);
     //         }
     //     }
     //
     //     // verifica se algum tiro inimigo acertou o jogador e declara derrota
-    //     if (arena.tiros[i].id_jogador == "Inimigo" && arena.jogador.area.estaDentro(arena.tiros[i].posicao) && arena.jogador.estaVoando()){
-    //         arena.statusPartida = PERDEU;
+    //     if (jogo.tiros[i].id_jogador == "Inimigo" && jogo.jogador.area.estaDentro(jogo.tiros[i].posicao) && jogo.jogador.estaVoando()){
+    //         jogo.statusPartida = oponenteGanhou;
     //         cout << "Você foi atingido por um tiro inimigo!" << endl;
     //         // mostra o tiro que acertou o jogador em vermelho
-    //         arena.tiros[i].setCor(Cor("darkred"));
+    //         jogo.tiros[i].setCor(Cor("darkred"));
     //     }
     // }
 
     // ação de resgate
-    // for (unsigned int i = 0; i < arena.objetosResgate.size(); i++) {
-    //     if (arena.jogador.resgatar(arena.objetosResgate[i])) {
-    //         arena.objetosResgate.erase(arena.objetosResgate.begin() + i);
-    //         cout << "1 objeto foi resgatado! Restam " << arena.objetosResgate.size() << " objetos na arena..." << endl;
+    // for (unsigned int i = 0; i < jogo.objetosResgate.size(); i++) {
+    //     if (jogo.jogador.resgatar(jogo.objetosResgate[i])) {
+    //         jogo.objetosResgate.erase(jogo.objetosResgate.begin() + i);
+    //         cout << "1 objeto foi resgatado! Restam " << jogo.objetosResgate.size() << " objetos na jogo..." << endl;
     //     }
     // }
 
-    //arena.jogador.girarHelice();
-    //for (unsigned int i = 0; i < arena.inimigos.size(); i++) arena.inimigos[i].girarHelice();
+    //jogo.jogador.girarHelice();
+    //for (unsigned int i = 0; i < jogo.inimigos.size(); i++) jogo.inimigos[i].girarHelice();
 
-    arena.oponente.moverTras(timeDifference);
+    jogo.oponente.moverFrente(timeDifference);
 
     if (keystates['a'])
-        arena.jogador.girarEsquerda();
+        jogo.jogador.girarEsquerda();
     if (keystates['d'])
-        arena.jogador.girarDireita();
+        jogo.jogador.girarDireita();
     if (keystates['w'])
-        arena.jogador.moverFrente(timeDifference);
+        jogo.jogador.moverFrente(timeDifference);
     if (keystates['s'])
-        arena.jogador.moverTras(timeDifference);
-    //if (keystates['-']) arena.jogador.descer();
-    //if (keystates['+'] && arena.jogador.area.posicao.z < (arena.jogador.area.raio * 5) - ALTURA_HELICOPTERO) arena.jogador.subir();
+        jogo.jogador.moverTras(timeDifference);
+    //if (keystates['-']) jogo.jogador.descer();
+    //if (keystates['+'] && jogo.jogador.area.posicao.z < (jogo.jogador.area.raio * 5) - ALTURA_HELICOPTERO) jogo.jogador.subir();
 
-    // colisao: jogador com os limites da arena, resposta: impede passagem
-    Ponto jogadorNovoP = arena.jogador.getPosicao();
-    int jogadorRaio = arena.jogador.area.raio;
+    // colisao: jogador com os limites da jogo, resposta: impede passagem
+    Ponto jogadorNovoP = jogo.jogador.getPosicao();
+    int jogadorRaio = jogo.jogador.area.raio;
     if (jogadorNovoP.x < jogadorRaio)
-        arena.jogador.area.posicao.x = jogadorRaio;
-    if (jogadorNovoP.x > arena.mapa.largura - jogadorRaio)
-        arena.jogador.area.posicao.x = arena.mapa.largura - jogadorRaio;
+        jogo.jogador.area.posicao.x = jogadorRaio;
+    if (jogadorNovoP.x > jogo.mapa.largura - jogadorRaio)
+        jogo.jogador.area.posicao.x = jogo.mapa.largura - jogadorRaio;
     if (jogadorNovoP.y < jogadorRaio)
-        arena.jogador.area.posicao.y = jogadorRaio;
-    if (jogadorNovoP.y > arena.mapa.altura - jogadorRaio)
-        arena.jogador.area.posicao.y = arena.mapa.altura - jogadorRaio;
+        jogo.jogador.area.posicao.y = jogadorRaio;
+    if (jogadorNovoP.y > jogo.mapa.altura - jogadorRaio)
+        jogo.jogador.area.posicao.y = jogo.mapa.altura - jogadorRaio;
 
-    // colisao: oponente com os limites da arena, resposta: impede passagem
-    Ponto oponenteNovoP = arena.oponente.getPosicao();
-    int oponenteRaio = arena.oponente.area.raio;
+    // colisao: oponente com os limites da jogo, resposta: impede passagem
+    Ponto oponenteNovoP = jogo.oponente.getPosicao();
+    int oponenteRaio = jogo.oponente.area.raio;
     if (oponenteNovoP.x < oponenteRaio)
-        arena.oponente.area.posicao.x = oponenteRaio;
-    if (oponenteNovoP.x > arena.mapa.largura - oponenteRaio)
-        arena.oponente.area.posicao.x = arena.mapa.largura - oponenteRaio;
+        jogo.oponente.area.posicao.x = oponenteRaio;
+    if (oponenteNovoP.x > jogo.mapa.largura - oponenteRaio)
+        jogo.oponente.area.posicao.x = jogo.mapa.largura - oponenteRaio;
     if (oponenteNovoP.y < oponenteRaio)
-        arena.oponente.area.posicao.y = oponenteRaio;
-    if (oponenteNovoP.y > arena.mapa.altura - oponenteRaio)
-        arena.oponente.area.posicao.y = arena.mapa.altura - oponenteRaio;
+        jogo.oponente.area.posicao.y = oponenteRaio;
+    if (oponenteNovoP.y > jogo.mapa.altura - oponenteRaio)
+        jogo.oponente.area.posicao.y = jogo.mapa.altura - oponenteRaio;
 
     // colisao: entre personagens
-    Circle cOponente = arena.oponente.area;
-    if (arena.jogador.area.estaTocando(cOponente))
+    Circulo cOponente = jogo.oponente.area;
+    if (jogo.jogador.area.estaTocando(cOponente))
     {
-        arena.jogador.moverTras(timeDifference);
+        jogo.jogador.moverTras(timeDifference);
+    }
+    Circulo cJogador = jogo.jogador.area;
+    if (jogo.oponente.area.estaTocando(cJogador))
+    {
+        jogo.oponente.moverTras(timeDifference);
     }
 
     // // desativa as ações dos inimigos para demonstrar algum funcionalidade
@@ -319,44 +270,44 @@ void idle()
     // }
     // accTimeAtirar += timeDifference;
     // bool atirarNoJogador = false;
-    // if (accTimeAtirar >= arena.getIntervaloEntreTiros()) {
+    // if (accTimeAtirar >= jogo.getIntervaloEntreTiros()) {
     //     atirarNoJogador = true;
     //     accTimeAtirar = 0;
     // }
-    // for (unsigned int i = 0; i < arena.inimigos.size(); i++) {
+    // for (unsigned int i = 0; i < jogo.inimigos.size(); i++) {
 
-    //     if (mudarAngulo) arena.inimigos[i].angulo += (rand() % 90) - 90;
+    //     if (mudarAngulo) jogo.inimigos[i].angulo += (rand() % 90) - 90;
 
-    //     Ponto novoP = arena.inimigos[i].getProximaPosicao(timeDifference);
-    //     int _raio = arena.inimigos[i].area.raio;
+    //     Ponto novoP = jogo.inimigos[i].getProximaPosicao(timeDifference);
+    //     int _raio = jogo.inimigos[i].area.raio;
 
-    //     // colisao: limites da arena, resposta: inverte ângulo no eixo relativo
-    //     if ((novoP.x < _raio) || (novoP.x > arena.mapa.largura - _raio)) {
-    //         arena.inimigos[i].angulo = 180 - arena.inimigos[i].angulo;
+    //     // colisao: limites da jogo, resposta: inverte ângulo no eixo relativo
+    //     if ((novoP.x < _raio) || (novoP.x > jogo.mapa.largura - _raio)) {
+    //         jogo.inimigos[i].angulo = 180 - jogo.inimigos[i].angulo;
     //     }
-    //     if ((novoP.y < _raio) || (novoP.y > arena.mapa.altura - _raio)) {
-    //         arena.inimigos[i].angulo = 360 - arena.inimigos[i].angulo;
+    //     if ((novoP.y < _raio) || (novoP.y > jogo.mapa.altura - _raio)) {
+    //         jogo.inimigos[i].angulo = 360 - jogo.inimigos[i].angulo;
     //     }
 
     //     // colisao: outros helicopteros, resposta: +180º
-    //     for (unsigned int j = 0; j < arena.inimigos.size(); j++) {
-    //         double distanciaMinima = arena.inimigos[i].area.raio + arena.inimigos[j].area.raio;
-    //         if (i != j && calculaDistancia(arena.inimigos[j].getProximaPosicao(timeDifference), novoP) < distanciaMinima){
-    //             arena.inimigos[i].angulo = arena.inimigos[i].angulo + 180;
+    //     for (unsigned int j = 0; j < jogo.inimigos.size(); j++) {
+    //         double distanciaMinima = jogo.inimigos[i].area.raio + jogo.inimigos[j].area.raio;
+    //         if (i != j && calculaDistancia(jogo.inimigos[j].getProximaPosicao(timeDifference), novoP) < distanciaMinima){
+    //             jogo.inimigos[i].angulo = jogo.inimigos[i].angulo + 180;
     //             break;
     //         }
     //     }
-    //     double distanciaMinima = arena.jogador.area.raio + arena.inimigos[i].area.raio;
-    //     if (calculaDistancia(arena.jogador.getProximaPosicao(timeDifference), novoP) < distanciaMinima){
-    //         arena.inimigos[i].angulo = arena.inimigos[i].angulo + 180;
+    //     double distanciaMinima = jogo.jogador.area.raio + jogo.inimigos[i].area.raio;
+    //     if (calculaDistancia(jogo.jogador.getProximaPosicao(timeDifference), novoP) < distanciaMinima){
+    //         jogo.inimigos[i].angulo = jogo.inimigos[i].angulo + 180;
     //     }
 
     //     if (atirarNoJogador) {
-    //         arena.inimigos[i].mirar(arena.jogador.getPosicao());
-    //         arena.tiros.push_back(arena.inimigos[i].atirar());
+    //         jogo.inimigos[i].mirar(jogo.jogador.getPosicao());
+    //         jogo.tiros.push_back(jogo.inimigos[i].atirar());
     //     }
 
-    //     arena.inimigos[i].moverFrente(timeDifference);
+    //     jogo.inimigos[i].moverFrente(timeDifference);
     // }
 
     glutPostRedisplay();
@@ -364,14 +315,14 @@ void idle()
 
 void mouse(int button, int state, int x, int y)
 {
-    if (arena.statusPartida != EM_ANDAMENTO && arena.statusPartida != PAUSADO)
+    if (jogo.statusPartida != jogoON && jogo.statusPartida != jogoOFF)
         return;
 
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && arena.statusPartida != PAUSADO)
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && jogo.statusPartida != jogoOFF)
     {
         // // atira
-        // if (arena.jogador.estaVoando()) {
-        //     arena.tiros.push_back(arena.jogador.atirar());
+        // if (jogo.jogador.estaVoando()) {
+        //     jogo.tiros.push_back(jogo.jogador.atirar());
         //     cout << "O jogador atirou!" << endl;
         // }
     }
@@ -391,11 +342,11 @@ void mouse(int button, int state, int x, int y)
 
 void mouseMotion(int x, int y)
 {
-    if (arena.statusPartida != EM_ANDAMENTO && arena.statusPartida != PAUSADO)
+    if (jogo.statusPartida != jogoON && jogo.statusPartida != jogoOFF)
         return;
 
-    // if (x != mouseUltimoX) arena.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
-    // if (y != mouseUltimoY) arena.jogador.moverCanhao(0, (y - mouseUltimoY)/2);
+    // if (x != mouseUltimoX) jogo.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
+    // if (y != mouseUltimoY) jogo.jogador.moverCanhao(0, (y - mouseUltimoY)/2);
     // atualiza o valor do ultimo x
     mouseUltimoX = x;
     mouseUltimoY = y;
@@ -403,28 +354,32 @@ void mouseMotion(int x, int y)
 
 void mouseClickMotion(int x, int y)
 {
-    if (arena.statusPartida != EM_ANDAMENTO && arena.statusPartida != PAUSADO)
+    if (jogo.statusPartida != jogoON && jogo.statusPartida != jogoOFF)
         return;
 
     // código do Thiago
     if (!buttonDown)
         return;
 
-    arena.camYaw -= x - lastX;
-    arena.camPitch += y - lastY;
+    jogo.camYaw -= x - lastX;
+    jogo.camPitch += y - lastY;
 
-    arena.camPitch = (int)arena.camPitch % 360;
-    if (arena.camPitch > 179)
-        arena.camPitch = 179;
-    if (arena.camPitch < 1)
-        arena.camPitch = 1;
-    arena.camYaw = (int)arena.camYaw % 360;
+    jogo.camPitch = (int)jogo.camPitch % 360;
+    if (jogo.camPitch > 179)
+        jogo.camPitch = 179;
+    if (jogo.camPitch < 1)
+        jogo.camPitch = 1;
+    jogo.camYaw = (int)jogo.camYaw % 360;
 
     lastX = x;
     lastY = y;
 }
 
-void keyup(unsigned char key, int x, int y) { keystates[key] = false; }
+void keyup(unsigned char key, int x, int y)
+{
+    keystates[key] = false;
+}
+
 void keyboard(unsigned char key, int x, int y)
 {
     keystates[key] = true;
@@ -438,16 +393,16 @@ void keyboard(unsigned char key, int x, int y)
     switch (key)
     {
     case '1':
-        arena.camera = CAMERA_1; // câmera no cockpit
+        jogo.camera = CAMERA_1; // câmera no cockpit
         break;
     case '2':
-        arena.camera = CAMERA_2; // câmera no canhão
+        jogo.camera = CAMERA_2; // câmera no canhão
         break;
     case '3':
-        arena.camera = CAMERA_3; // câmera que segue o helicóptero
+        jogo.camera = CAMERA_3; // câmera que segue o jogador
         break;
     case 'e':
-        arena.jogador.desenharEsfera();
+        jogo.jogador.desenharEsfera();
         break;
     case 't':
         if (textureEnabled)
@@ -464,10 +419,10 @@ void keyboard(unsigned char key, int x, int y)
         lightingEnabled = !lightingEnabled;
         break;
     case 'j':
-        arena.ativaLuz0 = !arena.ativaLuz0;
+        jogo.ativaLuz0 = !jogo.ativaLuz0;
         break;
     case 'k':
-        arena.ativaLuz1 = !arena.ativaLuz1;
+        jogo.ativaLuz1 = !jogo.ativaLuz1;
         break;
     case 'r':
         if (smoothEnabled)
@@ -477,19 +432,175 @@ void keyboard(unsigned char key, int x, int y)
         smoothEnabled = !smoothEnabled;
         break;
     case 'p':
-        if (arena.statusPartida == PAUSADO)
-            arena.statusPartida = EM_ANDAMENTO;
+        if (jogo.statusPartida == jogoOFF)
+            jogo.statusPartida = jogoON;
         else
-            arena.statusPartida = PAUSADO;
+            jogo.statusPartida = jogoOFF;
         break;
     case 'c':
-        arena.mostrarCameraCockpit = !arena.mostrarCameraCockpit;
+        jogo.mostrarCameraCockpit = !jogo.mostrarCameraCockpit;
         break;
     case 'm':
-        arena.mostrarMinimapa = !arena.mostrarMinimapa;
+        jogo.mostrarMinimapa = !jogo.mostrarMinimapa;
         break;
         // case 'b':
         //     desativarOponente = !desativarOponente;
         //     break;
     }
+}
+
+void trataXML(const char *diretorio)
+{
+    string caminho;
+    XMLDocument arquivo_config, arquivo_svg;
+    XMLError arquivoStatus;
+    XMLElement *elementos;
+
+    caminho = diretorio;
+
+    arquivoStatus = arquivo_svg.LoadFile(caminho.c_str());
+
+    if (arquivoStatus != XML_SUCCESS)
+    {
+        cerr << "Erro ao abrir svg" << endl;
+        exit(XML_ERROR_FILE_READ_ERROR);
+    }
+
+    elementos = arquivo_svg.FirstChild()->FirstChildElement();
+
+    Retangulo mapa;
+    Circulo personagem;
+    Circulo adversario;
+
+    for (; elementos != NULL; elementos = elementos->NextSiblingElement())
+    {
+        string ele = elementos->Value();
+        string cor;
+
+        if (!ele.compare("circle"))
+        {
+            cor = elementos->FindAttribute("fill")->Value();
+
+            if (cor == "red")
+            {
+                elementos->QueryFloatAttribute("cx", &adversario.posicao.x);
+                elementos->QueryFloatAttribute("cy", &adversario.posicao.y);
+                elementos->QueryIntAttribute("r", &adversario.raio);
+                adversario.cor = Cor(cor);
+            }
+            else
+            {
+                elementos->QueryFloatAttribute("cx", &personagem.posicao.x);
+                elementos->QueryFloatAttribute("cy", &personagem.posicao.y);
+                elementos->QueryIntAttribute("r", &personagem.raio);
+                personagem.cor = Cor(cor);
+            }
+        }
+        else if (!ele.compare("rect"))
+        {
+            elementos->QueryFloatAttribute("x", &mapa.posicao.x);
+            elementos->QueryFloatAttribute("y", &mapa.posicao.y);
+
+            elementos->QueryIntAttribute("width", &mapa.largura);
+            elementos->QueryIntAttribute("height", &mapa.altura);
+            cor = elementos->FindAttribute("fill")->Value();
+            mapa.cor = Cor(cor);
+        }
+    }
+
+    personagem.posicao.x = personagem.posicao.x - mapa.posicao.x;
+    personagem.posicao.y = personagem.posicao.y - mapa.posicao.y;
+    adversario.posicao.x = adversario.posicao.x - mapa.posicao.x;
+    adversario.posicao.y = adversario.posicao.y - mapa.posicao.y;
+
+    mapa.posicao.x = 0;
+    mapa.posicao.y = 0;
+
+    // monta a jogo
+    jogo.mapa = mapa;
+    //jogo.postoAbastecimento = postoAbastecimento;
+    //jogo.objetosResgate = objetosResgate;
+
+    personagem.posicao.z = ALTURA_HELICOPTERO / 2.0;
+    jogo.jogador.area = personagem;
+    //jogo.jogador.id = personagem.id;
+    jogo.jogador.velocidade = velocidadeLutador;
+    // printf("%f\n",jogo.jogador.area.raio/2.0);
+    // printf("%f\n", ALTURA_HELICOPTERO / 2.0);
+    // printf("%f\n",areaJogador.posicao.z);
+    // areaJogador.posicao.z = jogo.jogador.area.raio/2.0;
+
+    //jogo.jogador.velocidadeTiro = _velTiro;
+    //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
+    jogo.jogador.corCorpo = Cor("lightgreen");
+
+    adversario.posicao.z = ALTURA_HELICOPTERO / 2.0;
+    jogo.oponente.area = adversario;
+    //jogo.oponente.id = adversario.id;
+    jogo.oponente.velocidade = velocidadeOponente;
+    // areaOponente.posicao.z = jogo.oponente.area.raio/2.0;
+
+    // //jogo.jogador.velocidadeTiro = _velTiro;
+    // //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
+    jogo.oponente.corCorpo = Cor("darkgreen");
+
+    // personagem.posicao.x = (personagem.posicao.x - mapa.largura/2);
+    // personagem.posicao.y = -(-mapa.altura/2 + personagem.posicao.y);
+    // jogo.jogador.angulo = 0.0;
+    // // personagem.theta1 = -45;
+    // // personagem.theta2 = 135;
+    // // personagem.theta3 = -45;
+    // // personagem.theta4 = 135;
+
+    // adversario.posicao.x = (adversario.posicao.x - mapa.largura/2);
+    // adversario.posicao.y = -(-mapa.altura/2 + adversario.posicao.y);
+    // jogo.oponente.angulo = 0.0;
+    // adversario.p.x = (adversario.p.x - jogo.width / 2);
+    // adversario.p.y = -(-jogo.height / 2 + adversario.p.y);
+    // adversario.ang = 0.0;
+    // adversario.theta1 = -45;
+    // adversario.theta2 = 135;
+    // adversario.theta3 = -45;
+    // adversario.theta4 = 135;
+
+    Ponto pinit;
+    pinit.x = adversario.posicao.x - personagem.posicao.x;
+    pinit.y = adversario.posicao.y - personagem.posicao.y;
+
+    double angulorad = atan2(pinit.y, pinit.x);
+    double angulograu = (angulorad * 180) / M_PI;
+    jogo.jogador.angulo = angulograu;
+    jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);
+
+    srand(time(NULL));
+}
+
+// ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ MAIN ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+int main(int argc, char **argv)
+{
+
+    trataXML(argv[1]);
+
+    // glut init
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitWindowSize(width, height + 200);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("RING");
+    init();
+
+    // event 'binding'
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);
+    glutKeyboardUpFunc(keyup);
+    glutMouseFunc(mouse);
+    glutIdleFunc(idle);
+    glutPassiveMotionFunc(mouseMotion);
+    glutMotionFunc(mouseClickMotion);
+    glutReshapeFunc(reshape);
+
+    // glut main loop
+    glutMainLoop();
+    // }
+    return 0;
 }

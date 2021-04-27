@@ -4,10 +4,10 @@
 #include <iostream>
 #include <map>
 #include <cmath>
-#include "EstruturasBasicas.h"
-#include "Rect.h"
-#include "Circle.h"
-#include "Helicoptero.h"
+#include "utils.h"
+#include "retangulo.h"
+#include "circulo.h"
+#include "lutador.h"
 
 enum {
     CAMERA_1,
@@ -15,30 +15,25 @@ enum {
     CAMERA_3
 };
 
-class Arena
+class Jogo
 {
     public:
-        Arena();
-        Rect mapa;
-        Rect ceu;
-        Rect postoAbastecimento;
-        Helicoptero jogador;
-        Helicoptero oponente;
-        //std::vector<Helicoptero> inimigos;
-        //std::vector<Circle> objetosResgate;
-        //std::vector<Tiro> tiros;
+        Jogo();
+        Retangulo mapa;
+        Retangulo ceu;
+        Lutador jogador;
+        Lutador oponente;
         GLuint texturaChao, texturaParede, texturaCeu;
-        // std::map<std::string, Textura> texturas;
         int camera;
         double camYaw;
         double camPitch;
-        double camDistanciaHelicoptero;
+        double camDistanciaJogador;
         void defineCamera(bool desenhaCockpit = false);
 
         void defineLuz0();
         void defineLuz1();
 
-        std::map<std::string, Cor> mapaCorID;
+        //std::map<std::string, Cor> mapaCorID;
 
         // int nObjetos;
         // int nInimigos;
@@ -50,11 +45,11 @@ class Arena
         void DrawArena();
         //void DrawIndicadores();
         void DrawMiniMapa(float _w, float _h);
-        void DrawOrtho(void (Arena::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
+        void DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
         void DrawResultado();
-        void MostraDados();
+        //void MostraDados();
         // void ImprimeElemento(Cor corElemento);
-        void exibeResultado();
+        //void exibeResultado();
         // bool estaDentro(Tiro tiro);
         bool mostrarCameraCockpit = false;
         bool ativaLuz0 = true;
