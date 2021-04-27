@@ -224,24 +224,24 @@ void idle()
     int jogadorRaio = jogo.jogador.area.raio;
     if (jogadorNovoP.x < jogadorRaio)
         jogo.jogador.area.posicao.x = jogadorRaio;
-    if (jogadorNovoP.x > jogo.mapa.largura - jogadorRaio)
-        jogo.jogador.area.posicao.x = jogo.mapa.largura - jogadorRaio;
+    if (jogadorNovoP.x > jogo.arena.largura - jogadorRaio)
+        jogo.jogador.area.posicao.x = jogo.arena.largura - jogadorRaio;
     if (jogadorNovoP.y < jogadorRaio)
         jogo.jogador.area.posicao.y = jogadorRaio;
-    if (jogadorNovoP.y > jogo.mapa.altura - jogadorRaio)
-        jogo.jogador.area.posicao.y = jogo.mapa.altura - jogadorRaio;
+    if (jogadorNovoP.y > jogo.arena.altura - jogadorRaio)
+        jogo.jogador.area.posicao.y = jogo.arena.altura - jogadorRaio;
 
     // colisao: oponente com os limites da jogo, resposta: impede passagem
     Ponto oponenteNovoP = jogo.oponente.getPosicao();
     int oponenteRaio = jogo.oponente.area.raio;
     if (oponenteNovoP.x < oponenteRaio)
         jogo.oponente.area.posicao.x = oponenteRaio;
-    if (oponenteNovoP.x > jogo.mapa.largura - oponenteRaio)
-        jogo.oponente.area.posicao.x = jogo.mapa.largura - oponenteRaio;
+    if (oponenteNovoP.x > jogo.arena.largura - oponenteRaio)
+        jogo.oponente.area.posicao.x = jogo.arena.largura - oponenteRaio;
     if (oponenteNovoP.y < oponenteRaio)
         jogo.oponente.area.posicao.y = oponenteRaio;
-    if (oponenteNovoP.y > jogo.mapa.altura - oponenteRaio)
-        jogo.oponente.area.posicao.y = jogo.mapa.altura - oponenteRaio;
+    if (oponenteNovoP.y > jogo.arena.altura - oponenteRaio)
+        jogo.oponente.area.posicao.y = jogo.arena.altura - oponenteRaio;
 
     // colisao: entre personagens
     Circulo cOponente = jogo.oponente.area;
@@ -282,10 +282,10 @@ void idle()
     //     int _raio = jogo.inimigos[i].area.raio;
 
     //     // colisao: limites da jogo, resposta: inverte ângulo no eixo relativo
-    //     if ((novoP.x < _raio) || (novoP.x > jogo.mapa.largura - _raio)) {
+    //     if ((novoP.x < _raio) || (novoP.x > jogo.arena.largura - _raio)) {
     //         jogo.inimigos[i].angulo = 180 - jogo.inimigos[i].angulo;
     //     }
-    //     if ((novoP.y < _raio) || (novoP.y > jogo.mapa.altura - _raio)) {
+    //     if ((novoP.y < _raio) || (novoP.y > jogo.arena.altura - _raio)) {
     //         jogo.inimigos[i].angulo = 360 - jogo.inimigos[i].angulo;
     //     }
 
@@ -401,9 +401,9 @@ void keyboard(unsigned char key, int x, int y)
     case '3':
         jogo.camera = CAMERA_3; // câmera que segue o jogador
         break;
-    case 'e':
-        jogo.jogador.desenharEsfera();
-        break;
+    // case 'e':
+    //     jogo.jogador.desenharEsfera();
+    //     break;
     case 't':
         if (textureEnabled)
             glDisable(GL_TEXTURE_2D);
@@ -421,9 +421,9 @@ void keyboard(unsigned char key, int x, int y)
     case 'j':
         jogo.ativaLuz0 = !jogo.ativaLuz0;
         break;
-    case 'k':
-        jogo.ativaLuz1 = !jogo.ativaLuz1;
-        break;
+    // case 'k':
+    //     jogo.ativaLuz1 = !jogo.ativaLuz1;
+    //     break;
     case 'r':
         if (smoothEnabled)
             glShadeModel(GL_FLAT);
@@ -468,7 +468,7 @@ void trataXML(const char *diretorio)
 
     elementos = arquivo_svg.FirstChild()->FirstChildElement();
 
-    Retangulo mapa;
+    Retangulo arena;
     Circulo personagem;
     Circulo adversario;
 
@@ -486,38 +486,41 @@ void trataXML(const char *diretorio)
                 elementos->QueryFloatAttribute("cx", &adversario.posicao.x);
                 elementos->QueryFloatAttribute("cy", &adversario.posicao.y);
                 elementos->QueryIntAttribute("r", &adversario.raio);
-                adversario.cor = Cor(cor);
+                // adversario.cor = Cor(cor);
+                // jogo.oponente.corCorpo = Cor(1.0,0.0,0.0);
             }
             else
             {
                 elementos->QueryFloatAttribute("cx", &personagem.posicao.x);
                 elementos->QueryFloatAttribute("cy", &personagem.posicao.y);
                 elementos->QueryIntAttribute("r", &personagem.raio);
-                personagem.cor = Cor(cor);
+                // personagem.cor = Cor(cor);
+                // jogo.jogador.corCorpo = Cor(0.0,1.0,0.0);
             }
         }
         else if (!ele.compare("rect"))
         {
-            elementos->QueryFloatAttribute("x", &mapa.posicao.x);
-            elementos->QueryFloatAttribute("y", &mapa.posicao.y);
+            elementos->QueryFloatAttribute("x", &arena.posicao.x);
+            elementos->QueryFloatAttribute("y", &arena.posicao.y);
 
-            elementos->QueryIntAttribute("width", &mapa.largura);
-            elementos->QueryIntAttribute("height", &mapa.altura);
+            elementos->QueryIntAttribute("width", &arena.largura);
+            elementos->QueryIntAttribute("height", &arena.altura);
             cor = elementos->FindAttribute("fill")->Value();
-            mapa.cor = Cor(cor);
+            // arena.cor = Cor(0.0,0.0,1.0);
         }
     }
 
-    personagem.posicao.x = personagem.posicao.x - mapa.posicao.x;
-    personagem.posicao.y = personagem.posicao.y - mapa.posicao.y;
-    adversario.posicao.x = adversario.posicao.x - mapa.posicao.x;
-    adversario.posicao.y = adversario.posicao.y - mapa.posicao.y;
+    personagem.posicao.x = personagem.posicao.x - arena.posicao.x;
+    personagem.posicao.y = personagem.posicao.y - arena.posicao.y;
+    adversario.posicao.x = adversario.posicao.x - arena.posicao.x;
+    adversario.posicao.y = adversario.posicao.y - arena.posicao.y;
 
-    mapa.posicao.x = 0;
-    mapa.posicao.y = 0;
+    arena.posicao.x = 0;
+    arena.posicao.y = 0;
 
     // monta a jogo
-    jogo.mapa = mapa;
+    jogo.arena = arena;
+    
     //jogo.postoAbastecimento = postoAbastecimento;
     //jogo.objetosResgate = objetosResgate;
 
@@ -532,7 +535,7 @@ void trataXML(const char *diretorio)
 
     //jogo.jogador.velocidadeTiro = _velTiro;
     //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
-    jogo.jogador.corCorpo = Cor("lightgreen");
+    // jogo.jogador.corCorpo = Cor("lightgreen");
 
     adversario.posicao.z = ALTURA_HELICOPTERO / 2.0;
     jogo.oponente.area = adversario;
@@ -542,18 +545,18 @@ void trataXML(const char *diretorio)
 
     // //jogo.jogador.velocidadeTiro = _velTiro;
     // //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
-    jogo.oponente.corCorpo = Cor("darkgreen");
+    // jogo.oponente.corCorpo = Cor("darkgreen");
 
-    // personagem.posicao.x = (personagem.posicao.x - mapa.largura/2);
-    // personagem.posicao.y = -(-mapa.altura/2 + personagem.posicao.y);
+    // personagem.posicao.x = (personagem.posicao.x - arena.largura/2);
+    // personagem.posicao.y = -(-arena.altura/2 + personagem.posicao.y);
     // jogo.jogador.angulo = 0.0;
     // // personagem.theta1 = -45;
     // // personagem.theta2 = 135;
     // // personagem.theta3 = -45;
     // // personagem.theta4 = 135;
 
-    // adversario.posicao.x = (adversario.posicao.x - mapa.largura/2);
-    // adversario.posicao.y = -(-mapa.altura/2 + adversario.posicao.y);
+    // adversario.posicao.x = (adversario.posicao.x - arena.largura/2);
+    // adversario.posicao.y = -(-arena.altura/2 + adversario.posicao.y);
     // jogo.oponente.angulo = 0.0;
     // adversario.p.x = (adversario.p.x - jogo.width / 2);
     // adversario.p.y = -(-jogo.height / 2 + adversario.p.y);

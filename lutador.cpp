@@ -17,10 +17,10 @@ Lutador::Lutador()
     //velocidadeHelice = 1;
     //tempoAtualDeVoo = 0;
     //objetosResgatados = 0;
-    corCorpo = Cor("darkred");
+    // corCorpo = Cor(0,1,1);
 }
 
-void Lutador::Draw()
+void Lutador::Draw(Cores cor)
 {
     // draw3d = (flag == DRAW_2D) ? false : true;
 
@@ -40,13 +40,13 @@ void Lutador::Draw()
     glRotatef(angulo, 0, 0, 1);
 
     //desenharCanhao(canhao);
-    desenharCorpo();
+    desenharCorpo(cor);
     //desenharHelice(helice);
 
     glPopMatrix();
 }
 
-void Lutador::desenharCorpo()
+void Lutador::desenharCorpo(Cores cor)
 {
     // if (!draw3d)
     // {
@@ -61,7 +61,7 @@ void Lutador::desenharCorpo()
     {
         glPushMatrix();
         {
-            glColor3f(corCorpo.r, corCorpo.g, corCorpo.b);
+            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
 
             // GLuint paredeTextura = LoadTextureRAW2("images/earth.bmp");
             glBindTexture(GL_TEXTURE_2D, this->textura);
@@ -116,7 +116,7 @@ void Lutador::desenharCorpo()
             glPopMatrix();
 
             glPushMatrix();
-            glColor3f(1.0, 0.5, 0.5);
+            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
             glTranslatef(0, 0, this->area.raio * 3 / 4);
 
             //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());

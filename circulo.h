@@ -12,9 +12,9 @@ class Circulo
 {
     public:
         Circulo();
-        Circulo(Ponto posicao, int _raio, Cor _cor);
+        Circulo(Ponto posicao, int _raio/*, Cor _cor*/);
         Ponto posicao;
-        Cor cor;
+        // Cor cor;
         std::string id;
         int raio;
         // Textura textura;
@@ -23,7 +23,7 @@ class Circulo
         bool estaTocando(Circulo c);
         // void Draw(int flag = DRAW_2D, Textura *_textura = NULL);
         // void Draw();
-        void Draw2d();
+        void Draw2d(Cores cor);
 
         // int numeroDePontos;
         std::unique_ptr<OBJ> criaEsfera();

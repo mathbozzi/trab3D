@@ -26,8 +26,8 @@ void Jogo::Draw(bool cockpitPermanente)
     // for (Lutador h : inimigos)
     //     h.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
 
-    jogador.Draw();
-    oponente.Draw();
+    jogador.Draw({0.0,1.0,0.0});
+    oponente.Draw({1.0,0,0});
 
     DrawArena();
 
@@ -51,19 +51,20 @@ void Jogo::DrawMiniMapa(float _w, float _h)
     glPushAttrib(GL_ENABLE_BIT);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
-    glTranslatef(_w - (mapa.largura * 0.25) - 5, _h - (mapa.altura * 0.25) - 5, 0);
+    glTranslatef(_w - (arena.largura * 0.25) - 5, _h - (arena.altura * 0.25) - 5, 0);
     glScalef(0.25, 0.25, 1);
     glPushMatrix();
 
-    mapa.DrawArestas();
+    arena.DrawArestas();
     //postoAbastecimento.Draw(DRAW_2D);
     // for (Circle c : objetosResgate)
     //     c.Draw(DRAW_2D);
     // for (Tiro t : tiros)
     //     t.Draw(DRAW_2D);
     //for (Lutador h : inimigos)
-    oponente.area.Draw2d();
-    jogador.area.Draw2d();
+    
+    oponente.area.Draw2d({1,0,0});
+    jogador.area.Draw2d({0,1,0});
 
     glPopMatrix();
     glEnable(GL_LIGHTING);
@@ -83,52 +84,52 @@ void Jogo::DrawArena()
     {
 
         // desenha o chão
-        mapa.posicao.z = 0;
-        mapa.cor = Cor("lightgray");
-        mapa.Draw(this->texturaChao);  // mudar Jogo
+        arena.posicao.z = 0;
+        // arena.cor = Cor("lightgray");
+        arena.Draw(this->texturaChao, {0,0,1});  // mudar Jogo
 
         // desenha o céu
         glPushMatrix();
         {
-            ceu = mapa;
+            ceu = arena;
             ceu.posicao.z = -alturaArena; // sinal negativo significa inversão da Normal
             // ceu.fatorRepeticaoTextura = 1;
-            ceu.Draw(this->texturaCeu);
+            ceu.Draw(this->texturaCeu,{1,1,1});
         }
         glPopMatrix();
 
         // desenha as paredes
         glPushMatrix();
         {
-            Retangulo parede1 = Retangulo(-alturaArena, 0, alturaArena, mapa.altura);
+            Retangulo parede1 = Retangulo(-alturaArena, 0, alturaArena, arena.altura);
             glRotatef(90, 0, 1, 0);
-            parede1.Draw(this->texturaParede);
+            parede1.Draw(this->texturaParede,{0,1,1});
         }
         glPopMatrix();
 
         glPushMatrix();
         {
-            Retangulo parede2 = Retangulo(0, -alturaArena, mapa.largura, alturaArena);
+            Retangulo parede2 = Retangulo(0, -alturaArena, arena.largura, alturaArena);
             glRotatef(-90, 1, 0, 0);
-            parede2.Draw(this->texturaParede);
+            parede2.Draw(this->texturaParede,{0,1,1});
         }
         glPopMatrix();
 
         glPushMatrix();
         {
-            Retangulo parede3 = Retangulo(0, 0, alturaArena, mapa.altura);
-            glTranslatef(mapa.largura, 0, 0);
+            Retangulo parede3 = Retangulo(0, 0, alturaArena, arena.altura);
+            glTranslatef(arena.largura, 0, 0);
             glRotatef(-90, 0, 1, 0);
-            parede3.Draw(this->texturaParede);
+            parede3.Draw(this->texturaParede,{0,1,1});
         }
         glPopMatrix();
 
         glPushMatrix();
         {
-            Retangulo parede4 = Retangulo(0, 0, mapa.largura, alturaArena);
-            glTranslatef(0, mapa.altura, 0);
+            Retangulo parede4 = Retangulo(0, 0, arena.largura, alturaArena);
+            glTranslatef(0, arena.altura, 0);
             glRotatef(90, 1, 0, 0);
-            parede4.Draw(this->texturaParede);
+            parede4.Draw(this->texturaParede,{0,1,1});
         }
         glPopMatrix();
 
@@ -143,8 +144,8 @@ void Jogo::DrawArena()
 
 // void Jogo::DrawIndicadores()
 // {
-//     jogador.desenharCombustivel(10, mapa.altura - 10, NUMERO_DE_MARCADORES_COMBUSTIVEL);
-//     jogador.desenharResgates(10, mapa.altura - 50, nObjetos);
+//     jogador.desenharCombustivel(10, arena.altura - 10, NUMERO_DE_MARCADORES_COMBUSTIVEL);
+//     jogador.desenharResgates(10, arena.altura - 50, nObjetos);
 // }
 
 void Jogo::DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura, bool desabilitarLuz)
@@ -152,7 +153,7 @@ void Jogo::DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura, bool desab
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(0, mapa.largura, mapa.altura, 0, -1, 1);
+    glOrtho(0, arena.largura, arena.altura, 0, -1, 1);
     glPushAttrib(GL_ENABLE_BIT);
     if (desabilitarLuz)
         glDisable(GL_LIGHTING);
@@ -206,7 +207,7 @@ void Jogo::DrawResultado()
 // void Arena::MostraDados()
 // {
 //     cout << "A arena foi criada com:" << endl;
-//     cout << " - " << ((mapa.id == "Arena") ? 1 : 0) << " mapa" << endl;
+//     cout << " - " << ((arena.id == "Arena") ? 1 : 0) << " arena" << endl;
 //     cout << " - " << ((postoAbastecimento.id == "PostoAbastecimento") ? 1 : 0) << " posto de abastecimento" << endl;
 //     cout << " - " << ((jogador.area.id == "Jogador") ? 1 : 0) << " jogador" << endl;
 //     //cout << " - " << (oponente.size()) << " inimigo(s)" << endl;
@@ -330,7 +331,7 @@ void Jogo::defineLuz0()
     glPushAttrib(GL_ENABLE_BIT);
 
     // move a luz para a posição desejada
-    glTranslatef(mapa.largura / 2.0, mapa.altura / 2.0, 250);
+    glTranslatef(arena.largura / 2.0, arena.altura / 2.0,jogador.area.raio *10);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
     glPopAttrib();
@@ -353,7 +354,7 @@ void Jogo::defineLuz1()
     glPushAttrib(GL_ENABLE_BIT);
 
     // move a luz para a posição desejada
-    glTranslatef(mapa.largura / 2.0, mapa.altura / 2.0, 10);
+    glTranslatef(arena.largura / 2.0, arena.altura / 2.0, 10);
     glLightfv(GL_LIGHT1, GL_AMBIENT, light_color);
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
 
@@ -403,8 +404,8 @@ void Jogo::desenhaOrigemDoSC()
 // {
 //     Ponto p = tiro.posicao;
 //     int r = tiro.raio;
-//     bool dentro_x = (p.x > r && std::abs(p.x - mapa.largura) > r);
-//     bool dentro_y = (p.y > r && std::abs(p.y - mapa.altura) > r);
+//     bool dentro_x = (p.x > r && std::abs(p.x - arena.largura) > r);
+//     bool dentro_y = (p.y > r && std::abs(p.y - arena.altura) > r);
 //     bool dentro_z = (p.z > r && std::abs(p.z - (jogador.area.raio * 5)) > r);
 //     return (dentro_x && dentro_y && dentro_z);
 // }

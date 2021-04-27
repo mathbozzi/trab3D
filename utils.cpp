@@ -2,70 +2,36 @@
 
 using namespace std;
 
-
 Ponto::Ponto()
 {
     z = 0;
 }
 
-void Ponto::print()
+// void Ponto::print()
+// {
+//     cout << "Ponto: " << x << ", " << y << ", " << z << endl;
+// }
+ 
+Cores::Cores(float r, float g, float b)
 {
-    cout << "Ponto: " << x << ", " << y << ", " << z << endl;
+    this->r = r;
+    this->g = g;
+    this->b = b;
 }
 
-Cor::Cor()
+GLfloat Cores::getCorR()
 {
+    return this->r;
 }
 
-Cor::Cor(std::string color_name)
+GLfloat Cores::getCorG()
 {
-    // padrão é a cor preta
-    this->r = 0;
-    this->g = 0;
-    this->b = 0;
-
-    // preenche caso seja outra cor
-    if (color_name == "white") {
-        this->r = this->g = this->b = 255.0;
-    } else if (color_name == "gray") {
-        this->r = this->g = this->b = 127.0;
-    } else if (color_name == "lightgray") {
-        this->r = this->g = this->b = 210.0;
-    } else if (color_name == "green") {
-        this->g = 255.0;
-    } else if (color_name == "red") {
-        this->r = 255.0;
-    } else if (color_name == "blue") {
-        this->b = 255.0;
-    } else if (color_name == "lightgreen") {
-        this->r = 155.0;
-        this->g = 187.0;
-        this->b = 89.0;
-    } else if (color_name == "darkgreen") {
-        this->r = 99.0;
-        this->g = 169.0;
-        this->b = 117.0;
-    } else if (color_name == "lightblue") {
-        this->r = 79.0;
-        this->g = 129.0;
-        this->b = 189.0;
-    } else if (color_name == "darkred") {
-        this->r = 170;
-        this->g = 0.0;
-        this->b = 0.0;
-    }
-
-    // normaliza para o intervalo [0,1]
-    this->r /= 255.0;
-    this->g /= 255.0;
-    this->b /= 255.0;
+    return this->g;
 }
 
-Cor::Cor(int _r, int _g, int _b)
+GLfloat Cores::getCorB()
 {
-    this->r = (float)_r/255.0;
-    this->g = (float)_g/255.0;
-    this->b = (float)_b/255.0;
+    return this->b;
 }
 
 double calculaDistancia(Ponto p1, Ponto p2)
@@ -76,23 +42,21 @@ double calculaDistancia(Ponto p1, Ponto p2)
 void drawBox(GLfloat tamanho, GLfloat textureS)
 {
     static GLfloat n[6][3] =
-    {
-        {-1.0, 0.0, 0.0},
-        {0.0, 1.0, 0.0},
-        {1.0, 0.0, 0.0},
-        {0.0, -1.0, 0.0},
-        {0.0, 0.0, 1.0},
-        {0.0, 0.0, -1.0}
-    };
+        {
+            {-1.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0},
+            {1.0, 0.0, 0.0},
+            {0.0, -1.0, 0.0},
+            {0.0, 0.0, 1.0},
+            {0.0, 0.0, -1.0}};
     static GLint faces[6][4] =
-    {
-        {0, 1, 2, 3},
-        {3, 2, 6, 7},
-        {7, 6, 5, 4},
-        {4, 5, 1, 0},
-        {5, 6, 2, 1},
-        {7, 4, 0, 3}
-    };
+        {
+            {0, 1, 2, 3},
+            {3, 2, 6, 7},
+            {7, 6, 5, 4},
+            {4, 5, 1, 0},
+            {5, 6, 2, 1},
+            {7, 4, 0, 3}};
     GLfloat v[8][3];
     GLint i;
 
@@ -103,28 +67,29 @@ void drawBox(GLfloat tamanho, GLfloat textureS)
     v[0][2] = v[3][2] = v[4][2] = v[7][2] = -tamanho / 2;
     v[1][2] = v[2][2] = v[5][2] = v[6][2] = tamanho / 2;
 
-    for (i = 5; i >= 0; i--) {
+    for (i = 5; i >= 0; i--)
+    {
         glBegin(GL_POLYGON);
-            glNormal3fv(&n[i][0]);
-            glTexCoord2f (textureS, 0);
-            glVertex3fv(&v[faces[i][0]][0]);
-            glTexCoord2f (textureS, textureS);
-            glVertex3fv(&v[faces[i][1]][0]);
-            glTexCoord2f (0, textureS);
-            glVertex3fv(&v[faces[i][2]][0]);
-            glTexCoord2f (0, 0);
-            glVertex3fv(&v[faces[i][3]][0]);
+        glNormal3fv(&n[i][0]);
+        glTexCoord2f(textureS, 0);
+        glVertex3fv(&v[faces[i][0]][0]);
+        glTexCoord2f(textureS, textureS);
+        glVertex3fv(&v[faces[i][1]][0]);
+        glTexCoord2f(0, textureS);
+        glVertex3fv(&v[faces[i][2]][0]);
+        glTexCoord2f(0, 0);
+        glVertex3fv(&v[faces[i][3]][0]);
         glEnd();
     }
 }
 
-OBJ * CreateSphere (double R, double space) 
+OBJ *CreateSphere(double R, double space)
 {
     OBJ *obj = new OBJ;
-    
-    obj->numVtx = (180 / space) * 
-                  (2 + 360 / (2*space)) * 4;
-    obj->vtx = new VERTICES[ obj->numVtx ];
+
+    obj->numVtx = (180 / space) *
+                  (2 + 360 / (2 * space)) * 4;
+    obj->vtx = new VERTICES[obj->numVtx];
     obj->radius = R;
 
     int n;
@@ -132,28 +97,29 @@ OBJ * CreateSphere (double R, double space)
     double hR, lHR;
     double norm;
     n = 0;
-    for( vR = 0; vR <= 180-space; vR+=space){
-        for(hR = 0; hR <= 360+2*space; hR+=2*space)
+    for (vR = 0; vR <= 180 - space; vR += space)
+    {
+        for (hR = 0; hR <= 360 + 2 * space; hR += 2 * space)
         {
             lVR = vR;
             lHR = hR;
-            obj->vtx[n].X = R * 
-                    sin(lHR / 180 * M_PI) * 
-                    sin(lVR / 180 * M_PI);
-            obj->vtx[n].Y = R * 
-                    cos(lHR / 180 * M_PI) * 
-                    sin(lVR / 180 * M_PI);
-            obj->vtx[n].Z = R * 
-                    cos(lVR / 180 * M_PI);
+            obj->vtx[n].X = R *
+                            sin(lHR / 180 * M_PI) *
+                            sin(lVR / 180 * M_PI);
+            obj->vtx[n].Y = R *
+                            cos(lHR / 180 * M_PI) *
+                            sin(lVR / 180 * M_PI);
+            obj->vtx[n].Z = R *
+                            cos(lVR / 180 * M_PI);
             obj->vtx[n].V = lVR / 180;
             obj->vtx[n].U = lHR / 360;
             norm = sqrt(
-                    obj->vtx[n].X*obj->vtx[n].X+
-                    obj->vtx[n].Y*obj->vtx[n].Y+
-                    obj->vtx[n].Z*obj->vtx[n].Z);
-            obj->vtx[n].nX = obj->vtx[n].X/norm;
-            obj->vtx[n].nY = obj->vtx[n].Y/norm;
-            obj->vtx[n].nZ = obj->vtx[n].Z/norm;
+                obj->vtx[n].X * obj->vtx[n].X +
+                obj->vtx[n].Y * obj->vtx[n].Y +
+                obj->vtx[n].Z * obj->vtx[n].Z);
+            obj->vtx[n].nX = obj->vtx[n].X / norm;
+            obj->vtx[n].nY = obj->vtx[n].Y / norm;
+            obj->vtx[n].nZ = obj->vtx[n].Z / norm;
             n++;
 
             lVR = vR + space;
@@ -163,10 +129,10 @@ OBJ * CreateSphere (double R, double space)
             obj->vtx[n].Z = R * cos(lVR / 180 * M_PI);
             obj->vtx[n].V = lVR / 180;
             obj->vtx[n].U = lHR / 360;
-            norm = sqrt(obj->vtx[n].X*obj->vtx[n].X+obj->vtx[n].Y*obj->vtx[n].Y+obj->vtx[n].Z*obj->vtx[n].Z);
-            obj->vtx[n].nX = obj->vtx[n].X/norm;
-            obj->vtx[n].nY = obj->vtx[n].Y/norm;
-            obj->vtx[n].nZ = obj->vtx[n].Z/norm;
+            norm = sqrt(obj->vtx[n].X * obj->vtx[n].X + obj->vtx[n].Y * obj->vtx[n].Y + obj->vtx[n].Z * obj->vtx[n].Z);
+            obj->vtx[n].nX = obj->vtx[n].X / norm;
+            obj->vtx[n].nY = obj->vtx[n].Y / norm;
+            obj->vtx[n].nZ = obj->vtx[n].Z / norm;
             n++;
 
             lVR = vR;
@@ -176,10 +142,10 @@ OBJ * CreateSphere (double R, double space)
             obj->vtx[n].Z = R * cos(lVR / 180 * M_PI);
             obj->vtx[n].V = lVR / 180;
             obj->vtx[n].U = lHR / 360;
-            norm = sqrt(obj->vtx[n].X*obj->vtx[n].X+obj->vtx[n].Y*obj->vtx[n].Y+obj->vtx[n].Z*obj->vtx[n].Z);
-            obj->vtx[n].nX = obj->vtx[n].X/norm;
-            obj->vtx[n].nY = obj->vtx[n].Y/norm;
-            obj->vtx[n].nZ = obj->vtx[n].Z/norm;
+            norm = sqrt(obj->vtx[n].X * obj->vtx[n].X + obj->vtx[n].Y * obj->vtx[n].Y + obj->vtx[n].Z * obj->vtx[n].Z);
+            obj->vtx[n].nX = obj->vtx[n].X / norm;
+            obj->vtx[n].nY = obj->vtx[n].Y / norm;
+            obj->vtx[n].nZ = obj->vtx[n].Z / norm;
             n++;
 
             lVR = vR + space;
@@ -189,10 +155,10 @@ OBJ * CreateSphere (double R, double space)
             obj->vtx[n].Z = R * cos(lVR / 180 * M_PI);
             obj->vtx[n].V = lVR / 180;
             obj->vtx[n].U = lHR / 360;
-            norm = sqrt(obj->vtx[n].X*obj->vtx[n].X+obj->vtx[n].Y*obj->vtx[n].Y+obj->vtx[n].Z*obj->vtx[n].Z);
-            obj->vtx[n].nX = obj->vtx[n].X/norm;
-            obj->vtx[n].nY = obj->vtx[n].Y/norm;
-            obj->vtx[n].nZ = obj->vtx[n].Z/norm;
+            norm = sqrt(obj->vtx[n].X * obj->vtx[n].X + obj->vtx[n].Y * obj->vtx[n].Y + obj->vtx[n].Z * obj->vtx[n].Z);
+            obj->vtx[n].nX = obj->vtx[n].X / norm;
+            obj->vtx[n].nY = obj->vtx[n].Y / norm;
+            obj->vtx[n].nZ = obj->vtx[n].Z / norm;
             n++;
         }
     }

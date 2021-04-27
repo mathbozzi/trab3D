@@ -50,10 +50,10 @@ public:
     //void desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores);                 // OK
     //void desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos);                               // OK
     //void desenharHelice(Textura *textura);                                                                // OK
-    void desenharCorpo(); // OK
+    void desenharCorpo(Cores cor); // OK
     //void desenharCanhao(Textura *textura);                                                                // OK
-    void Draw(); // OK
-    void desenharEsfera() { desenhaEsfera = !desenhaEsfera; }                                             // OK
+    void Draw(Cores cor); // OK
+    // void desenharEsfera() { desenhaEsfera = !desenhaEsfera; }                                             // OK
 
     Circulo area;
     //std::string id;
@@ -61,7 +61,7 @@ public:
     //float tempoMaximoDeVoo, tempoAtualDeVoo;
     float angulo;
     //int objetosResgatados;
-    Cor corCorpo;
+    // Cores corCorpo;
     //Textura texturaCorpo;
     // Textura texturaCorpo, texturaHelice, texturaCanhao;
 
@@ -72,8 +72,6 @@ public:
     Ponto getProximaPosicao(GLdouble timeDiff);
     void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
 
-protected:
-private:
     float anguloCanhaoYaw, anguloCanhaoPitch, anguloHelice;
     //float velocidadeHelice;
     //bool voando;

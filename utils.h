@@ -13,44 +13,28 @@ static int jogadorGanhou = 1;
 static int oponenteGanhou = 2;
 static int jogoOFF = 3;
 
-// enum {
-//     EM_ANDAMENTO,
-//     GANHOU,
-//     PERDEU,
-//     PAUSADO
-// };
-
-// enum {
-//     DRAW_2D,
-//     DRAW_3D
-//  };
-
-//  enum {
-//     WITH_STROKE = true,
-//     NO_STROKE = false
-// };
-
 class Ponto
 {
 public:
     Ponto();
     Ponto(float _x, float _y, float _z = 0) : x(_x), y(_y), z(_z){};
-    void print();
     GLfloat x;
     GLfloat y;
     GLfloat z;
+    // void print();
 };
 
-class Cor
+class Cores
 {
+    float r;
+    float g;
+    float b;
+
 public:
-    Cor();
-    Cor(std::string color_name);
-    Cor(int _r, int _g, int _b);
-    GLfloat r;
-    GLfloat g;
-    GLfloat b;
-    inline bool operator==(const Cor &c) { return (this->r == c.r && this->g == c.g && this->b == c.b); }
+    Cores(float r, float g, float b);
+    float getCorR();
+    float getCorG();
+    float getCorB();
 };
 
 double calculaDistancia(Ponto p1, Ponto p2);

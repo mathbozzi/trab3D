@@ -5,11 +5,11 @@ Circulo::Circulo()
 	// this->numeroDePontos = 360;
 }
 
-Circulo::Circulo(Ponto posicao, int _raio, Cor _cor)
+Circulo::Circulo(Ponto posicao, int _raio/*, Cor _cor*/)
 {
 	this->posicao = posicao;
 	this->raio = _raio;
-	this->cor = _cor;
+	// this->cor = _cor;
 	// this->numeroDePontos = 360;
 }
 
@@ -41,11 +41,11 @@ Circulo::Circulo(Ponto posicao, int _raio, Cor _cor)
 // 	glPopMatrix();
 // }
 
-void Circulo::Draw2d()
+void Circulo::Draw2d(Cores cor)
 {
 
 	// calcula os pontos de acordo com a quantidade escolhida e desenha o círculo
-	glColor3f(cor.r, cor.g, cor.b);
+	glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
 	glBegin(GL_POLYGON);
 	float angulo, x, y;
 	for (int i = 0; i < 10; i++)
