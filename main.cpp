@@ -80,7 +80,7 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    if (jogo.statusPartida == jogadorGanhou || jogo.statusPartida == oponenteGanhou)
+    if (jogo.lutaAtual == jogadorGanhou || jogo.lutaAtual == oponenteGanhou)
     {
         glViewport(0, 0, width, height);
         glLoadIdentity();
@@ -117,8 +117,8 @@ void idle()
 {
 
     static GLdouble previousTime = 0;
-    static GLdouble accTimeMover = 0;
-    static GLdouble accTimeAtirar = 0;
+    // static GLdouble accTimeMover = 0;
+    // static GLdouble accTimeAtirar = 0;
     GLdouble currentTime;
     GLdouble timeDifference;
 
@@ -136,22 +136,22 @@ void idle()
     // }
 
     // não precisa atualizar nada, se a partida não estiver em andamento
-    if (jogo.statusPartida != jogoON)
+    if (jogo.lutaAtual != jogoON)
     {
         glutPostRedisplay();
         return;
     }
 
     // // verifica se o jogador jogadorGanhou (restadou todos objetos e matou todos inimigos)
-    // if (jogo.statusPartida == jogoON && jogo.jogador.objetosResgatados == jogo.nObjetos && jogo.inimigos.size() == 0) {
-    //     jogo.statusPartida = jogadorGanhou;
+    // if (jogo.lutaAtual == jogoON && jogo.jogador.objetosResgatados == jogo.nObjetos && jogo.inimigos.size() == 0) {
+    //     jogo.lutaAtual = jogadorGanhou;
     //     cout << "Parabéns! Você jogadorGanhou a partida!!!" << endl;
     //     return;
     // }
 
     // verifica se o jogador oponenteGanhou por causa da falta de combustível
     // if (jogo.jogador.getNivelCombustivel() <= 0) {
-    //     jogo.statusPartida = oponenteGanhou;
+    //     jogo.lutaAtual = oponenteGanhou;
     //     cout << "Você oponenteGanhou por falta de combustível! Que vergonha..." << endl;
     //     return;
     // }
@@ -186,7 +186,7 @@ void idle()
     //
     //     // verifica se algum tiro inimigo acertou o jogador e declara derrota
     //     if (jogo.tiros[i].id_jogador == "Inimigo" && jogo.jogador.area.estaDentro(jogo.tiros[i].posicao) && jogo.jogador.estaVoando()){
-    //         jogo.statusPartida = oponenteGanhou;
+    //         jogo.lutaAtual = oponenteGanhou;
     //         cout << "Você foi atingido por um tiro inimigo!" << endl;
     //         // mostra o tiro que acertou o jogador em vermelho
     //         jogo.tiros[i].setCor(Cor("darkred"));
@@ -204,7 +204,7 @@ void idle()
     //jogo.jogador.girarHelice();
     //for (unsigned int i = 0; i < jogo.inimigos.size(); i++) jogo.inimigos[i].girarHelice();
 
-    jogo.oponente.moverFrente(timeDifference);
+    // jogo.oponente.moverFrente(timeDifference);
 
     if (keystates['a'])
         jogo.jogador.girarEsquerda();
@@ -313,10 +313,10 @@ void idle()
 
 void mouse(int button, int state, int x, int y)
 {
-    if (jogo.statusPartida != jogoON && jogo.statusPartida != jogoOFF)
+    if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && jogo.statusPartida != jogoOFF)
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && jogo.lutaAtual != jogoOFF)
     {
         // // atira
         // if (jogo.jogador.estaVoando()) {
@@ -340,7 +340,7 @@ void mouse(int button, int state, int x, int y)
 
 void mouseMotion(int x, int y)
 {
-    if (jogo.statusPartida != jogoON && jogo.statusPartida != jogoOFF)
+    if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
     // if (x != mouseUltimoX) jogo.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
@@ -352,7 +352,7 @@ void mouseMotion(int x, int y)
 
 void mouseClickMotion(int x, int y)
 {
-    if (jogo.statusPartida != jogoON && jogo.statusPartida != jogoOFF)
+    if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
     // código do Thiago
@@ -363,10 +363,10 @@ void mouseClickMotion(int x, int y)
     jogo.camPitch += y - lastY;
 
     jogo.camPitch = (int)jogo.camPitch % 360;
-    if (jogo.camPitch > 179)
-        jogo.camPitch = 179;
-    if (jogo.camPitch < 1)
-        jogo.camPitch = 1;
+    if (jogo.camPitch > 150)
+        jogo.camPitch = 150;
+    if (jogo.camPitch < 30)
+        jogo.camPitch = 30;
     jogo.camYaw = (int)jogo.camYaw % 360;
 
     lastX = x;
@@ -430,10 +430,10 @@ void keyboard(unsigned char key, int x, int y)
         smoothEnabled = !smoothEnabled;
         break;
     case 'p':
-        if (jogo.statusPartida == jogoOFF)
-            jogo.statusPartida = jogoON;
+        if (jogo.lutaAtual == jogoOFF)
+            jogo.lutaAtual = jogoON;
         else
-            jogo.statusPartida = jogoOFF;
+            jogo.lutaAtual = jogoOFF;
         break;
     case 'c':
         jogo.mostrarCameraCockpit = !jogo.mostrarCameraCockpit;
@@ -581,6 +581,8 @@ void trataXML(const char *diretorio)
     double angulograu = (angulorad * 180) / M_PI;
     jogo.jogador.angulo = angulograu;
     jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);
+    
+    jogo.camYaw = angulograu +90;
 
     srand(time(NULL));
 }

@@ -23,13 +23,30 @@ class Lutador
 {
 public:
     Lutador();
-    //Lutador(float _velocidadeHelice, float _velocidadeHelicoptero, float _velocidadeTiro);
     void moverFrente(GLdouble timeDiff); // OK
     void moverTras(GLdouble timeDiff);   // OK
     void girarDireita();                 // OK
     void girarEsquerda();                // OK
+    void ajustarAngulo();
+    void desenharCorpo(Cores cor); // OK
+    void Draw(Cores cor);          // OK
+    Circulo area;
+    float angulo;
+    float anguloPerna=0;
+    int pernaVoltando=false;
+    int pernaIndo=true;
+    float velocidade;
+    float anguloCanhaoYaw, anguloCanhaoPitch; 
+    GLuint textura;
+    Ponto getPosicao() { return area.posicao; };
+    Ponto getDirecao();
+    Ponto getProximaPosicao(GLdouble timeDiff);
+    void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
+    // bool desenhaEsfera = false;
 
+    // float anguloHelice;
     //void moverCanhao(int incrementoYaw, int incrementoPitch);
+    //Lutador(float _velocidadeHelice, float _velocidadeHelicoptero, float _velocidadeTiro);
     //void girarHelice();              // OK
     //void decolar();                  // OK
     //void pousar();                   // OK
@@ -44,39 +61,21 @@ public:
     //void reabastercer();                         // OK
     //bool resgatar(Circulo objeto);                // OK
     //double getNivelCombustivel();                // OK
-    void ajustarAngulo();
-
     // desenho
     //void desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores);                 // OK
     //void desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos);                               // OK
     //void desenharHelice(Textura *textura);                                                                // OK
-    void desenharCorpo(Cores cor); // OK
     //void desenharCanhao(Textura *textura);                                                                // OK
-    void Draw(Cores cor); // OK
     // void desenharEsfera() { desenhaEsfera = !desenhaEsfera; }                                             // OK
-
-    Circulo area;
     //std::string id;
-    float velocidade;
     //float tempoMaximoDeVoo, tempoAtualDeVoo;
-    float angulo;
     //int objetosResgatados;
     // Cores corCorpo;
     //Textura texturaCorpo;
     // Textura texturaCorpo, texturaHelice, texturaCanhao;
-
-    GLuint textura;
-
-    Ponto getPosicao() { return area.posicao; };
-    Ponto getDirecao();
-    Ponto getProximaPosicao(GLdouble timeDiff);
-    void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
-
-    float anguloCanhaoYaw, anguloCanhaoPitch, anguloHelice;
     //float velocidadeHelice;
     //bool voando;
     // bool draw3d = false;
-    bool desenhaEsfera = false;
 };
 //void displayCabeca(GLuint textureSun);
 

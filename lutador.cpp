@@ -52,72 +52,157 @@ void Lutador::desenharCorpo(Cores cor)
         glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
 
         glBindTexture(GL_TEXTURE_2D, this->textura);
+        glTranslatef(0, 0, 5);
 
         // if (textura != NULL)
         // glBindTexture(GL_TEXTURE_2D, textura->get());
 
-        //perna direita cima
-        // printf("%d\n",this->area.raio);
+        //perna direita
         glPushMatrix();
         {
-            glTranslatef(0, this->area.raio / 4, -this->area.raio / 8);
-            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-            drawBox(1.0, 1);
+            glTranslatef(0, this->area.raio / 4, 0);
+            glRotatef(this->anguloPerna, 0, 1, 0); // angulo perna
+            glPushMatrix();
+            {
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+                desenhaCubo();
+            }
+            glPopMatrix();
+            glTranslatef(0, 0, -this->area.raio / 4);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+            desenhaCubo();
         }
         glPopMatrix();
 
-        //perna direita baixo
+        //perna esquerda
         glPushMatrix();
         {
-            glTranslatef(0, this->area.raio / 4, -this->area.raio / 3);
-            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-            drawBox(1.0, 1);
-        }
-        glPopMatrix();
-
-        //perna esquerda cima
-        glPushMatrix();
-        {
-            glTranslatef(0, -this->area.raio / 4, -this->area.raio / 8);
-            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-            drawBox(1.0, 1);
-        }
-        glPopMatrix();
-
-        //perna esquerda baixo
-        glPushMatrix();
-        {
-            glTranslatef(0, -this->area.raio / 4, -this->area.raio / 3);
-            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-            drawBox(1.0, 1);
+            glTranslatef(0, -this->area.raio / 4, 0);
+            glRotatef(-this->anguloPerna, 0, 1, 0); // angulo perna
+            glPushMatrix();
+            {
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+                desenhaCubo();
+            }
+            glPopMatrix();
+            glTranslatef(0, 0, -this->area.raio / 4);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+            desenhaCubo();
         }
         glPopMatrix();
 
         // tronco
         glPushMatrix();
         {
-            glTranslatef(0, 0, this->area.raio / 4);
-            glScalef(this->area.raio / 2, this->area.raio, this->area.raio / 2);
-            drawBox(1.0, 1);
+            glTranslatef(0, 0, this->area.raio / 2);
+            glScalef(this->area.raio / 2, this->area.raio, this->area.raio);
+            desenhaCubo();
         }
         glPopMatrix();
 
+        // desenha braco direito
         glPushMatrix();
-        glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
-        glTranslatef(0, 0, this->area.raio * 3 / 4);
-
-        //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-        OBJ *obj = CreateSphere(this->area.raio / 4, 10);
-        glBegin(GL_TRIANGLE_STRIP);
         {
-            for (int i = 0; i < obj->numVtx; i++)
+            glTranslatef(0, this->area.raio / 2 * 0.9, this->area.raio / 2 * 0.75);
+            glRotatef(90, 1, 0, 0);
+            glRotatef(-15, 0, 1, 0);
+            glRotatef(20, 0, 0, 1); // angulo de elevacao do braço
+            glPushMatrix();
             {
-                glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
-                glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
-                glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
+                glScalef(this->area.raio / 6, this->area.raio / 6, this->area.raio);
+                desenhaCubo();
             }
-            delete[] obj->vtx;
-            glEnd();
+            glPopMatrix();
+            glTranslatef(0, 0, -this->area.raio / 2 * 0.85);
+            glRotatef(-90, 0, 1, 0);
+            glPushMatrix();
+            {
+                glScalef(this->area.raio / 7, this->area.raio / 7, this->area.raio);
+                desenhaCubo();
+            }
+            glPopMatrix();
+            glTranslatef(0, 0, -this->area.raio / 2);
+
+            // desenha luva
+            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+            //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
+            OBJ *obj = CreateSphere(this->area.raio / 7, 10);
+            glBegin(GL_TRIANGLE_STRIP);
+            {
+                for (int i = 0; i < obj->numVtx; i++)
+                {
+                    glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
+                    glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
+                    glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
+                }
+                delete[] obj->vtx;
+                glEnd();
+            }
+        }
+        glPopMatrix();
+
+        // desenha braco esquerdo
+        glPushMatrix();
+        {
+            glTranslatef(0, -this->area.raio / 2 * 0.9, this->area.raio / 2 * 0.75);
+            glRotatef(-90, 1, 0, 0);
+            glRotatef(-15, 0, 1, 0);
+            glRotatef(-20, 0, 0, 1); // angulo de elevacao do braço
+            // DrawAxes();
+            glPushMatrix();
+            {
+                glScalef(this->area.raio / 6, this->area.raio / 6, this->area.raio);
+                desenhaCubo();
+            }
+            glPopMatrix();
+            glTranslatef(0, 0, -this->area.raio / 2 * 0.85);
+            glRotatef(-90, 0, 1, 0);
+            glPushMatrix();
+            {
+                glScalef(this->area.raio / 7, this->area.raio / 7, this->area.raio);
+                desenhaCubo();
+            }
+            glPopMatrix();
+            glTranslatef(0, 0, -this->area.raio / 2);
+            // DrawAxes();
+
+            // desenha luva
+            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+            //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
+            OBJ *obj = CreateSphere(this->area.raio / 7, 10);
+            glBegin(GL_TRIANGLE_STRIP);
+            {
+                for (int i = 0; i < obj->numVtx; i++)
+                {
+                    glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
+                    glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
+                    glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
+                }
+                delete[] obj->vtx;
+                glEnd();
+            }
+        }
+        glPopMatrix();
+
+        // cabeca
+        glPushMatrix();
+        {
+            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+            glTranslatef(0, 0, this->area.raio * 3 / 4);
+
+            //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
+            OBJ *obj = CreateSphere(this->area.raio / 4, 10);
+            glBegin(GL_TRIANGLE_STRIP);
+            {
+                for (int i = 0; i < obj->numVtx; i++)
+                {
+                    glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
+                    glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
+                    glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
+                }
+                delete[] obj->vtx;
+                glEnd();
+            }
         }
         glPopMatrix();
     }
@@ -148,7 +233,7 @@ void Lutador::desenharCorpo(Cores cor)
 //         glRotatef(anguloCanhaoPitch, 0, 1, 0); // rotaciona, se quiser
 //         glScalef(25, 4, 4);
 //         glTranslatef(0.5, 0, 0);
-//         drawBox(1.0, 1);
+//         desenhaCubo(1.0, 1);
 //         glPopMatrix();
 //     }
 // }
@@ -195,11 +280,11 @@ void Lutador::desenharCorpo(Cores cor)
 //         glTranslatef(0, 0, (TAMANHO_LUTADORES / 2.0) + altura_helice);
 //         glPushMatrix();
 //         glScalef(80, 3, altura_helice);
-//         drawBox(1.0, 1);
+//         desenhaCubo(1.0, 1);
 //         glPopMatrix();
 //         glPushMatrix();
 //         glScalef(3, 80, altura_helice);
-//         drawBox(1.0, 1);
+//         desenhaCubo(1.0, 1);
 //         glPopMatrix();
 //         Circulo(Ponto(0, 0), 2, Cor("darkgreen")).Draw(DRAW_3D, textura);
 //         glPopMatrix();
@@ -310,6 +395,26 @@ void Lutador::moverFrente(GLdouble timeDiff)
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
     area.posicao.setX(area.posicao.getX() + cos(alphaRadians) * velocidade * timeDiff);
     area.posicao.setY(area.posicao.getY() - sin(alphaRadians) * velocidade * timeDiff);
+    if (this->anguloPerna < 15 && pernaIndo)
+    {
+        if (this->anguloPerna == 14)
+        {
+            pernaVoltando = true;
+            pernaIndo = false;
+            this->anguloPerna -= 1;
+        }
+        this->anguloPerna += 1;
+    }
+    else if (this->anguloPerna < 15 && pernaVoltando)
+    {
+        if (this->anguloPerna == -14)
+        {
+            pernaIndo = true;
+            pernaVoltando = false;
+            this->anguloPerna += 1;
+        }
+        this->anguloPerna -= 1;
+    }
 }
 
 void Lutador::moverTras(GLdouble timeDiff)
@@ -319,6 +424,27 @@ void Lutador::moverTras(GLdouble timeDiff)
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
     area.posicao.setX(area.posicao.getX() - cos(alphaRadians) * velocidade * timeDiff);
     area.posicao.setY(area.posicao.getY() + sin(alphaRadians) * velocidade * timeDiff);
+    
+    if (this->anguloPerna < 15 && pernaIndo)
+    {
+        if (this->anguloPerna == 14)
+        {
+            pernaVoltando = true;
+            pernaIndo = false;
+            this->anguloPerna -= 1;
+        }
+        this->anguloPerna += 1;
+    }
+    else if (this->anguloPerna < 15 && pernaVoltando)
+    {
+        if (this->anguloPerna == -14)
+        {
+            pernaIndo = true;
+            pernaVoltando = false;
+            this->anguloPerna += 1;
+        }
+        this->anguloPerna -= 1;
+    }
 }
 
 // void Lutador::aumentarVelocidadeHelice()

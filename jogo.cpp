@@ -4,9 +4,9 @@ using namespace std;
 
 Jogo::Jogo()
 {
-    this->statusPartida = jogoON;
+    this->lutaAtual = jogoON;
     camera = cam3;
-    camYaw = 90;
+    // camYaw = 180;
     camPitch = 135;
     camDistanciaJogador = 100;
 }
@@ -21,7 +21,7 @@ void Jogo::Draw(bool cockpitPermanente)
     defineLuz0();
     defineLuz1();
 
-    desenhaOrigemDoSC();
+    // desenhaOrigemDoSC();
 
     // for (Lutador h : inimigos)
     //     h.Draw(DRAW_3D, &texturas["inimigoCorpo"], &texturas["inimigoHelice"], &texturas["inimigoCanhao"]);
@@ -166,7 +166,7 @@ void Jogo::DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura, bool desab
 void Jogo::DrawResultado()
 {
     GLuint t;
-    switch (statusPartida)
+    switch (lutaAtual)
     {
     case 1: //jogador ganhou
         //t = Textura("win.bmp").get();
@@ -239,13 +239,13 @@ void Jogo::defineCamera(bool desenhaCockpit)
         posicaoCamera.setZ(posicaoCamera.getZ() + camDistanciaJogador * -direcaoCamera.getZ());
 
         // limita a câmera para não passar do chão
-        if (posicaoCamera.getZ() < TAMANHO_LUTADORES)
+        if (posicaoCamera.getZ() < 0)
         // if (posicaoCamera.z <  this->jogador.area.raio)
         {
             // posicaoCamera.z = this->jogador.area.raio;
             direcaoCamera.setX(sin(camYaw * M_PI / 180.0));
             direcaoCamera.setY(cos(camYaw * M_PI / 180.0));
-            posicaoCamera.setZ(TAMANHO_LUTADORES);
+            posicaoCamera.setZ(0);
         }
         else
         {
@@ -281,7 +281,7 @@ void Jogo::defineCamera(bool desenhaCockpit)
         // move a camera para o cockpit
         posicaoCamera.setX(posicaoCamera.getX() + direcaoCamera.getX() * 15);
         posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15);
-        posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + 6);
+        posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + 25);
 
         Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
 
@@ -298,7 +298,7 @@ void Jogo::defineCamera(bool desenhaCockpit)
     // move a camera para o cockpit
     posicaoCamera.setX(posicaoCamera.getX() + direcaoCamera.getX() * 15);
     posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15);
-    posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + 6);
+    posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + 25);
 
     Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
 
@@ -361,43 +361,43 @@ void Jogo::defineLuz1()
     glPopMatrix();
 }
 
-void Jogo::desenhaOrigemDoSC()
-{
-    GLfloat mat_ambient_r[] = {1.0, 0.0, 0.0, 1.0};
-    GLfloat mat_ambient_g[] = {0.0, 1.0, 0.0, 1.0};
-    GLfloat mat_ambient_b[] = {0.0, 0.0, 1.0, 1.0};
+// void Jogo::desenhaOrigemDoSC()
+// {
+//     GLfloat mat_ambient_r[] = {1.0, 0.0, 0.0, 1.0};
+//     GLfloat mat_ambient_g[] = {0.0, 1.0, 0.0, 1.0};
+//     GLfloat mat_ambient_b[] = {0.0, 0.0, 1.0, 1.0};
 
-    glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
+//     glPushAttrib(GL_ENABLE_BIT);
+//     glDisable(GL_LIGHTING);
+//     glDisable(GL_TEXTURE_2D);
 
-    //x axis
-    glPushMatrix();
-    glColor3fv(mat_ambient_r);
-    glScalef(5, 0.3, 0.3);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(50.0);
-    glPopMatrix();
+//     //x axis
+//     glPushMatrix();
+//     glColor3fv(mat_ambient_r);
+//     glScalef(5, 0.3, 0.3);
+//     glTranslatef(0.5, 0, 0); // put in one end
+//     glutSolidCube(50.0);
+//     glPopMatrix();
 
-    //y axis
-    glPushMatrix();
-    glColor3fv(mat_ambient_g);
-    glRotatef(90, 0, 0, 1);
-    glScalef(5, 0.3, 0.3);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(50.0);
-    glPopMatrix();
+//     //y axis
+//     glPushMatrix();
+//     glColor3fv(mat_ambient_g);
+//     glRotatef(90, 0, 0, 1);
+//     glScalef(5, 0.3, 0.3);
+//     glTranslatef(0.5, 0, 0); // put in one end
+//     glutSolidCube(50.0);
+//     glPopMatrix();
 
-    //z axis
-    glPushMatrix();
-    glColor3fv(mat_ambient_b);
-    glRotatef(-90, 0, 1, 0);
-    glScalef(5, 0.3, 0.3);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(50.0);
-    glPopMatrix();
-    glPopAttrib();
-}
+//     //z axis
+//     glPushMatrix();
+//     glColor3fv(mat_ambient_b);
+//     glRotatef(-90, 0, 1, 0);
+//     glScalef(5, 0.3, 0.3);
+//     glTranslatef(0.5, 0, 0); // put in one end
+//     glutSolidCube(50.0);
+//     glPopMatrix();
+//     glPopAttrib();
+// }
 
 // bool Jogo::estaDentro(Tiro tiro)
 // {

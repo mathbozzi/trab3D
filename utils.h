@@ -70,7 +70,8 @@ typedef struct
     double radius;
 } OBJ;
 
-void drawBox(GLfloat tamanho, GLfloat textureS = 1);
+void desenhaCubo();
+void DrawAxes();
 OBJ *CreateSphere(double R, double space);
 GLuint LoadTextureRAW(const char *filename);
 
