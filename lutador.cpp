@@ -5,13 +5,11 @@ OBJ *cabeca;
 
 Lutador::Lutador()
 {
-    area.posicao.z = this->area.raio / 2.0;
+    area.posicao.setZ(this->area.raio / 2.0);
     //anguloHelice = 0;
     //angulo = 180;
     anguloCanhaoYaw = 0;
     anguloCanhaoPitch = 0;
-    // texturaLutador = LoadTextureRAW2("images/earth.bmp");
-    // texturaOponente = LoadTextureRAW2("images/earth.bmp");
 
     //voando = false;
     //velocidadeHelice = 1;
@@ -30,7 +28,7 @@ void Lutador::Draw(Cores cor)
     glPushMatrix();
 
     // move ele para a posição do circulo do jogador
-    glTranslatef(this->area.posicao.x, this->area.posicao.y, this->area.posicao.z);
+    glTranslatef(this->area.posicao.getX(), this->area.posicao.getY(), this->area.posicao.getZ());
 
     // redimensiona ele para caber dentro do circulo
     glScalef(this->area.raio * 2 / 85.0, this->area.raio * 2 / 85.0, 1);
@@ -48,94 +46,82 @@ void Lutador::Draw(Cores cor)
 
 void Lutador::desenharCorpo(Cores cor)
 {
-    // if (!draw3d)
-    // {
-    //     glPushMatrix();
-    //     Rect(-15, -15, 35, 30, corCorpo).Draw(DRAW_2D, NULL, WITH_STROKE); // corpo
-    //     Rect(-40, -3, 25, 6, corCorpo).Draw(DRAW_2D, NULL, WITH_STROKE);   // cauda
-    //     Rect(-50, 4, 15, 3, corCorpo).Draw(DRAW_2D);                       // cauda direita
-    //     Rect(-50, -7, 15, 3, corCorpo).Draw(DRAW_2D);                      // cauda esquerda
-    //     glPopMatrix();
-    // }
-    // else
+
+    glPushMatrix();
     {
+        glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+
+        glBindTexture(GL_TEXTURE_2D, this->textura);
+
+        // if (textura != NULL)
+        // glBindTexture(GL_TEXTURE_2D, textura->get());
+
+        //perna direita cima
+        // printf("%d\n",this->area.raio);
         glPushMatrix();
         {
-            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+            glTranslatef(0, this->area.raio / 4, -this->area.raio / 8);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
+            drawBox(1.0, 1);
+        }
+        glPopMatrix();
 
-            // GLuint paredeTextura = LoadTextureRAW2("images/earth.bmp");
-            glBindTexture(GL_TEXTURE_2D, this->textura);
+        //perna direita baixo
+        glPushMatrix();
+        {
+            glTranslatef(0, this->area.raio / 4, -this->area.raio / 3);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
+            drawBox(1.0, 1);
+        }
+        glPopMatrix();
 
-            // if (textura != NULL)
-            // glBindTexture(GL_TEXTURE_2D, textura->get());
+        //perna esquerda cima
+        glPushMatrix();
+        {
+            glTranslatef(0, -this->area.raio / 4, -this->area.raio / 8);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
+            drawBox(1.0, 1);
+        }
+        glPopMatrix();
 
-            //perna direita cima
-            // printf("%d\n",this->area.raio);
-            glPushMatrix();
+        //perna esquerda baixo
+        glPushMatrix();
+        {
+            glTranslatef(0, -this->area.raio / 4, -this->area.raio / 3);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
+            drawBox(1.0, 1);
+        }
+        glPopMatrix();
+
+        // tronco
+        glPushMatrix();
+        {
+            glTranslatef(0, 0, this->area.raio / 4);
+            glScalef(this->area.raio / 2, this->area.raio, this->area.raio / 2);
+            drawBox(1.0, 1);
+        }
+        glPopMatrix();
+
+        glPushMatrix();
+        glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+        glTranslatef(0, 0, this->area.raio * 3 / 4);
+
+        //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
+        OBJ *obj = CreateSphere(this->area.raio / 4, 10);
+        glBegin(GL_TRIANGLE_STRIP);
+        {
+            for (int i = 0; i < obj->numVtx; i++)
             {
-                glTranslatef(0, this->area.raio / 4, -this->area.raio / 8);
-                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-                drawBox(1.0, 1);
+                glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
+                glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
+                glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
             }
-            glPopMatrix();
-
-            //perna direita baixo
-            glPushMatrix();
-            {
-                glTranslatef(0, this->area.raio / 4, -this->area.raio / 3);
-                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-                drawBox(1.0, 1);
-            }
-            glPopMatrix();
-
-            //perna esquerda cima
-            glPushMatrix();
-            {
-                glTranslatef(0, -this->area.raio / 4, -this->area.raio / 8);
-                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-                drawBox(1.0, 1);
-            }
-            glPopMatrix();
-
-            //perna esquerda baixo
-            glPushMatrix();
-            {
-                glTranslatef(0, -this->area.raio / 4, -this->area.raio / 3);
-                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 4);
-                drawBox(1.0, 1);
-            }
-            glPopMatrix();
-
-            // tronco
-            glPushMatrix();
-            {
-                glTranslatef(0, 0, this->area.raio / 4);
-                glScalef(this->area.raio / 2, this->area.raio, this->area.raio / 2);
-                drawBox(1.0, 1);
-            }
-            glPopMatrix();
-
-            glPushMatrix();
-            glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
-            glTranslatef(0, 0, this->area.raio * 3 / 4);
-
-            //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-            OBJ *obj = CreateSphere(this->area.raio / 4, 10);
-            glBegin(GL_TRIANGLE_STRIP);
-            {
-                for (int i = 0; i < obj->numVtx; i++)
-                {
-                    glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
-                    glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
-                    glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
-                }
-                delete[] obj->vtx;
-                glEnd();
-            }
-            glPopMatrix();
+            delete[] obj->vtx;
+            glEnd();
         }
         glPopMatrix();
     }
+    glPopMatrix();
 }
 
 // void Lutador::desenharCanhao(Textura *textura)
@@ -206,7 +192,7 @@ void Lutador::desenharCorpo(Cores cor)
 //         if (textura != NULL)
 //             glBindTexture(GL_TEXTURE_2D, textura->get());
 //         glRotatef(anguloHelice, 0, 0, 1);
-//         glTranslatef(0, 0, (ALTURA_HELICOPTERO / 2.0) + altura_helice);
+//         glTranslatef(0, 0, (TAMANHO_LUTADORES / 2.0) + altura_helice);
 //         glPushMatrix();
 //         glScalef(80, 3, altura_helice);
 //         drawBox(1.0, 1);
@@ -285,7 +271,7 @@ void Lutador::desenharCorpo(Cores cor)
 //         anguloHelice = 0;
 // }
 
-//bool Lutador::estaVoando() { return (area.posicao.z > ALTURA_HELICOPTERO / 2.0); };
+//bool Lutador::estaVoando() { return (area.posicao.z > TAMANHO_LUTADORES / 2.0); };
 //void Lutador::decolar() { voando = true; }
 //void Lutador::pousar() { voando = false; }
 // void Lutador::subir() { area.posicao.z++; }
@@ -310,10 +296,10 @@ void Lutador::girarEsquerda()
 
 Ponto Lutador::getProximaPosicao(GLdouble timeDiff)
 {
-    Ponto novaPosicao;
+    Ponto novaPosicao = Ponto(0, 0, 0);
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
-    novaPosicao.x = area.posicao.x + cos(alphaRadians) * velocidade * timeDiff;
-    novaPosicao.y = area.posicao.y - sin(alphaRadians) * velocidade * timeDiff;
+    novaPosicao.setX(area.posicao.getX() + cos(alphaRadians) * velocidade * timeDiff);
+    novaPosicao.setY(area.posicao.getY() - sin(alphaRadians) * velocidade * timeDiff);
     return novaPosicao;
 }
 
@@ -322,8 +308,8 @@ void Lutador::moverFrente(GLdouble timeDiff)
     // if (!estaVoando())
     //     return;
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
-    area.posicao.x += cos(alphaRadians) * velocidade * timeDiff;
-    area.posicao.y -= sin(alphaRadians) * velocidade * timeDiff;
+    area.posicao.setX(area.posicao.getX() + cos(alphaRadians) * velocidade * timeDiff);
+    area.posicao.setY(area.posicao.getY() - sin(alphaRadians) * velocidade * timeDiff);
 }
 
 void Lutador::moverTras(GLdouble timeDiff)
@@ -331,8 +317,8 @@ void Lutador::moverTras(GLdouble timeDiff)
     // if (!estaVoando())
     //     return;
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
-    area.posicao.x -= cos(alphaRadians) * velocidade * timeDiff;
-    area.posicao.y += sin(alphaRadians) * velocidade * timeDiff;
+    area.posicao.setX(area.posicao.getX() - cos(alphaRadians) * velocidade * timeDiff);
+    area.posicao.setY(area.posicao.getY() + sin(alphaRadians) * velocidade * timeDiff);
 }
 
 // void Lutador::aumentarVelocidadeHelice()
@@ -410,14 +396,14 @@ void Lutador::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
     double direcao_z = cos((anguloCanhaoPitch + 90) * degree2rad);
     direcao = Ponto(direcao_x, direcao_y, direcao_z);
 
-    Ponto baseCanhao = Ponto((area.raio * 4 / 9) * cos(angulo * degree2rad), (area.raio * 4 / 9) * sin(angulo * degree2rad));
+    Ponto baseCanhao = Ponto((area.raio * 4 / 9) * cos(angulo * degree2rad), (area.raio * 4 / 9) * sin(angulo * degree2rad), 0);
 
-    Ponto pontaCanhaoInicial;
+    Ponto pontaCanhaoInicial = Ponto(0, 0, 0);
     double tamanho = area.raio * 2 / 3;
-    pontaCanhaoInicial.x = baseCanhao.x + tamanho * cos((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad);
-    pontaCanhaoInicial.y = baseCanhao.y + tamanho * sin((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad);
-    pontaCanhaoInicial.z = baseCanhao.y + tamanho * cos((anguloCanhaoPitch + 90) * M_PI / 180.0);
-    pontaCanhao = Ponto(this->area.posicao.x + pontaCanhaoInicial.x, this->area.posicao.y + pontaCanhaoInicial.y, this->area.posicao.z + pontaCanhaoInicial.z);
+    pontaCanhaoInicial.setX(baseCanhao.getX() + tamanho * cos((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad));
+    pontaCanhaoInicial.setY(baseCanhao.getY() + tamanho * sin((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad));
+    pontaCanhaoInicial.setZ(baseCanhao.getY() + tamanho * cos((anguloCanhaoPitch + 90) * M_PI / 180.0));
+    pontaCanhao = Ponto(this->area.posicao.getX() + pontaCanhaoInicial.getX(), this->area.posicao.getY() + pontaCanhaoInicial.getY(), this->area.posicao.getZ() + pontaCanhaoInicial.getZ());
 }
 
 void Lutador::ajustarAngulo()
@@ -444,6 +430,5 @@ void Lutador::ajustarAngulo()
 
 Ponto Lutador::getDirecao()
 {
-    return Ponto(cos((angulo)*M_PI / 180.0), sin((angulo)*M_PI / 180.0));
+    return Ponto(cos((angulo)*M_PI / 180.0), sin((angulo)*M_PI / 180.0), 0);
 }
-

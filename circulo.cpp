@@ -5,10 +5,10 @@ Circulo::Circulo()
 	// this->numeroDePontos = 360;
 }
 
-Circulo::Circulo(Ponto posicao, int _raio/*, Cor _cor*/)
+Circulo::Circulo(Ponto posicao, int raio)
 {
 	this->posicao = posicao;
-	this->raio = _raio;
+	this->raio = raio;
 	// this->cor = _cor;
 	// this->numeroDePontos = 360;
 }
@@ -54,7 +54,7 @@ void Circulo::Draw2d(Cores cor)
 		angulo = 2.0f * 3.1415926f * i / float(10);
 		x = raio * cosf(angulo);
 		y = raio * sinf(angulo);
-		glVertex2f(x + posicao.x, y + posicao.y);
+		glVertex2f(x + posicao.getX(), y + posicao.getY());
 	}
 	glEnd();
 }

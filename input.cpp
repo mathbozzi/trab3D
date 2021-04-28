@@ -47,12 +47,12 @@
 //     //arena.postoAbastecimento = postoAbastecimento;
 //     //arena.objetosResgate = objetosResgate;
 
-//     areaJogador.posicao.z = ALTURA_HELICOPTERO / 2.0;
+//     areaJogador.posicao.z = TAMANHO_LUTADORES / 2.0;
 //     arena.jogador.area = areaJogador;
 //     arena.jogador.id = areaJogador.id;
 //     arena.jogador.velocidadeHelicoptero = velocidadeLutador;
 //     // printf("%f\n",arena.jogador.area.raio/2.0);
-//     // printf("%f\n", ALTURA_HELICOPTERO / 2.0);
+//     // printf("%f\n", TAMANHO_LUTADORES / 2.0);
 //     // printf("%f\n",areaJogador.posicao.z);
 //     // areaJogador.posicao.z = arena.jogador.area.raio/2.0;
     
@@ -61,7 +61,7 @@
 //     arena.jogador.corCorpo = Cor("lightgreen");
 
 
-//     areaOponente.posicao.z = ALTURA_HELICOPTERO / 2.0;
+//     areaOponente.posicao.z = TAMANHO_LUTADORES / 2.0;
 //     arena.oponente.area = areaOponente;
 //     arena.oponente.id = areaOponente.id;
 //     arena.oponente.velocidadeHelicoptero = velocidadeOponente;
@@ -75,7 +75,7 @@
 
 //     // for (Circle areaInimigo : areaInimigos) {
 //     //     Helicoptero inimigo;
-//     //     areaInimigo.posicao.z = ALTURA_HELICOPTERO + (rand() % ((areaJogador.raio * 5) - ALTURA_HELICOPTERO * 2));
+//     //     areaInimigo.posicao.z = TAMANHO_LUTADORES + (rand() % ((areaJogador.raio * 5) - TAMANHO_LUTADORES * 2));
 //     //     inimigo.area = areaInimigo;
 //     //     inimigo.id = areaInimigo.id;
 //     //     inimigo.velocidadeHelicoptero = _velInimigo;

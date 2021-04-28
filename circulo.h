@@ -12,8 +12,8 @@ class Circulo
 {
     public:
         Circulo();
-        Circulo(Ponto posicao, int _raio/*, Cor _cor*/);
-        Ponto posicao;
+        Circulo(Ponto posicao, int raio);
+        Ponto posicao = Ponto(0,0,0);
         // Cor cor;
         std::string id;
         int raio;

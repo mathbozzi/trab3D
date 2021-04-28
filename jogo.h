@@ -9,12 +9,13 @@
 #include "circulo.h"
 #include "lutador.h"
 
-enum
-{
-    CAMERA_1,
-    CAMERA_2,
-    CAMERA_3
-};
+
+// enum
+// {
+//     CAMERA_1,
+//     CAMERA_2,
+//     CAMERA_3
+// };
 
 class Jogo
 {

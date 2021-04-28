@@ -25,8 +25,6 @@ bool keystates[256];
 int mouseUltimoX;
 int mouseUltimoY;
 
-
-
 int width = 500;
 int height = 500;
 
@@ -44,11 +42,11 @@ void init()
     glEnable(GL_TEXTURE_2D);
 
     // carrega as texturas
-    jogo.jogador.textura = LoadTextureRAW2("images/earth.bmp");
-    jogo.oponente.textura = LoadTextureRAW2("images/lava.bmp");
-    jogo.texturaChao = LoadTextureRAW2("images/madeira.bmp");
-    jogo.texturaParede = LoadTextureRAW2("images/ring1.bmp");
-    jogo.texturaCeu = LoadTextureRAW2("images/stars1.bmp");
+    jogo.jogador.textura = LoadTextureRAW("images/earth.bmp");
+    jogo.oponente.textura = LoadTextureRAW("images/lava.bmp");
+    jogo.texturaChao = LoadTextureRAW("images/madeira.bmp");
+    jogo.texturaParede = LoadTextureRAW("images/ring1.bmp");
+    jogo.texturaCeu = LoadTextureRAW("images/stars1.bmp");
     // arena.texturas["chao"] = Textura("grama.bmp");
     // arena.texturas["tiro"] = Textura("lava.bmp");
     // arena.texturas["objetos"] = Textura("earth.bmp");
@@ -72,7 +70,7 @@ void projecao(double _near, double _far, Retangulo viewport, double angulo)
 
     glMatrixMode(GL_MODELVIEW);
 
-    glViewport(viewport.posicao.x, viewport.posicao.y, viewport.largura, viewport.altura);
+    glViewport(viewport.posicao.getX(), viewport.posicao.getY(), viewport.largura, viewport.altura);
     glLoadIdentity();
 }
 
@@ -93,7 +91,7 @@ void display(void)
         jogo.DrawMiniMapa(width, height);
         // cockpit permanente
         int cameraAtual = jogo.camera;
-        jogo.camera = CAMERA_1; // seta a camera do cockpit
+        jogo.camera = cam1; // seta a camera do cockpit
         projecao(5, 1000, Retangulo(0, height - 200, width, 200), 60);
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw(true);
@@ -217,31 +215,31 @@ void idle()
     if (keystates['s'])
         jogo.jogador.moverTras(timeDifference);
     //if (keystates['-']) jogo.jogador.descer();
-    //if (keystates['+'] && jogo.jogador.area.posicao.z < (jogo.jogador.area.raio * 5) - ALTURA_HELICOPTERO) jogo.jogador.subir();
+    //if (keystates['+'] && jogo.jogador.area.posicao.z < (jogo.jogador.area.raio * 5) - TAMANHO_LUTADORES) jogo.jogador.subir();
 
     // colisao: jogador com os limites da jogo, resposta: impede passagem
     Ponto jogadorNovoP = jogo.jogador.getPosicao();
     int jogadorRaio = jogo.jogador.area.raio;
-    if (jogadorNovoP.x < jogadorRaio)
-        jogo.jogador.area.posicao.x = jogadorRaio;
-    if (jogadorNovoP.x > jogo.arena.largura - jogadorRaio)
-        jogo.jogador.area.posicao.x = jogo.arena.largura - jogadorRaio;
-    if (jogadorNovoP.y < jogadorRaio)
-        jogo.jogador.area.posicao.y = jogadorRaio;
-    if (jogadorNovoP.y > jogo.arena.altura - jogadorRaio)
-        jogo.jogador.area.posicao.y = jogo.arena.altura - jogadorRaio;
+    if (jogadorNovoP.getX() < jogadorRaio)
+        jogo.jogador.area.posicao.setX(jogadorRaio);
+    if (jogadorNovoP.getX() > jogo.arena.largura - jogadorRaio)
+        jogo.jogador.area.posicao.setX(jogo.arena.largura - jogadorRaio);
+    if (jogadorNovoP.getY() < jogadorRaio)
+        jogo.jogador.area.posicao.setY(jogadorRaio);
+    if (jogadorNovoP.getY() > jogo.arena.altura - jogadorRaio)
+        jogo.jogador.area.posicao.setY(jogo.arena.altura - jogadorRaio);
 
     // colisao: oponente com os limites da jogo, resposta: impede passagem
     Ponto oponenteNovoP = jogo.oponente.getPosicao();
     int oponenteRaio = jogo.oponente.area.raio;
-    if (oponenteNovoP.x < oponenteRaio)
-        jogo.oponente.area.posicao.x = oponenteRaio;
-    if (oponenteNovoP.x > jogo.arena.largura - oponenteRaio)
-        jogo.oponente.area.posicao.x = jogo.arena.largura - oponenteRaio;
-    if (oponenteNovoP.y < oponenteRaio)
-        jogo.oponente.area.posicao.y = oponenteRaio;
-    if (oponenteNovoP.y > jogo.arena.altura - oponenteRaio)
-        jogo.oponente.area.posicao.y = jogo.arena.altura - oponenteRaio;
+    if (oponenteNovoP.getX() < oponenteRaio)
+        jogo.oponente.area.posicao.setX(oponenteRaio);
+    if (oponenteNovoP.getX() > jogo.arena.largura - oponenteRaio)
+        jogo.oponente.area.posicao.setX(jogo.arena.largura - oponenteRaio);
+    if (oponenteNovoP.getY() < oponenteRaio)
+        jogo.oponente.area.posicao.setY(oponenteRaio);
+    if (oponenteNovoP.getY() > jogo.arena.altura - oponenteRaio)
+        jogo.oponente.area.posicao.setY(jogo.arena.altura - oponenteRaio);
 
     // colisao: entre personagens
     Circulo cOponente = jogo.oponente.area;
@@ -393,13 +391,13 @@ void keyboard(unsigned char key, int x, int y)
     switch (key)
     {
     case '1':
-        jogo.camera = CAMERA_1; // câmera no cockpit
+        jogo.camera = cam1; // câmera no cockpit
         break;
     case '2':
-        jogo.camera = CAMERA_2; // câmera no canhão
+        jogo.camera = cam2; // câmera no canhão
         break;
     case '3':
-        jogo.camera = CAMERA_3; // câmera que segue o jogador
+        jogo.camera = cam3; // câmera que segue o jogador
         break;
     // case 'e':
     //     jogo.jogador.desenharEsfera();
@@ -483,40 +481,49 @@ void trataXML(const char *diretorio)
 
             if (cor == "red")
             {
-                elementos->QueryFloatAttribute("cx", &adversario.posicao.x);
-                elementos->QueryFloatAttribute("cy", &adversario.posicao.y);
+                float x,y;
+                elementos->QueryFloatAttribute("cx", &x);
+                elementos->QueryFloatAttribute("cy", &y);
                 elementos->QueryIntAttribute("r", &adversario.raio);
+                adversario.posicao.setX(x);
+                adversario.posicao.setY(y);
                 // adversario.cor = Cor(cor);
                 // jogo.oponente.corCorpo = Cor(1.0,0.0,0.0);
             }
             else
-            {
-                elementos->QueryFloatAttribute("cx", &personagem.posicao.x);
-                elementos->QueryFloatAttribute("cy", &personagem.posicao.y);
+            {   
+                float x,y;
+                elementos->QueryFloatAttribute("cx", &x);
+                elementos->QueryFloatAttribute("cy", &y);
                 elementos->QueryIntAttribute("r", &personagem.raio);
+                personagem.posicao.setX(x);
+                personagem.posicao.setY(y);
                 // personagem.cor = Cor(cor);
                 // jogo.jogador.corCorpo = Cor(0.0,1.0,0.0);
             }
         }
         else if (!ele.compare("rect"))
         {
-            elementos->QueryFloatAttribute("x", &arena.posicao.x);
-            elementos->QueryFloatAttribute("y", &arena.posicao.y);
-
+            float x,y;
+            elementos->QueryFloatAttribute("x", &x);
+            elementos->QueryFloatAttribute("y", &y);
             elementos->QueryIntAttribute("width", &arena.largura);
             elementos->QueryIntAttribute("height", &arena.altura);
+            arena.posicao.setX(x);
+            arena.posicao.setY(y);
             cor = elementos->FindAttribute("fill")->Value();
+
             // arena.cor = Cor(0.0,0.0,1.0);
         }
     }
 
-    personagem.posicao.x = personagem.posicao.x - arena.posicao.x;
-    personagem.posicao.y = personagem.posicao.y - arena.posicao.y;
-    adversario.posicao.x = adversario.posicao.x - arena.posicao.x;
-    adversario.posicao.y = adversario.posicao.y - arena.posicao.y;
+    personagem.posicao.setX(personagem.posicao.getX() - arena.posicao.getX());
+    personagem.posicao.setY(personagem.posicao.getY() - arena.posicao.getY());
+    adversario.posicao.setX(adversario.posicao.getX() - arena.posicao.getX());
+    adversario.posicao.setY(adversario.posicao.getY() - arena.posicao.getY());
 
-    arena.posicao.x = 0;
-    arena.posicao.y = 0;
+    arena.posicao.setX(0);
+    arena.posicao.setY(0);
 
     // monta a jogo
     jogo.arena = arena;
@@ -524,12 +531,12 @@ void trataXML(const char *diretorio)
     //jogo.postoAbastecimento = postoAbastecimento;
     //jogo.objetosResgate = objetosResgate;
 
-    personagem.posicao.z = ALTURA_HELICOPTERO / 2.0;
+    personagem.posicao.setZ(TAMANHO_LUTADORES / 2.0);
     jogo.jogador.area = personagem;
     //jogo.jogador.id = personagem.id;
     jogo.jogador.velocidade = velocidadeLutador;
     // printf("%f\n",jogo.jogador.area.raio/2.0);
-    // printf("%f\n", ALTURA_HELICOPTERO / 2.0);
+    // printf("%f\n", TAMANHO_LUTADORES / 2.0);
     // printf("%f\n",areaJogador.posicao.z);
     // areaJogador.posicao.z = jogo.jogador.area.raio/2.0;
 
@@ -537,7 +544,7 @@ void trataXML(const char *diretorio)
     //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
     // jogo.jogador.corCorpo = Cor("lightgreen");
 
-    adversario.posicao.z = ALTURA_HELICOPTERO / 2.0;
+    adversario.posicao.setZ(TAMANHO_LUTADORES / 2.0);
     jogo.oponente.area = adversario;
     //jogo.oponente.id = adversario.id;
     jogo.oponente.velocidade = velocidadeOponente;
@@ -566,11 +573,11 @@ void trataXML(const char *diretorio)
     // adversario.theta3 = -45;
     // adversario.theta4 = 135;
 
-    Ponto pinit;
-    pinit.x = adversario.posicao.x - personagem.posicao.x;
-    pinit.y = adversario.posicao.y - personagem.posicao.y;
+    Ponto pinit = Ponto(0,0,0);
+    pinit.setX(adversario.posicao.getX() - personagem.posicao.getX());
+    pinit.setY(adversario.posicao.getY() - personagem.posicao.getY());
 
-    double angulorad = atan2(pinit.y, pinit.x);
+    double angulorad = atan2(pinit.getY(), pinit.getX());
     double angulograu = (angulorad * 180) / M_PI;
     jogo.jogador.angulo = angulograu;
     jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);

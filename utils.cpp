@@ -1,17 +1,14 @@
 #include "utils.h"
 
-using namespace std;
 
-Ponto::Ponto()
-{
-    z = 0;
+Ponto::Ponto(float x, float y, float z)
+{   
+    this->x = x;
+    this->y = y;
+    this->z = z;
 }
 
-// void Ponto::print()
-// {
-//     cout << "Ponto: " << x << ", " << y << ", " << z << endl;
-// }
- 
+
 Cores::Cores(float r, float g, float b)
 {
     this->r = r;
@@ -19,24 +16,55 @@ Cores::Cores(float r, float g, float b)
     this->b = b;
 }
 
-GLfloat Cores::getCorR()
+float Cores::getCorR()
 {
     return this->r;
 }
 
-GLfloat Cores::getCorG()
+float Cores::getCorG()
 {
     return this->g;
 }
 
-GLfloat Cores::getCorB()
+float Cores::getCorB()
 {
     return this->b;
 }
 
+float Ponto::getX()
+{
+    return this->x;
+}
+
+float Ponto::getY()
+{
+    return this->y;
+}
+
+float Ponto::getZ()
+{
+    return this->z;
+}
+
+void Ponto::setX(float x)
+{
+    this->x = x;
+}
+
+void Ponto::setY(float y)
+{
+    this->y = y;
+}
+
+void Ponto::setZ(float z)
+{
+    this->z = z;
+}
+
+
 double calculaDistancia(Ponto p1, Ponto p2)
 {
-    return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) + (p2.z - p1.z) * (p2.z - p1.z));
+    return sqrt((p2.getX() - p1.getX()) * (p2.getX() - p1.getX()) + (p2.getY() - p1.getY()) * (p2.getY() - p1.getY()) + (p2.getZ() - p1.getZ()) * (p2.getZ() - p1.getZ()));
 }
 
 void drawBox(GLfloat tamanho, GLfloat textureS)
@@ -165,7 +193,7 @@ OBJ *CreateSphere(double R, double space)
     return obj;
 }
 
-GLuint LoadTextureRAW2(const char *filename)
+GLuint LoadTextureRAW(const char *filename)
 {
 
     GLuint texture;

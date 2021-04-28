@@ -8,9 +8,9 @@ Retangulo::Retangulo()
 
 Retangulo::Retangulo(int x, int y, int width, int height/*, Cor cor*/)
 {
-    this->posicao.x = x;
-    this->posicao.y = y;
-    this->posicao.z = 0;
+    this->posicao.setX(x);
+    this->posicao.setY(y);
+    this->posicao.setZ(0);
     this->altura = height;
     this->largura = width;
     // this->cor = cor;
@@ -54,9 +54,9 @@ void Retangulo::Draw(GLuint textura, Cores cor)
 
     vector<Ponto> vertices;
     vertices.push_back(posicao);
-    vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
-    vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
-    vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
+    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY(), posicao.getZ()));
+    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY() + altura, posicao.getZ()));
+    vertices.push_back(Ponto(posicao.getX(), posicao.getY() + altura, posicao.getZ()));
 
     double textureS = 1; 
     glPushMatrix();
@@ -66,13 +66,13 @@ void Retangulo::Draw(GLuint textura, Cores cor)
     glBegin(GL_POLYGON);
     glNormal3f(0, 0, 1);
     glTexCoord2f(0, 0);
-    glVertex3f(vertices[0].x, vertices[0].y, std::abs(vertices[0].z));
+    glVertex3f(vertices[0].getX(), vertices[0].getY(), std::abs(vertices[0].getZ()));
     glTexCoord2f(0, textureS);
-    glVertex3f(vertices[1].x, vertices[1].y, std::abs(vertices[1].z));
+    glVertex3f(vertices[1].getX(), vertices[1].getY(), std::abs(vertices[1].getZ()));
     glTexCoord2f(textureS, textureS);
-    glVertex3f(vertices[2].x, vertices[2].y, std::abs(vertices[2].z));
+    glVertex3f(vertices[2].getX(), vertices[2].getY(), std::abs(vertices[2].getZ()));
     glTexCoord2f(textureS, 0);
-    glVertex3f(vertices[3].x, vertices[3].y, std::abs(vertices[3].z));
+    glVertex3f(vertices[3].getX(), vertices[3].getY(), std::abs(vertices[3].getZ()));
     glEnd();
     glPopMatrix();
 }
@@ -82,16 +82,16 @@ void Retangulo::DrawArestas()
     // vector<Ponto> vertices = getVertices();
     vector<Ponto> vertices;
     vertices.push_back(posicao);
-    vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
-    vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
-    vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
+    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY(), posicao.getZ()));
+    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY() + altura, posicao.getZ()));
+    vertices.push_back(Ponto(posicao.getX(), posicao.getY() + altura, posicao.getZ()));
 
     //  glPointSize(strokeLargura);
     glBegin(GL_LINE_LOOP);
     Cores c = Cores(0.0,0.0,0.0);
     glColor3f(c.getCorR(), c.getCorG(), c.getCorB());
     for (Ponto v : vertices)
-        glVertex2f(v.x, v.y);
+        glVertex2f(v.getX(), v.getY());
     glEnd();
 }
 
@@ -107,8 +107,8 @@ void Retangulo::DrawArestas()
 
 bool Retangulo::estaDentro(Ponto p)
 {
-    bool h = (p.x >= posicao.x && p.x <= posicao.x + largura);
-    bool v = (p.y >= posicao.y && p.y <= posicao.y + altura);
+    bool h = (p.getX() >= posicao.getX() && p.getX() <= posicao.getX() + largura);
+    bool v = (p.getY() >= posicao.getY() && p.getY() <= posicao.getY() + altura);
     return (h && v);
 }
 

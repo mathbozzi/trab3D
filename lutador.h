@@ -15,7 +15,7 @@
  * Azul:            79, 129, 189
  */
 
-#define ALTURA_HELICOPTERO 40
+#define TAMANHO_LUTADORES 40
 // #define HELICE_VEL_MAXIMA 3.0
 // #define HELICE_VEL_MINIMA 0.0
 
