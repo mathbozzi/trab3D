@@ -16,12 +16,16 @@
 using namespace std;
 using namespace tinyxml2;
 
+bool keystates[256];
+
 Jogo jogo;
 float velocidadeLutador = 0.2;
 float velocidadeOponente = 0.1;
+int xAntigo;
+int yAntigo;
+
 //bool isDrawn = false;
 //bool desativarOponente = false;
-bool keystates[256];
 int mouseUltimoX;
 int mouseUltimoY;
 
@@ -127,14 +131,6 @@ void idle()
     timeDifference = currentTime - previousTime; // Elapsed time from the previous frame.
     previousTime = currentTime;                  //Update previous time
 
-    // modifica a velocidade da helice de acordo com o status
-    //if (jogo.jogador.estaVoando()) jogo.jogador.aumentarVelocidadeHelice();
-    // else jogo.jogador.diminuirVelocidadeHelice();
-    // for (unsigned int i = 0; i < jogo.inimigos.size(); i++) {
-    //     if (jogo.inimigos[i].estaVoando()) jogo.inimigos[i].aumentarVelocidadeHelice();
-    //     else jogo.inimigos[i].diminuirVelocidadeHelice();
-    // }
-
     // não precisa atualizar nada, se a partida não estiver em andamento
     if (jogo.lutaAtual != jogoON)
     {
@@ -207,9 +203,11 @@ void idle()
     // jogo.oponente.moverFrente(timeDifference);
 
     if (keystates['a'])
-        jogo.jogador.girarEsquerda();
+        // jogo.jogador.girarEsquerda();
+        jogo.jogador.angulo -=1;
     if (keystates['d'])
-        jogo.jogador.girarDireita();
+        // jogo.jogador.girarDireita();
+        jogo.jogador.angulo +=1;
     if (keystates['w'])
         jogo.jogador.moverFrente(timeDifference);
     if (keystates['s'])
@@ -311,51 +309,87 @@ void idle()
     glutPostRedisplay();
 }
 
-void mouse(int button, int state, int x, int y)
+void mouse(int button, int estado, int x, int y)
 {
     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && jogo.lutaAtual != jogoOFF)
+    if (button == GLUT_LEFT_BUTTON && jogo.lutaAtual != jogoOFF)
     {
-        // // atira
-        // if (jogo.jogador.estaVoando()) {
-        //     jogo.tiros.push_back(jogo.jogador.atirar());
-        //     cout << "O jogador atirou!" << endl;
-        // }
+        // cout << x << " " << y << endl;
+        if (estado == GLUT_DOWN)
+        {
+            xAntigo = x;
+        }
+        else if (estado == GLUT_UP)
+        {
+            jogo.jogador.theta1 = 15;
+            jogo.jogador.theta2 = 90;
+            jogo.jogador.theta3 = 15;
+            jogo.jogador.theta4 = 90;
+        }
     }
 
-    // movimenta câmera ao redor do helicóptero
-    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+    if (button == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN)
     {
         lastX = x;
         lastY = y;
         buttonDown = 1;
     }
-    if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+    if (button == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
     {
         buttonDown = 0;
     }
 }
 
-void mouseMotion(int x, int y)
+// void mouseMotion(int x, int y)
+// {
+//     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
+//         return;
+
+//     // if (x != mouseUltimoX) jogo.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
+//     // if (y != mouseUltimoY) jogo.jogador.moverCanhao(0, (y - mouseUltimoY)/2);
+//     // atualiza o valor do ultimo x
+//     mouseUltimoX = x;
+//     mouseUltimoY = y;
+// }
+
+void movimentoBraco(int x, int y)
 {
     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
-    // if (x != mouseUltimoX) jogo.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
-    // if (y != mouseUltimoY) jogo.jogador.moverCanhao(0, (y - mouseUltimoY)/2);
-    // atualiza o valor do ultimo x
-    mouseUltimoX = x;
-    mouseUltimoY = y;
-}
+    int newX = x;
+    int newY = height - y;
+    if (x - xAntigo > 0)
+    {
+        if (x - xAntigo <= width / 2.0)
+        {
+            // cout << x << " " << xAntigo << "  " << x - xAntigo << endl;
+            jogo.jogador.theta1 = (15 + (x - xAntigo) * (65 / (width / 2.0)));
+            // lutadorPrincipal->MudaTheta1(-45 + (x - xAntigo) * (135 / (arenaSVG->get_width() / 2)));
+            jogo.jogador.theta2 = (90 + (x - xAntigo) * (-55 / (width / 2.0)));
+            // lutadorPrincipal->MudaTheta2(135 - (x - xAntigo) * (110 / (arenaSVG->get_width() / 2)));
+            Ponto pSocoDir = jogo.jogador.verificaSocoDir();
+            // Ponto p   // ponto cabeca oponente + eixo z
+            // verificaSeAcertouSocoDireito(pSocoDir, lutadorOponente);
+        }
+    }
+    else
+    {
+        if ((x - xAntigo >= (-height / 2.0)))
+        {
+            jogo.jogador.theta3 = (15 - (x - xAntigo) * (65 / (height / 2.0)));
+            // lutadorPrincipal->MudaTheta3(-45 - (x - xAntigo) * (135 / (arenaSVG->get_height() / 2)));
+            jogo.jogador.theta4 = (90 + (x - xAntigo) * (55 / (height / 2.0)));
+            // lutadorPrincipal->MudaTheta4(135 + (x - xAntigo) * (110 / (arenaSVG->get_height() / 2)));
+            Ponto pSocoEsq = jogo.jogador.verificaSocoEsq();
+            // Point pSocoEsq = lutadorPrincipal->verificaSocoEsq(arenaSVG->get_width() / 2, arenaSVG->get_height() / 2, -lutadorPrincipal->ObtemTheta3(), -lutadorPrincipal->ObtemTheta4());
+            // verificaSeAcertouSocoEsquerdo(pSocoEsq, lutadorOponente);
+        }
+    }
 
-void mouseClickMotion(int x, int y)
-{
-    if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
-        return;
-
-    // código do Thiago
+    //cameras
     if (!buttonDown)
         return;
 
@@ -481,7 +515,7 @@ void trataXML(const char *diretorio)
 
             if (cor == "red")
             {
-                float x,y;
+                float x, y;
                 elementos->QueryFloatAttribute("cx", &x);
                 elementos->QueryFloatAttribute("cy", &y);
                 elementos->QueryIntAttribute("r", &adversario.raio);
@@ -491,8 +525,8 @@ void trataXML(const char *diretorio)
                 // jogo.oponente.corCorpo = Cor(1.0,0.0,0.0);
             }
             else
-            {   
-                float x,y;
+            {
+                float x, y;
                 elementos->QueryFloatAttribute("cx", &x);
                 elementos->QueryFloatAttribute("cy", &y);
                 elementos->QueryIntAttribute("r", &personagem.raio);
@@ -504,7 +538,7 @@ void trataXML(const char *diretorio)
         }
         else if (!ele.compare("rect"))
         {
-            float x,y;
+            float x, y;
             elementos->QueryFloatAttribute("x", &x);
             elementos->QueryFloatAttribute("y", &y);
             elementos->QueryIntAttribute("width", &arena.largura);
@@ -527,11 +561,12 @@ void trataXML(const char *diretorio)
 
     // monta a jogo
     jogo.arena = arena;
-    
+    jogo.camDistanciaJogador = 5 * (personagem.raio);
+
     //jogo.postoAbastecimento = postoAbastecimento;
     //jogo.objetosResgate = objetosResgate;
 
-    personagem.posicao.setZ(TAMANHO_LUTADORES / 2.0);
+    personagem.posicao.setZ(personagem.raio / 2.0);
     jogo.jogador.area = personagem;
     //jogo.jogador.id = personagem.id;
     jogo.jogador.velocidade = velocidadeLutador;
@@ -544,7 +579,7 @@ void trataXML(const char *diretorio)
     //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
     // jogo.jogador.corCorpo = Cor("lightgreen");
 
-    adversario.posicao.setZ(TAMANHO_LUTADORES / 2.0);
+    adversario.posicao.setZ(personagem.raio / 2.0);
     jogo.oponente.area = adversario;
     //jogo.oponente.id = adversario.id;
     jogo.oponente.velocidade = velocidadeOponente;
@@ -573,7 +608,7 @@ void trataXML(const char *diretorio)
     // adversario.theta3 = -45;
     // adversario.theta4 = 135;
 
-    Ponto pinit = Ponto(0,0,0);
+    Ponto pinit = Ponto(0, 0, 0);
     pinit.setX(adversario.posicao.getX() - personagem.posicao.getX());
     pinit.setY(adversario.posicao.getY() - personagem.posicao.getY());
 
@@ -581,8 +616,8 @@ void trataXML(const char *diretorio)
     double angulograu = (angulorad * 180) / M_PI;
     jogo.jogador.angulo = angulograu;
     jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);
-    
-    jogo.camYaw = angulograu +90;
+
+    jogo.camYaw = angulograu + 90;
 
     srand(time(NULL));
 }
@@ -597,7 +632,7 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(width, height + 200);
-    glutInitWindowPosition(100, 100);
+    glutInitWindowPosition(300, 100);
     glutCreateWindow("RING");
     init();
 
@@ -607,8 +642,8 @@ int main(int argc, char **argv)
     glutKeyboardUpFunc(keyup);
     glutMouseFunc(mouse);
     glutIdleFunc(idle);
-    glutPassiveMotionFunc(mouseMotion);
-    glutMotionFunc(mouseClickMotion);
+    // glutPassiveMotionFunc(mouseMotion);
+    glutMotionFunc(movimentoBraco);
     glutReshapeFunc(reshape);
 
     // glut main loop

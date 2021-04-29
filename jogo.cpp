@@ -8,7 +8,7 @@ Jogo::Jogo()
     camera = cam3;
     // camYaw = 180;
     camPitch = 135;
-    camDistanciaJogador = 100;
+    // camDistanciaJogador = 200;
 }
 
 void Jogo::Draw(bool cockpitPermanente)
@@ -75,7 +75,7 @@ void Jogo::DrawMiniMapa(float _w, float _h)
 
 void Jogo::DrawArena()
 {
-    int alturaArena = jogador.area.raio * 3.5;
+    int alturaArena = jogador.area.raio * 7;
     // Textura *texturaParede = &texturas["posto"];
 
     glPushMatrix();
@@ -231,7 +231,7 @@ void Jogo::defineCamera(bool desenhaCockpit)
         Ponto posicaoCamera = Ponto(0, 0, 0);
         posicaoCamera.setX(jogador.area.posicao.getX());
         posicaoCamera.setY(jogador.area.posicao.getY());
-        posicaoCamera.setZ(jogador.area.posicao.getZ());
+        posicaoCamera.setZ(jogador.area.posicao.getZ()*2);
 
         // desloca a camera em uma 'esfera virtual'
         Ponto direcaoCamera = Ponto(0, 0, 0);

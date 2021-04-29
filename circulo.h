@@ -27,7 +27,7 @@ class Circulo
 
         // int numeroDePontos;
         std::unique_ptr<OBJ> criaEsfera();
-        void DrawEsfera();
+        // void DrawEsfera();
     
 };
 

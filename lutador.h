@@ -15,7 +15,7 @@
  * Azul:            79, 129, 189
  */
 
-#define TAMANHO_LUTADORES 40
+// #define TAMANHO_LUTADORES 1
 // #define HELICE_VEL_MAXIMA 3.0
 // #define HELICE_VEL_MINIMA 0.0
 
@@ -25,22 +25,33 @@ public:
     Lutador();
     void moverFrente(GLdouble timeDiff); // OK
     void moverTras(GLdouble timeDiff);   // OK
-    void girarDireita();                 // OK
-    void girarEsquerda();                // OK
-    void ajustarAngulo();
+    // void girarDireita();                 // OK
+    // void girarEsquerda();                // OK
+    // void ajustarAngulo();
     void desenharCorpo(Cores cor); // OK
     void Draw(Cores cor);          // OK
     Circulo area;
     float angulo;
-    float anguloPerna=0;
-    int pernaVoltando=false;
-    int pernaIndo=true;
+    float theta1 = 15;
+    float theta2 = 90;
+    float theta3 = 15;
+    float theta4 = 90;
+    float thetaElevacao = 20;
+    float anguloPerna = 0;
+    int pernaVoltando = false;
+    int pernaIndo = true;
     float velocidade;
-    float anguloCanhaoYaw, anguloCanhaoPitch; 
+    float anguloCanhaoYaw, anguloCanhaoPitch;
     GLuint textura;
     Ponto getPosicao() { return area.posicao; };
     Ponto getDirecao();
     Ponto getProximaPosicao(GLdouble timeDiff);
+    Ponto verificaSocoDir();
+    Ponto verificaSocoEsq();
+    Ponto translated(Ponto p, Ponto pAntigo);
+    Ponto rotated(Ponto p, float angle);
+    Ponto rotatedZ(Ponto p, float angle);
+
     void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
     // bool desenhaEsfera = false;
 

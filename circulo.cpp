@@ -145,16 +145,16 @@ std::unique_ptr<OBJ> Circulo::criaEsfera()
 	return obj;
 }
 
-void Circulo::DrawEsfera()
-{
-	std::unique_ptr<OBJ> obj = criaEsfera();
-	glBegin(GL_TRIANGLE_STRIP);
-	for (int i = 0; i < obj->numVtx; i++)
-	{
-		glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
-		glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
-		glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
-	}
-	delete[] obj->vtx;
-	glEnd();
-}
+// void Circulo::DrawEsfera()
+// {
+// 	std::unique_ptr<OBJ> obj = criaEsfera();
+// 	glBegin(GL_TRIANGLE_STRIP);
+// 	for (int i = 0; i < obj->numVtx; i++)
+// 	{
+// 		glNormal3f(obj->vtx[i].nX, obj->vtx[i].nY, obj->vtx[i].nZ);
+// 		glTexCoord2f(obj->vtx[i].U, obj->vtx[i].V);
+// 		glVertex3f(obj->vtx[i].X, obj->vtx[i].Y, obj->vtx[i].Z);
+// 	}
+// 	delete[] obj->vtx;
+// 	glEnd();
+// }

@@ -1,6 +1,8 @@
 #include "lutador.h"
 #include <stdio.h>
 
+using namespace std;
+
 OBJ *cabeca;
 
 Lutador::Lutador()
@@ -24,6 +26,10 @@ void Lutador::Draw(Cores cor)
 
     // if (desenhaEsfera)
     //     area.Draw();
+    glPushMatrix();
+    glTranslatef(300, 300, 105);
+    DrawAxes();
+    glPopMatrix();
 
     glPushMatrix();
 
@@ -31,10 +37,12 @@ void Lutador::Draw(Cores cor)
     glTranslatef(this->area.posicao.getX(), this->area.posicao.getY(), this->area.posicao.getZ());
 
     // redimensiona ele para caber dentro do circulo
-    glScalef(this->area.raio * 2 / 85.0, this->area.raio * 2 / 85.0, 1);
+    // printf("%d",this->area.raio);
+    // glScalef(this->area.raio/(this->area.raio *0.3), this->area.raio/(this->area.raio *0.3) , 1);
+    // glScalef(this->area.raio * 2 / 85.0, this->area.raio * 2 / 85.0, 1);
 
     // gira o helicóptero
-    ajustarAngulo();
+    // ajustarAngulo();
     glRotatef(angulo, 0, 0, 1);
 
     //desenharCanhao(canhao);
@@ -50,9 +58,8 @@ void Lutador::desenharCorpo(Cores cor)
     glPushMatrix();
     {
         glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
-
         glBindTexture(GL_TEXTURE_2D, this->textura);
-        glTranslatef(0, 0, 5);
+        // glTranslatef(0, 0, 1);
 
         // if (textura != NULL)
         // glBindTexture(GL_TEXTURE_2D, textura->get());
@@ -60,16 +67,16 @@ void Lutador::desenharCorpo(Cores cor)
         //perna direita
         glPushMatrix();
         {
-            glTranslatef(0, this->area.raio / 4, 0);
+            glTranslatef(0, this->area.raio / 4, this->area.raio / 2);
             glRotatef(this->anguloPerna, 0, 1, 0); // angulo perna
             glPushMatrix();
             {
-                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio);
                 desenhaCubo();
             }
             glPopMatrix();
-            glTranslatef(0, 0, -this->area.raio / 4);
-            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+            glTranslatef(0, 0, -this->area.raio / 2);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio);
             desenhaCubo();
         }
         glPopMatrix();
@@ -77,25 +84,25 @@ void Lutador::desenharCorpo(Cores cor)
         //perna esquerda
         glPushMatrix();
         {
-            glTranslatef(0, -this->area.raio / 4, 0);
+            glTranslatef(0, -this->area.raio / 4, this->area.raio / 2);
             glRotatef(-this->anguloPerna, 0, 1, 0); // angulo perna
             glPushMatrix();
             {
-                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+                glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio);
                 desenhaCubo();
             }
             glPopMatrix();
-            glTranslatef(0, 0, -this->area.raio / 4);
-            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio / 2);
+            glTranslatef(0, 0, -this->area.raio / 2);
+            glScalef(this->area.raio / 4, this->area.raio / 4, this->area.raio);
             desenhaCubo();
         }
         glPopMatrix();
 
-        // tronco
+        // // tronco
         glPushMatrix();
         {
-            glTranslatef(0, 0, this->area.raio / 2);
-            glScalef(this->area.raio / 2, this->area.raio, this->area.raio);
+            glTranslatef(0, 0, 1.5 * this->area.raio);
+            glScalef(this->area.raio / 2, this->area.raio, 2 * this->area.raio);
             desenhaCubo();
         }
         glPopMatrix();
@@ -103,30 +110,31 @@ void Lutador::desenharCorpo(Cores cor)
         // desenha braco direito
         glPushMatrix();
         {
-            glTranslatef(0, this->area.raio / 2 * 0.9, this->area.raio / 2 * 0.75);
+            glTranslatef(0, this->area.raio / 2 * 0.95, 1.5 * this->area.raio * 0.92);
             glRotatef(90, 1, 0, 0);
-            glRotatef(-15, 0, 1, 0);
-            glRotatef(20, 0, 0, 1); // angulo de elevacao do braço
+            glRotatef(-this->theta1, 0, 1, 0);
+            glRotatef(this->thetaElevacao, 0, 0, 1); // angulo de elevacao do braço
             glPushMatrix();
             {
-                glScalef(this->area.raio / 6, this->area.raio / 6, this->area.raio);
+                glScalef(this->area.raio / 6, this->area.raio / 6, 2 * this->area.raio);
                 desenhaCubo();
             }
             glPopMatrix();
-            glTranslatef(0, 0, -this->area.raio / 2 * 0.85);
-            glRotatef(-90, 0, 1, 0);
+            glTranslatef(0, 0, 2 * (-this->area.raio) / 2 * 0.92);
+            glRotatef(-this->theta2, 0, 1, 0);
             glPushMatrix();
             {
-                glScalef(this->area.raio / 7, this->area.raio / 7, this->area.raio);
+                glScalef(this->area.raio / 7, this->area.raio / 7, 2 * this->area.raio);
                 desenhaCubo();
             }
             glPopMatrix();
-            glTranslatef(0, 0, -this->area.raio / 2);
+            glTranslatef(0, 0, -this->area.raio / 2 * 2);
+            // DrawAxes();
 
             // desenha luva
             glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
             //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-            OBJ *obj = CreateSphere(this->area.raio / 7, 10);
+            OBJ *obj = CreateSphere(this->area.raio / 5, 10);
             glBegin(GL_TRIANGLE_STRIP);
             {
                 for (int i = 0; i < obj->numVtx; i++)
@@ -144,32 +152,31 @@ void Lutador::desenharCorpo(Cores cor)
         // desenha braco esquerdo
         glPushMatrix();
         {
-            glTranslatef(0, -this->area.raio / 2 * 0.9, this->area.raio / 2 * 0.75);
+            glTranslatef(0, -this->area.raio / 2 * 0.95, 1.5 * this->area.raio * 0.92);
             glRotatef(-90, 1, 0, 0);
-            glRotatef(-15, 0, 1, 0);
-            glRotatef(-20, 0, 0, 1); // angulo de elevacao do braço
-            // DrawAxes();
+            glRotatef(-this->theta3, 0, 1, 0);
+            glRotatef(-this->thetaElevacao, 0, 0, 1); // angulo de elevacao do braço
             glPushMatrix();
             {
-                glScalef(this->area.raio / 6, this->area.raio / 6, this->area.raio);
+                glScalef(this->area.raio / 6, this->area.raio / 6, 2 * this->area.raio);
                 desenhaCubo();
             }
             glPopMatrix();
-            glTranslatef(0, 0, -this->area.raio / 2 * 0.85);
-            glRotatef(-90, 0, 1, 0);
+            glTranslatef(0, 0, -this->area.raio / 2 * 0.92 * 2);
+            glRotatef(-this->theta4, 0, 1, 0);
             glPushMatrix();
             {
-                glScalef(this->area.raio / 7, this->area.raio / 7, this->area.raio);
+                glScalef(this->area.raio / 7, this->area.raio / 7, 2 * this->area.raio);
                 desenhaCubo();
             }
             glPopMatrix();
-            glTranslatef(0, 0, -this->area.raio / 2);
-            // DrawAxes();
+            glTranslatef(0, 0, -this->area.raio / 2 * 2);
+            DrawAxes();
 
             // desenha luva
             glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
             //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-            OBJ *obj = CreateSphere(this->area.raio / 7, 10);
+            OBJ *obj = CreateSphere(this->area.raio / 5, 10);
             glBegin(GL_TRIANGLE_STRIP);
             {
                 for (int i = 0; i < obj->numVtx; i++)
@@ -188,10 +195,9 @@ void Lutador::desenharCorpo(Cores cor)
         glPushMatrix();
         {
             glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
-            glTranslatef(0, 0, this->area.raio * 3 / 4);
-
+            glTranslatef(0, 0, this->area.raio * 2);
             //if (_textura != NULL) glBindTexture(GL_TEXTURE_2D, textura.get());
-            OBJ *obj = CreateSphere(this->area.raio / 4, 10);
+            OBJ *obj = CreateSphere(this->area.raio / 2, 10);
             glBegin(GL_TRIANGLE_STRIP);
             {
                 for (int i = 0; i < obj->numVtx; i++)
@@ -203,11 +209,118 @@ void Lutador::desenharCorpo(Cores cor)
                 delete[] obj->vtx;
                 glEnd();
             }
+
+            // desenha nariz
+            glTranslatef(this->area.raio / 2, 0, 0);
+            OBJ *obj2 = CreateSphere(this->area.raio / 2 * 0.3, 10);
+            glBegin(GL_TRIANGLE_STRIP);
+            {
+                for (int i = 0; i < obj2->numVtx; i++)
+                {
+                    glNormal3f(obj2->vtx[i].nX, obj2->vtx[i].nY, obj2->vtx[i].nZ);
+                    glTexCoord2f(obj2->vtx[i].U, obj2->vtx[i].V);
+                    glVertex3f(obj2->vtx[i].X, obj2->vtx[i].Y, obj2->vtx[i].Z);
+                }
+                delete[] obj2->vtx;
+                glEnd();
+            }
+            // DrawAxes();
         }
         glPopMatrix();
     }
     glPopMatrix();
 }
+
+Ponto Lutador::verificaSocoDir()
+{
+    Ponto luvaDir = {0.0, 0.0, this->thetaElevacao};
+
+    // antebraço + rotação
+    Ponto a = {0.0, this->area.raio * (float)1.0, 0.0};
+    luvaDir = translated(luvaDir, a);
+    luvaDir = rotated(luvaDir, -this->theta2);
+
+    // // braco direito ate cotovelo + rotacao
+    Ponto b = {0, (float)0.92 * this->area.raio, 0};
+    luvaDir = translated(luvaDir, b);
+    luvaDir = rotated(luvaDir, -this->theta1);
+
+    Ponto c = {0, this->area.raio / (float)2.0 * (float)0.95, (float)1.5 * this->area.raio * (float)0.92};
+    luvaDir = translated(luvaDir, c);
+
+    luvaDir = rotated(luvaDir, this->angulo);
+
+    luvaDir = translated(luvaDir, this->area.posicao);
+
+    luvaDir = {luvaDir.getX(),luvaDir.getY(),luvaDir.getZ()*(float)0.92};
+
+    // cout << "******" << endl;
+    // cout << luvaDir.getX() << endl;
+    // cout << luvaDir.getY() << endl;
+    // cout << luvaDir.getZ() << endl;
+    // luvaDir = {luvaDir.getX(), luvaDir.getY(), luvaDir.getZ()};
+
+    return luvaDir;
+}
+
+Ponto Lutador::verificaSocoEsq()
+{
+    Ponto luvaEsq = {0.0, 0.0, this->thetaElevacao};
+
+    // antebraço + rotação
+    Ponto a = {0.0, -this->area.raio * (float)1.0, 0.0};
+    luvaEsq = translated(luvaEsq, a);
+    luvaEsq = rotated(luvaEsq, this->theta4);
+
+    // // braco direito ate cotovelo + rotacao
+    Ponto b = {0, -(float)0.92 * this->area.raio, 0};
+    luvaEsq = translated(luvaEsq, b);
+    luvaEsq = rotated(luvaEsq, this->theta3);
+
+    Ponto c = {0, -this->area.raio / (float)2.0 * (float)0.95, (float)1.5 * this->area.raio * (float)0.92};
+    luvaEsq = translated(luvaEsq, c);
+
+    luvaEsq = rotated(luvaEsq, this->angulo);
+
+    luvaEsq = translated(luvaEsq, this->area.posicao);
+
+    luvaEsq = {luvaEsq.getX(),luvaEsq.getY(),luvaEsq.getZ()*(float)0.92};
+
+    cout << "******" << endl;
+    cout << luvaEsq.getX() << endl;
+    cout << luvaEsq.getY() << endl;
+    cout << luvaEsq.getZ() << endl;
+    // luvaEsq = {luvaEsq.getX(), luvaEsq.getY(), luvaEsq.getZ()};
+
+    return luvaEsq;
+}
+
+Ponto Lutador::translated(Ponto p, Ponto pAntigo)
+{
+    p.setX(p.getX() + pAntigo.getX());
+    p.setY(p.getY() + pAntigo.getY());
+    p.setZ(p.getZ() + pAntigo.getZ());
+    // p.x += pAntigo.x;
+    // p.y += pAntigo.y;
+    return p;
+}
+
+Ponto Lutador::rotated(Ponto p, float angle)
+{
+    Ponto rotated = {0, 0, p.getZ()};
+    rotated.setX(p.getX() * cos(M_PI * angle / 180.0) - p.getY() * sin(M_PI * angle / 180.0));
+    rotated.setY(p.getX() * sin(M_PI * angle / 180.0) + p.getY() * cos(M_PI * angle / 180.0));
+    // rotated.setZ(p.getZ() + p.getX() * cos((angle + 90) * M_PI / 180.0));
+    return rotated;
+}
+
+// Ponto Lutador::rotatedZ(Ponto p, float angle)
+// {
+//     Ponto rotated = {0, 0, 0};
+//     // rotated.setX(p.getX() * cos(M_PI * angle / 180.0) - p.getY() * sin(M_PI * angle / 180.0));
+//     rotated.setY(p.getX() * sin(M_PI * angle / 180.0) + p.getY() * cos(M_PI * angle / 180.0));
+//     return rotated;
+// }
 
 // void Lutador::desenharCanhao(Textura *textura)
 // {
@@ -366,18 +479,18 @@ void Lutador::desenharCorpo(Cores cor)
 //         area.posicao.z--;
 // }
 
-void Lutador::girarDireita()
-{
-    // if (!estaVoando())
-    //     return;
-    angulo += 1.5;
-}
-void Lutador::girarEsquerda()
-{
-    // if (!estaVoando())
-    //     return;
-    angulo -= 1.5;
-}
+// void Lutador::girarDireita()
+// {
+//     // if (!estaVoando())
+//     //     return;
+//     angulo += 1;
+// }
+// void Lutador::girarEsquerda()
+// {
+//     // if (!estaVoando())
+//     //     return;
+//     angulo -= 1;
+// }
 
 Ponto Lutador::getProximaPosicao(GLdouble timeDiff)
 {
@@ -395,9 +508,9 @@ void Lutador::moverFrente(GLdouble timeDiff)
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
     area.posicao.setX(area.posicao.getX() + cos(alphaRadians) * velocidade * timeDiff);
     area.posicao.setY(area.posicao.getY() - sin(alphaRadians) * velocidade * timeDiff);
-    if (this->anguloPerna < 15 && pernaIndo)
+    if (this->anguloPerna < 20 && pernaIndo)
     {
-        if (this->anguloPerna == 14)
+        if (this->anguloPerna == 19)
         {
             pernaVoltando = true;
             pernaIndo = false;
@@ -405,9 +518,9 @@ void Lutador::moverFrente(GLdouble timeDiff)
         }
         this->anguloPerna += 1;
     }
-    else if (this->anguloPerna < 15 && pernaVoltando)
+    else if (this->anguloPerna < 20 && pernaVoltando)
     {
-        if (this->anguloPerna == -14)
+        if (this->anguloPerna == -19)
         {
             pernaIndo = true;
             pernaVoltando = false;
@@ -424,10 +537,10 @@ void Lutador::moverTras(GLdouble timeDiff)
     float alphaRadians = (360.0 - angulo) * (M_PI / 180.0);
     area.posicao.setX(area.posicao.getX() - cos(alphaRadians) * velocidade * timeDiff);
     area.posicao.setY(area.posicao.getY() + sin(alphaRadians) * velocidade * timeDiff);
-    
-    if (this->anguloPerna < 15 && pernaIndo)
+
+    if (this->anguloPerna < 20 && pernaIndo)
     {
-        if (this->anguloPerna == 14)
+        if (this->anguloPerna == 19)
         {
             pernaVoltando = true;
             pernaIndo = false;
@@ -435,9 +548,9 @@ void Lutador::moverTras(GLdouble timeDiff)
         }
         this->anguloPerna += 1;
     }
-    else if (this->anguloPerna < 15 && pernaVoltando)
+    else if (this->anguloPerna < 20 && pernaVoltando)
     {
-        if (this->anguloPerna == -14)
+        if (this->anguloPerna == -19)
         {
             pernaIndo = true;
             pernaVoltando = false;
@@ -532,10 +645,10 @@ void Lutador::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
     pontaCanhao = Ponto(this->area.posicao.getX() + pontaCanhaoInicial.getX(), this->area.posicao.getY() + pontaCanhaoInicial.getY(), this->area.posicao.getZ() + pontaCanhaoInicial.getZ());
 }
 
-void Lutador::ajustarAngulo()
-{
-    this->angulo = (this->angulo > 360) ? (int)this->angulo % 360 : this->angulo;
-}
+// void Lutador::ajustarAngulo()
+// {
+//     this->angulo = (this->angulo > 360) ? (int)this->angulo % 360 : this->angulo;
+// }
 
 // void Lutador::moverCanhao(int incrementoYaw, int incrementoPitch)
 // {
