@@ -26,10 +26,10 @@ void Lutador::Draw(Cores cor)
 
     // if (desenhaEsfera)
     //     area.Draw();
-    glPushMatrix();
-    glTranslatef(300, 300, 105);
-    DrawAxes();
-    glPopMatrix();
+    // glPushMatrix();
+    // glTranslatef(300, 300, 105);
+    // DrawAxes();
+    // glPopMatrix();
 
     glPushMatrix();
 
@@ -41,7 +41,6 @@ void Lutador::Draw(Cores cor)
     // glScalef(this->area.raio/(this->area.raio *0.3), this->area.raio/(this->area.raio *0.3) , 1);
     // glScalef(this->area.raio * 2 / 85.0, this->area.raio * 2 / 85.0, 1);
 
-    // gira o helicóptero
     // ajustarAngulo();
     glRotatef(angulo, 0, 0, 1);
 
@@ -171,7 +170,7 @@ void Lutador::desenharCorpo(Cores cor)
             }
             glPopMatrix();
             glTranslatef(0, 0, -this->area.raio / 2 * 2);
-            DrawAxes();
+            // DrawAxes();
 
             // desenha luva
             glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
@@ -286,10 +285,10 @@ Ponto Lutador::verificaSocoEsq()
 
     luvaEsq = {luvaEsq.getX(),luvaEsq.getY(),luvaEsq.getZ()*(float)0.92};
 
-    cout << "******" << endl;
-    cout << luvaEsq.getX() << endl;
-    cout << luvaEsq.getY() << endl;
-    cout << luvaEsq.getZ() << endl;
+    // cout << "******" << endl;
+    // cout << luvaEsq.getX() << endl;
+    // cout << luvaEsq.getY() << endl;
+    // cout << luvaEsq.getZ() << endl;
     // luvaEsq = {luvaEsq.getX(), luvaEsq.getY(), luvaEsq.getZ()};
 
     return luvaEsq;

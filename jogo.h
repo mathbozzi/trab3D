@@ -35,7 +35,7 @@ public:
     bool mostrarCameraCockpit = false;
     bool ativaLuz0 = true;
     bool ativaLuz1 = true;
-    bool mostrarMinimapa = false;
+    // bool mostrarMinimapa = false;
     double velHelicoptero;
 
 

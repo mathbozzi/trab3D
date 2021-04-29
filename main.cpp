@@ -22,7 +22,10 @@ Jogo jogo;
 float velocidadeLutador = 0.2;
 float velocidadeOponente = 0.1;
 int xAntigo;
-int yAntigo;
+int yAntigo = 0;
+int botaoPress = 0;
+bool flagSoco = false;
+int contaSocoLutador = 0;
 
 //bool isDrawn = false;
 //bool desativarOponente = false;
@@ -33,9 +36,7 @@ int width = 500;
 int height = 500;
 
 // camera controls
-int lastX = 0;
-int lastY = 0;
-int buttonDown = 0;
+// int lastX = 0;
 
 void init()
 {
@@ -95,7 +96,7 @@ void display(void)
         jogo.DrawMiniMapa(width, height);
         // cockpit permanente
         int cameraAtual = jogo.camera;
-        jogo.camera = cam1; // seta a camera do cockpit
+        jogo.camera = cam4; // seta a camera do cockpit
         projecao(5, 1000, Retangulo(0, height - 200, width, 200), 60);
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw(true);
@@ -204,10 +205,10 @@ void idle()
 
     if (keystates['a'])
         // jogo.jogador.girarEsquerda();
-        jogo.jogador.angulo -=1;
+        jogo.jogador.angulo -= 1;
     if (keystates['d'])
         // jogo.jogador.girarDireita();
-        jogo.jogador.angulo +=1;
+        jogo.jogador.angulo += 1;
     if (keystates['w'])
         jogo.jogador.moverFrente(timeDifference);
     if (keystates['s'])
@@ -309,6 +310,25 @@ void idle()
     glutPostRedisplay();
 }
 
+void verificaSeAcertouSoco(Ponto p, Ponto o)
+{
+    double dist = calculaDistancia(p, o);
+
+    if (dist >= jogo.jogador.area.raio / 10 + jogo.oponente.area.raio / 2)
+    {
+        flagSoco = true;
+    }
+    else
+    {
+        if (flagSoco)
+        {
+            contaSocoLutador += 1;
+            flagSoco = false;
+        }
+    }
+    // cout << contaSocoLutador << endl;
+}
+
 void mouse(int button, int estado, int x, int y)
 {
     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
@@ -332,13 +352,14 @@ void mouse(int button, int estado, int x, int y)
 
     if (button == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN)
     {
-        lastX = x;
-        lastY = y;
-        buttonDown = 1;
+        xAntigo = x;
+        yAntigo = y;
+        botaoPress = 1;
     }
     if (button == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
     {
-        buttonDown = 0;
+        botaoPress = 0;
+
     }
 }
 
@@ -371,8 +392,13 @@ void movimentoBraco(int x, int y)
             jogo.jogador.theta2 = (90 + (x - xAntigo) * (-55 / (width / 2.0)));
             // lutadorPrincipal->MudaTheta2(135 - (x - xAntigo) * (110 / (arenaSVG->get_width() / 2)));
             Ponto pSocoDir = jogo.jogador.verificaSocoDir();
-            // Ponto p   // ponto cabeca oponente + eixo z
-            // verificaSeAcertouSocoDireito(pSocoDir, lutadorOponente);
+            Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
+            pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
+            // cout << "------" << endl;
+            // cout << pontoCabecaOponente.getX() << endl;
+            // cout << pontoCabecaOponente.getY() << endl;
+            // cout << pontoCabecaOponente.getZ() << endl;
+            verificaSeAcertouSoco(pSocoDir, pontoCabecaOponente);
         }
     }
     else
@@ -384,27 +410,30 @@ void movimentoBraco(int x, int y)
             jogo.jogador.theta4 = (90 + (x - xAntigo) * (55 / (height / 2.0)));
             // lutadorPrincipal->MudaTheta4(135 + (x - xAntigo) * (110 / (arenaSVG->get_height() / 2)));
             Ponto pSocoEsq = jogo.jogador.verificaSocoEsq();
+            Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
+            pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
+            verificaSeAcertouSoco(pSocoEsq, pontoCabecaOponente);
             // Point pSocoEsq = lutadorPrincipal->verificaSocoEsq(arenaSVG->get_width() / 2, arenaSVG->get_height() / 2, -lutadorPrincipal->ObtemTheta3(), -lutadorPrincipal->ObtemTheta4());
             // verificaSeAcertouSocoEsquerdo(pSocoEsq, lutadorOponente);
         }
     }
 
     //cameras
-    if (!buttonDown)
+    if (!botaoPress)
         return;
 
-    jogo.camYaw -= x - lastX;
-    jogo.camPitch += y - lastY;
+    jogo.camYaw -= x - xAntigo;
+    jogo.camPitch += y - yAntigo;
 
     jogo.camPitch = (int)jogo.camPitch % 360;
     if (jogo.camPitch > 150)
         jogo.camPitch = 150;
-    if (jogo.camPitch < 30)
-        jogo.camPitch = 30;
-    jogo.camYaw = (int)jogo.camYaw % 360;
+    // if (jogo.camPitch < 30)
+    //     jogo.camPitch = 30;
+    // jogo.camYaw = (int)jogo.camYaw % 360;
 
-    lastX = x;
-    lastY = y;
+    xAntigo = x;
+    yAntigo = y;
 }
 
 void keyup(unsigned char key, int x, int y)
@@ -432,6 +461,9 @@ void keyboard(unsigned char key, int x, int y)
         break;
     case '3':
         jogo.camera = cam3; // câmera que segue o jogador
+        break;
+    case '4':
+        jogo.camera = cam4; //
         break;
     // case 'e':
     //     jogo.jogador.desenharEsfera();
@@ -472,9 +504,9 @@ void keyboard(unsigned char key, int x, int y)
     case 'c':
         jogo.mostrarCameraCockpit = !jogo.mostrarCameraCockpit;
         break;
-    case 'm':
-        jogo.mostrarMinimapa = !jogo.mostrarMinimapa;
-        break;
+        // case 'm':
+        //     jogo.mostrarMinimapa = !jogo.mostrarMinimapa;
+        //     break;
         // case 'b':
         //     desativarOponente = !desativarOponente;
         //     break;

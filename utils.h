@@ -15,7 +15,7 @@ static int jogoOFF = 3;
 static int cam1 = 4;
 static int cam2 = 5;
 static int cam3 = 6;
-
+static int cam4 = 7;
 
 class Cores
 {

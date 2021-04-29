@@ -41,8 +41,6 @@ void Jogo::Draw(bool cockpitPermanente)
 
 void Jogo::DrawMiniMapa(float _w, float _h)
 {
-    if (!mostrarMinimapa)
-        return;
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -226,12 +224,11 @@ void Jogo::defineCamera(bool desenhaCockpit)
 {
     if (camera == cam3)
     {
-
         // inicial
         Ponto posicaoCamera = Ponto(0, 0, 0);
         posicaoCamera.setX(jogador.area.posicao.getX());
         posicaoCamera.setY(jogador.area.posicao.getY());
-        posicaoCamera.setZ(jogador.area.posicao.getZ()*2);
+        posicaoCamera.setZ(jogador.area.posicao.getZ() * 2);
 
         // desloca a camera em uma 'esfera virtual'
         Ponto direcaoCamera = Ponto(0, 0, 0);
@@ -261,33 +258,63 @@ void Jogo::defineCamera(bool desenhaCockpit)
     else if (camera == cam2)
     {
 
-        Ponto posicaoCamera = Ponto(0, 0, 0);
-        Ponto direcaoCamera = Ponto(0, 0, 0);
-        jogador.getInfoCanhao(posicaoCamera, direcaoCamera);
+        // Ponto posicaoCamera = Ponto(0, 0, 0);
+        // Ponto direcaoCamera = Ponto(0, 0, 0);
+        // jogador.getInfoCanhao(posicaoCamera, direcaoCamera);
 
-        // move a camera para cima do canhao
-        posicaoCamera.setZ(posicaoCamera.getZ() + 10);
-        Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
+        // // move a camera para cima do canhao
+        // posicaoCamera.setZ(posicaoCamera.getZ() + 10);
+        // Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
 
-        // posiciona a camera olhando para o jogador
-        gluLookAt(posicaoCamera.getX(), posicaoCamera.getY(), posicaoCamera.getZ(), look.getX(), look.getY(), look.getZ(), 0, 0, -1);
+        // // posiciona a camera olhando para o jogador
+        // gluLookAt(posicaoCamera.getX(), posicaoCamera.getY(), posicaoCamera.getZ(), look.getX(), look.getY(), look.getZ(), 0, 0, -1);
     }
     else if (camera == cam1)
     {
-
         Ponto posicaoCamera = jogador.getPosicao();
-        Ponto direcaoCamera = jogador.getDirecao();
+        // Ponto direcaoCamera = jogador.getDirecao();
+        Ponto direcaoCamera = Ponto(0,0,0);
 
         // move a camera para o cockpit
         posicaoCamera.setX(posicaoCamera.getX() + direcaoCamera.getX() * 15);
-        posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15);
-        posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + 25);
+        posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15 - this->jogador.area.raio / 2.0);
+        posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + this->jogador.area.raio * 2.0);
 
         Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
 
         // posiciona a camera olhando para o jogador
         gluLookAt(posicaoCamera.getX(), posicaoCamera.getY(), posicaoCamera.getZ(), look.getX(), look.getY(), look.getZ(), 0, 0, -1);
+
+        // Ponto direcaoCamera = Ponto(0, 0, 0);
+        // Ponto posicaoCamera = jogador.getPosicao();
+        // // Ponto direcaoCamera = jogador.getDirecao();
+
+        // posicaoCamera.setX(posicaoCamera.getX() + direcaoCamera.getX() * 15);
+        // posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15 - this->jogador.area.raio / 2);
+        // posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + this->jogador.area.raio * 2);
+
+        // Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
+
+        // // posiciona a camera olhando para o jogador
+        // gluLookAt(posicaoCamera.getX(), posicaoCamera.getY(), posicaoCamera.getZ(), look.getX(), look.getY(), look.getZ(), 0, 0, -1);
     }
+    // else if (camera == cam4)
+    // {
+    //     // Ponto posicaoCamera = Ponto(0, 0, 0);
+    //     // Ponto direcaoCamera = Ponto(0, 0, 0);
+    //     Ponto posicaoCamera = oponente.getPosicao();
+    //     Ponto direcaoCamera = oponente.getDirecao();
+
+    //     // move a camera para o cockpit
+    //     posicaoCamera.setX(posicaoCamera.getX() + direcaoCamera.getX() * 15);
+    //     posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15 + -this->oponente.area.raio / 2);
+    //     posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + this->oponente.area.raio * 2);
+
+    //     Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
+
+    //     // posiciona a camera olhando para o lutador
+    //     gluLookAt(posicaoCamera.getX(), posicaoCamera.getY(), posicaoCamera.getZ(), look.getX(), look.getY(), look.getZ(), 0, 0, -1);
+    // }
 
     if (!desenhaCockpit)
         return;
@@ -297,8 +324,8 @@ void Jogo::defineCamera(bool desenhaCockpit)
 
     // move a camera para o cockpit
     posicaoCamera.setX(posicaoCamera.getX() + direcaoCamera.getX() * 15);
-    posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15);
-    posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + 25);
+    posicaoCamera.setY(posicaoCamera.getY() + direcaoCamera.getY() * 15 - this->jogador.area.raio / 2.0);
+    posicaoCamera.setZ(posicaoCamera.getZ() + direcaoCamera.getZ() * 15 + this->jogador.area.raio * 2.0);
 
     Ponto look = Ponto(posicaoCamera.getX() + direcaoCamera.getX(), posicaoCamera.getY() + direcaoCamera.getY(), posicaoCamera.getZ() + direcaoCamera.getZ());
 
