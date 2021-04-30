@@ -52,7 +52,7 @@ public:
     Ponto rotated(Ponto p, float angle);
     Ponto rotatedZ(Ponto p, float angle);
 
-    void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
+    // void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
     // bool desenhaEsfera = false;
 
     // float anguloHelice;

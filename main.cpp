@@ -26,17 +26,16 @@ int yAntigo = 0;
 int botaoPress = 0;
 bool flagSoco = false;
 int contaSocoLutador = 0;
+static char pontos[100];
+void *font = GLUT_BITMAP_9_BY_15;
 
 //bool isDrawn = false;
 //bool desativarOponente = false;
-int mouseUltimoX;
-int mouseUltimoY;
+// int mouseUltimoX;
+// int mouseUltimoY;
 
 int width = 500;
 int height = 500;
-
-// camera controls
-// int lastX = 0;
 
 void init()
 {
@@ -54,15 +53,6 @@ void init()
     jogo.texturaCeu = LoadTextureRAW("images/stars1.bmp");
     // arena.texturas["chao"] = Textura("grama.bmp");
     // arena.texturas["tiro"] = Textura("lava.bmp");
-    // arena.texturas["objetos"] = Textura("earth.bmp");
-    // arena.texturas["posto"] = Textura("ring1.bmp");
-    // arena.texturas["ceu"] = Textura("ceu-claro.bmp");
-    // arena.texturas["jogadorCorpo"] = Textura("azul.bmp");
-    // arena.texturas["jogadorCanhao"] = Textura("azul.bmp");
-    // arena.texturas["jogadorHelice"] = Textura("azul-claro.bmp");
-    // arena.texturas["inimigoCorpo"] = Textura("vermelho.bmp");
-    // arena.texturas["inimigoCanhao"] = Textura("vermelho.bmp");
-    // arena.texturas["inimigoHelice"] = Textura("vermelho-claro.bmp");
 }
 
 void projecao(double _near, double _far, Retangulo viewport, double angulo)
@@ -79,35 +69,102 @@ void projecao(double _near, double _far, Retangulo viewport, double angulo)
     glLoadIdentity();
 }
 
+void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char *text, double r, double g, double b)
+{
+    //Push to recover original attributes
+    glPushAttrib(GL_ENABLE_BIT);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    //Draw text in the x, y, z position
+    glColor3f(r, g, b);
+    glRasterPos3f(x, y, z);
+    const char *tmpStr;
+    tmpStr = text;
+    while (*tmpStr)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *tmpStr);
+        tmpStr++;
+    }
+    glPopAttrib();
+}
+
+void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, double b)
+{
+    //Draw text considering a 2D space (disable all 3d features)
+    glMatrixMode(GL_PROJECTION);
+    //Push to recover original PROJECTION MATRIX
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, 1, 0, 1, -1, 1);
+    RasterChars(x, y, 0, text, r, g, b);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+}
+
 void display(void)
 {
     glClearColor(1, 1, 1, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    if (jogo.lutaAtual == jogadorGanhou || jogo.lutaAtual == oponenteGanhou)
+    if (jogo.lutaAtual == jogadorGanhou)
     {
-        glViewport(0, 0, width, height);
-        glLoadIdentity();
-        jogo.DrawResultado();
-    }
-    else
-    {
+        // glViewport(0, 0, width, height);
+        // glLoadIdentity();
+        sprintf(pontos, "VOCE GANHOU! PARABENS! :D");
+        char *pontuacao = pontos;
+        PrintText(0.05, 0.05, pontuacao, 0, 0, 0);
         jogo.DrawMiniMapa(width, height);
-        // cockpit permanente
+
         int cameraAtual = jogo.camera;
-        jogo.camera = cam4; // seta a camera do cockpit
-        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 60);
+        jogo.camera = cam4; //camera do oponente
+        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw(true);
 
-        // câmera escolhida
         jogo.camera = cameraAtual;
         projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw();
     }
+    else if (jogo.lutaAtual == oponenteGanhou)
+    {
+        // glViewport(0, 0, width, height);
+        // glLoadIdentity();
+        sprintf(pontos, "VOCE PERDEU! TENTE NOVAMENTE! :C");
+        char *pontuacao = pontos;
+        PrintText(0.05, 0.05, pontuacao, 0, 0, 0);
+        jogo.DrawMiniMapa(width, height);
 
+        int cameraAtual = jogo.camera;
+        jogo.camera = cam4; //camera do oponente
+        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        jogo.Draw(true);
+
+        jogo.camera = cameraAtual;
+        projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        jogo.Draw();
+    }
+    else
+    {
+        jogo.DrawMiniMapa(width, height);
+        sprintf(pontos, "Lutador: %2d x %2d Oponente", contaSocoLutador, 0);
+        char *pontuacao = pontos;
+        PrintText(0.05, 0.05, pontuacao, 0, 0, 0);
+        // câmera escolhida
+        int cameraAtual = jogo.camera;
+        jogo.camera = cam4; //camera do oponente
+        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        jogo.Draw(true);
+
+        jogo.camera = cameraAtual;
+        projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        jogo.Draw();
+    }
     glutSwapBuffers();
     glutPostRedisplay();
 }
@@ -137,6 +194,11 @@ void idle()
     {
         glutPostRedisplay();
         return;
+    }
+
+    if (contaSocoLutador == 10)
+    {
+        jogo.lutaAtual = jogadorGanhou;
     }
 
     // // verifica se o jogador jogadorGanhou (restadou todos objetos e matou todos inimigos)
@@ -329,14 +391,13 @@ void verificaSeAcertouSoco(Ponto p, Ponto o)
     // cout << contaSocoLutador << endl;
 }
 
-void mouse(int button, int estado, int x, int y)
+void mouse(int botao, int estado, int x, int y)
 {
     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
-    if (button == GLUT_LEFT_BUTTON && jogo.lutaAtual != jogoOFF)
+    if (botao == GLUT_LEFT_BUTTON && jogo.lutaAtual != jogoOFF)
     {
-        // cout << x << " " << y << endl;
         if (estado == GLUT_DOWN)
         {
             xAntigo = x;
@@ -350,16 +411,15 @@ void mouse(int button, int estado, int x, int y)
         }
     }
 
-    if (button == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN)
+    if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN)
     {
         xAntigo = x;
         yAntigo = y;
         botaoPress = 1;
     }
-    if (button == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
+    if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
     {
         botaoPress = 0;
-
     }
 }
 
@@ -386,18 +446,11 @@ void movimentoBraco(int x, int y)
     {
         if (x - xAntigo <= width / 2.0)
         {
-            // cout << x << " " << xAntigo << "  " << x - xAntigo << endl;
             jogo.jogador.theta1 = (15 + (x - xAntigo) * (65 / (width / 2.0)));
-            // lutadorPrincipal->MudaTheta1(-45 + (x - xAntigo) * (135 / (arenaSVG->get_width() / 2)));
             jogo.jogador.theta2 = (90 + (x - xAntigo) * (-55 / (width / 2.0)));
-            // lutadorPrincipal->MudaTheta2(135 - (x - xAntigo) * (110 / (arenaSVG->get_width() / 2)));
             Ponto pSocoDir = jogo.jogador.verificaSocoDir();
             Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
             pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
-            // cout << "------" << endl;
-            // cout << pontoCabecaOponente.getX() << endl;
-            // cout << pontoCabecaOponente.getY() << endl;
-            // cout << pontoCabecaOponente.getZ() << endl;
             verificaSeAcertouSoco(pSocoDir, pontoCabecaOponente);
         }
     }
@@ -406,19 +459,14 @@ void movimentoBraco(int x, int y)
         if ((x - xAntigo >= (-height / 2.0)))
         {
             jogo.jogador.theta3 = (15 - (x - xAntigo) * (65 / (height / 2.0)));
-            // lutadorPrincipal->MudaTheta3(-45 - (x - xAntigo) * (135 / (arenaSVG->get_height() / 2)));
             jogo.jogador.theta4 = (90 + (x - xAntigo) * (55 / (height / 2.0)));
-            // lutadorPrincipal->MudaTheta4(135 + (x - xAntigo) * (110 / (arenaSVG->get_height() / 2)));
             Ponto pSocoEsq = jogo.jogador.verificaSocoEsq();
             Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
             pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
             verificaSeAcertouSoco(pSocoEsq, pontoCabecaOponente);
-            // Point pSocoEsq = lutadorPrincipal->verificaSocoEsq(arenaSVG->get_width() / 2, arenaSVG->get_height() / 2, -lutadorPrincipal->ObtemTheta3(), -lutadorPrincipal->ObtemTheta4());
-            // verificaSeAcertouSocoEsquerdo(pSocoEsq, lutadorOponente);
-        }
+       }
     }
 
-    //cameras
     if (!botaoPress)
         return;
 
@@ -444,8 +492,6 @@ void keyup(unsigned char key, int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {
     keystates[key] = true;
-    if (key == 27)
-        exit(0);
 
     static bool textureEnabled = true;
     static bool lightingEnabled = true;
@@ -460,8 +506,10 @@ void keyboard(unsigned char key, int x, int y)
         jogo.camera = cam2; // câmera no canhão
         break;
     case '3':
+    {
         jogo.camera = cam3; // câmera que segue o jogador
-        break;
+    }
+    break;
     case '4':
         jogo.camera = cam4; //
         break;
@@ -504,12 +552,34 @@ void keyboard(unsigned char key, int x, int y)
     case 'c':
         jogo.mostrarCameraCockpit = !jogo.mostrarCameraCockpit;
         break;
-        // case 'm':
-        //     jogo.mostrarMinimapa = !jogo.mostrarMinimapa;
-        //     break;
-        // case 'b':
-        //     desativarOponente = !desativarOponente;
-        //     break;
+    case '+':
+    {
+        if (jogo.camera == cam3)
+        {
+            int inc = jogo.camDistanciaJogador >= (jogo.jogador.area.raio * 5.8) ? 0 : 1;
+            jogo.camDistanciaJogador += inc * 2;
+        }
+        break;
+    }
+    case '-':
+    {
+        if (jogo.camera == cam3)
+        {
+            int inc = jogo.camDistanciaJogador <= 5 ? 0 : 1;
+            jogo.camDistanciaJogador -= inc * 2;
+        }
+
+        break;
+    }
+    // case 'm':
+    //     jogo.mostrarMinimapa = !jogo.mostrarMinimapa;
+    //     break;
+    // case 'b':
+    //     desativarOponente = !desativarOponente;
+    //     break;
+    case 27:
+        exit(0);
+        break;
     }
 }
 

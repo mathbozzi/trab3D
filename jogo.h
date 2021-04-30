@@ -31,10 +31,10 @@ public:
     void DrawArena();
     void DrawMiniMapa(float _w, float _h);
     void DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
-    void DrawResultado();
     bool mostrarCameraCockpit = false;
     bool ativaLuz0 = true;
     bool ativaLuz1 = true;
+    // void DrawResultado();
     // bool mostrarMinimapa = false;
     double velHelicoptero;
 

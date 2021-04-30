@@ -313,6 +313,12 @@ Ponto Lutador::rotated(Ponto p, float angle)
     return rotated;
 }
 
+Ponto Lutador::getDirecao()
+{
+    return Ponto(cos((angulo)*M_PI / 180.0), sin((angulo)*M_PI / 180.0), 0);
+}
+
+
 // Ponto Lutador::rotatedZ(Ponto p, float angle)
 // {
 //     Ponto rotated = {0, 0, 0};
@@ -625,24 +631,24 @@ void Lutador::moverTras(GLdouble timeDiff)
 //     return Tiro(pontaCanhao, direcao, id, this->velocidadeTiro);
 // }
 
-void Lutador::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
-{
-    double degree2rad = M_PI / 180.0;
+// void Lutador::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
+// {
+//     double degree2rad = M_PI / 180.0;
 
-    double direcao_x = cos((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
-    double direcao_y = sin((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
-    double direcao_z = cos((anguloCanhaoPitch + 90) * degree2rad);
-    direcao = Ponto(direcao_x, direcao_y, direcao_z);
+//     double direcao_x = cos((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
+//     double direcao_y = sin((anguloCanhaoYaw + angulo) * degree2rad) * sin((anguloCanhaoPitch + 90) * degree2rad);
+//     double direcao_z = cos((anguloCanhaoPitch + 90) * degree2rad);
+//     direcao = Ponto(direcao_x, direcao_y, direcao_z);
 
-    Ponto baseCanhao = Ponto((area.raio * 4 / 9) * cos(angulo * degree2rad), (area.raio * 4 / 9) * sin(angulo * degree2rad), 0);
+//     Ponto baseCanhao = Ponto((area.raio * 4 / 9) * cos(angulo * degree2rad), (area.raio * 4 / 9) * sin(angulo * degree2rad), 0);
 
-    Ponto pontaCanhaoInicial = Ponto(0, 0, 0);
-    double tamanho = area.raio * 2 / 3;
-    pontaCanhaoInicial.setX(baseCanhao.getX() + tamanho * cos((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad));
-    pontaCanhaoInicial.setY(baseCanhao.getY() + tamanho * sin((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad));
-    pontaCanhaoInicial.setZ(baseCanhao.getY() + tamanho * cos((anguloCanhaoPitch + 90) * M_PI / 180.0));
-    pontaCanhao = Ponto(this->area.posicao.getX() + pontaCanhaoInicial.getX(), this->area.posicao.getY() + pontaCanhaoInicial.getY(), this->area.posicao.getZ() + pontaCanhaoInicial.getZ());
-}
+//     Ponto pontaCanhaoInicial = Ponto(0, 0, 0);
+//     double tamanho = area.raio * 2 / 3;
+//     pontaCanhaoInicial.setX(baseCanhao.getX() + tamanho * cos((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad));
+//     pontaCanhaoInicial.setY(baseCanhao.getY() + tamanho * sin((anguloCanhaoYaw + angulo) * M_PI / 180.0) * sin((anguloCanhaoPitch + 90) * degree2rad));
+//     pontaCanhaoInicial.setZ(baseCanhao.getY() + tamanho * cos((anguloCanhaoPitch + 90) * M_PI / 180.0));
+//     pontaCanhao = Ponto(this->area.posicao.getX() + pontaCanhaoInicial.getX(), this->area.posicao.getY() + pontaCanhaoInicial.getY(), this->area.posicao.getZ() + pontaCanhaoInicial.getZ());
+// }
 
 // void Lutador::ajustarAngulo()
 // {
@@ -666,7 +672,3 @@ void Lutador::getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao)
 //         anguloCanhaoPitch = 45;
 // }
 
-Ponto Lutador::getDirecao()
-{
-    return Ponto(cos((angulo)*M_PI / 180.0), sin((angulo)*M_PI / 180.0), 0);
-}
