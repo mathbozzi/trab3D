@@ -1,5 +1,5 @@
-#ifndef ARENA_H
-#define ARENA_H
+#ifndef JOGO_H
+#define JOGO_H
 
 #include <iostream>
 #include <map>
@@ -18,7 +18,7 @@ public:
     Retangulo ceu;
     Lutador jogador;
     Lutador oponente;
-    GLuint texturaChao, texturaParede, texturaCeu;
+    GLuint texturaChao, texturaParede1, texturaParede2,texturaParede3,texturaParede4, texturaCeuDia,texturaCeuNoite;
     int camera;
     int lutaAtual;
     double camYaw;
@@ -36,7 +36,7 @@ public:
     bool ativaLuz1 = true;
     // void DrawResultado();
     // bool mostrarMinimapa = false;
-    double velHelicoptero;
+    // double velHelicoptero;
 
 
     // void desenhaOrigemDoSC();
@@ -56,4 +56,4 @@ public:
     // double velTiro;
 };
 
-#endif // ARENA_H
+#endif // JOGO_H

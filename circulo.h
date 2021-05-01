@@ -1,5 +1,5 @@
-#ifndef CIRCLE_H
-#define CIRCLE_H
+#ifndef CIRCULO_H
+#define CIRCULO_H
 
 
 #include <math.h>
@@ -31,4 +31,4 @@ class Circulo
     
 };
 
-#endif // CIRCLE_H
+#endif // CIRCULO_H

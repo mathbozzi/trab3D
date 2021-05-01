@@ -45,30 +45,26 @@ void init()
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 
-    // carrega as texturas
-    jogo.jogador.textura = LoadTextureRAW("images/earth.bmp");
-    jogo.oponente.textura = LoadTextureRAW("images/lava.bmp");
-    jogo.texturaChao = LoadTextureRAW("images/madeira.bmp");
-    jogo.texturaParede = LoadTextureRAW("images/ring1.bmp");
-    jogo.texturaCeu = LoadTextureRAW("images/stars1.bmp");
-    // arena.texturas["chao"] = Textura("grama.bmp");
-    // arena.texturas["tiro"] = Textura("lava.bmp");
+    jogo.jogador.texturaCabeca = LoadTextureRAW("textura/cabeca.bmp");
+    jogo.jogador.texturaCamisa = LoadTextureRAW("textura/camisa3.bmp");
+    jogo.jogador.texturaPele = LoadTextureRAW("textura/pele.bmp");
+    jogo.jogador.texturaBermuda = LoadTextureRAW("textura/bermuda.bmp");
+    jogo.jogador.texturaLuva = LoadTextureRAW("textura/luva1.bmp");
+    jogo.oponente.texturaCabeca = LoadTextureRAW("textura/rostoOponente.bmp");
+    jogo.oponente.texturaCamisa = LoadTextureRAW("textura/camisa1.bmp");
+    jogo.oponente.texturaBermuda = LoadTextureRAW("textura/bermudaOponente.bmp");
+    jogo.oponente.texturaPele = LoadTextureRAW("textura/pele.bmp");
+    jogo.oponente.texturaLuva = LoadTextureRAW("textura/luva2.bmp");
+    jogo.texturaParede1 = LoadTextureRAW("textura/candrade.bmp");
+    jogo.texturaParede2 = LoadTextureRAW("textura/candrade2.bmp");
+    jogo.texturaParede3 = LoadTextureRAW("textura/candrade3.bmp");
+    jogo.texturaParede4 = LoadTextureRAW("textura/candrade4.bmp");
+    jogo.texturaChao = LoadTextureRAW("textura/gramaca.bmp");
+    jogo.texturaCeuDia = LoadTextureRAW("textura/nublado.bmp");
+    jogo.texturaCeuNoite = LoadTextureRAW("textura/stars1.bmp");
 }
 
-void projecao(double _near, double _far, Retangulo viewport, double angulo)
-{
-    glMatrixMode(GL_PROJECTION);
-
-    glLoadIdentity();
-    double _ratio = viewport.largura / viewport.altura;
-    gluPerspective(angulo, _ratio, _near, _far);
-
-    glMatrixMode(GL_MODELVIEW);
-
-    glViewport(viewport.posicao.getX(), viewport.posicao.getY(), viewport.largura, viewport.altura);
-    glLoadIdentity();
-}
-
+// codigo lab terra e sol
 void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char *text, double r, double g, double b)
 {
     //Push to recover original attributes
@@ -87,7 +83,7 @@ void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char *text, double r, do
     }
     glPopAttrib();
 }
-
+// codigo lab terra e sol
 void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, double b)
 {
     //Draw text considering a 2D space (disable all 3d features)
@@ -101,6 +97,20 @@ void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, doubl
     glMatrixMode(GL_MODELVIEW);
 }
 
+// void projecao(double _near, double _far, Retangulo viewport, double angulo)
+// {
+//     glMatrixMode(GL_PROJECTION);
+
+//     glLoadIdentity();
+//     double _ratio = viewport.largura / viewport.altura;
+//     gluPerspective(angulo, _ratio, _near, _far);
+
+//     glMatrixMode(GL_MODELVIEW);
+
+//     glViewport(viewport.posicao.getX(), viewport.posicao.getY(), viewport.largura, viewport.altura);
+//     glLoadIdentity();
+// }
+
 void display(void)
 {
     glClearColor(1, 1, 1, 1.0);
@@ -109,41 +119,69 @@ void display(void)
 
     if (jogo.lutaAtual == jogadorGanhou)
     {
-        // glViewport(0, 0, width, height);
-        // glLoadIdentity();
         sprintf(pontos, "VOCE GANHOU! PARABENS! :D");
         char *pontuacao = pontos;
-        PrintText(0.05, 0.05, pontuacao, 0, 0, 0);
+        PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
         jogo.DrawMiniMapa(width, height);
 
         int cameraAtual = jogo.camera;
         jogo.camera = cam4; //camera do oponente
-        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        // projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(70, width / 200, 5, 1000);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0, height - 200, width, 200);
+            glLoadIdentity();
+        }
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw(true);
 
         jogo.camera = cameraAtual;
-        projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        // projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(90, width / (height - 200), 5, 1000);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0, 0, width, height - 200);
+            glLoadIdentity();
+        }
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw();
     }
     else if (jogo.lutaAtual == oponenteGanhou)
     {
-        // glViewport(0, 0, width, height);
-        // glLoadIdentity();
         sprintf(pontos, "VOCE PERDEU! TENTE NOVAMENTE! :C");
         char *pontuacao = pontos;
-        PrintText(0.05, 0.05, pontuacao, 0, 0, 0);
+        PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
         jogo.DrawMiniMapa(width, height);
 
         int cameraAtual = jogo.camera;
         jogo.camera = cam4; //camera do oponente
-        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        // projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(70, width / 200, 5, 1000);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0, height - 200, width, 200);
+            glLoadIdentity();
+        }
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw(true);
 
         jogo.camera = cameraAtual;
-        projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        // projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(90, width / (height - 200), 5, 1000);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0, 0, width, height - 200);
+            glLoadIdentity();
+        }
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw();
     }
@@ -152,16 +190,30 @@ void display(void)
         jogo.DrawMiniMapa(width, height);
         sprintf(pontos, "Lutador: %2d x %2d Oponente", contaSocoLutador, 0);
         char *pontuacao = pontos;
-        PrintText(0.05, 0.05, pontuacao, 0, 0, 0);
-        // câmera escolhida
+        PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
+
         int cameraAtual = jogo.camera;
-        jogo.camera = cam4; //camera do oponente
-        projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        jogo.camera = cam4;
+        {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(70, width / 200, 5, 1000);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0, height - 200, width, 200);
+            glLoadIdentity();
+        }
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw(true);
 
         jogo.camera = cameraAtual;
-        projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
+        {
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(90, width / (height - 200), 5, 1000);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0, 0, width, height - 200);
+            glLoadIdentity();
+        }
         glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
         jogo.Draw();
     }
@@ -177,10 +229,7 @@ void reshape(int w, int h)
 
 void idle()
 {
-
     static GLdouble previousTime = 0;
-    // static GLdouble accTimeMover = 0;
-    // static GLdouble accTimeAtirar = 0;
     GLdouble currentTime;
     GLdouble timeDifference;
 
@@ -189,40 +238,20 @@ void idle()
     timeDifference = currentTime - previousTime; // Elapsed time from the previous frame.
     previousTime = currentTime;                  //Update previous time
 
-    // não precisa atualizar nada, se a partida não estiver em andamento
+    //para o jogo
     if (jogo.lutaAtual != jogoON)
     {
         glutPostRedisplay();
         return;
     }
-
+    // verifica se o jogador ganhou
     if (contaSocoLutador == 10)
     {
         jogo.lutaAtual = jogadorGanhou;
+        return;
     }
 
-    // // verifica se o jogador jogadorGanhou (restadou todos objetos e matou todos inimigos)
-    // if (jogo.lutaAtual == jogoON && jogo.jogador.objetosResgatados == jogo.nObjetos && jogo.inimigos.size() == 0) {
-    //     jogo.lutaAtual = jogadorGanhou;
-    //     cout << "Parabéns! Você jogadorGanhou a partida!!!" << endl;
-    //     return;
-    // }
-
-    // verifica se o jogador oponenteGanhou por causa da falta de combustível
-    // if (jogo.jogador.getNivelCombustivel() <= 0) {
-    //     jogo.lutaAtual = oponenteGanhou;
-    //     cout << "Você oponenteGanhou por falta de combustível! Que vergonha..." << endl;
-    //     return;
-    // }
-
-    // consumir combustível e atualizar mostrador
-    //jogo.jogador.consumirCombustivel(timeDifference);
-
-    // // reabastecimento
-    // if (!jogo.jogador.estaVoando() && jogo.postoAbastecimento.estaDentro(jogo.jogador.getPosicao())) {
-    //     if (jogo.jogador.getNivelCombustivel() != 1.0) cout << "O jogador reabasteceu! (" << (jogo.jogador.getNivelCombustivel() * 100.0) << "% -> 100%)" << endl;
-    //     jogo.jogador.reabastercer();
-    // }
+    // verifica se o oponente ganhou
 
     // interação dos tiros
     // for (unsigned int i = 0; i < jogo.tiros.size(); i++) {
@@ -376,7 +405,7 @@ void verificaSeAcertouSoco(Ponto p, Ponto o)
 {
     double dist = calculaDistancia(p, o);
 
-    if (dist >= jogo.jogador.area.raio / 10 + jogo.oponente.area.raio / 2)
+    if (dist >= jogo.jogador.area.raio / (jogo.jogador.area.raio *0.275) + jogo.oponente.area.raio /2.0 ) // mudar aqui
     {
         flagSoco = true;
     }
@@ -464,7 +493,7 @@ void movimentoBraco(int x, int y)
             Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
             pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
             verificaSeAcertouSoco(pSocoEsq, pontoCabecaOponente);
-       }
+        }
     }
 
     if (!botaoPress)
@@ -500,7 +529,7 @@ void keyboard(unsigned char key, int x, int y)
     switch (key)
     {
     case '1':
-        jogo.camera = cam1; // câmera no cockpit
+        jogo.camera = cam1; 
         break;
     case '2':
         jogo.camera = cam2; // câmera no canhão
@@ -513,9 +542,6 @@ void keyboard(unsigned char key, int x, int y)
     case '4':
         jogo.camera = cam4; //
         break;
-    // case 'e':
-    //     jogo.jogador.desenharEsfera();
-    //     break;
     case 't':
         if (textureEnabled)
             glDisable(GL_TEXTURE_2D);
@@ -556,7 +582,7 @@ void keyboard(unsigned char key, int x, int y)
     {
         if (jogo.camera == cam3)
         {
-            int inc = jogo.camDistanciaJogador >= (jogo.jogador.area.raio * 5.8) ? 0 : 1;
+            int inc = jogo.camDistanciaJogador >= (jogo.jogador.area.raio * 4.65) ? 0 : 1;
             jogo.camDistanciaJogador += inc * 2;
         }
         break;
@@ -663,7 +689,7 @@ void trataXML(const char *diretorio)
 
     // monta a jogo
     jogo.arena = arena;
-    jogo.camDistanciaJogador = 5 * (personagem.raio);
+    jogo.camDistanciaJogador = 4.65 * (personagem.raio);
 
     //jogo.postoAbastecimento = postoAbastecimento;
     //jogo.objetosResgate = objetosResgate;

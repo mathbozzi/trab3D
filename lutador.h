@@ -1,5 +1,5 @@
-#ifndef HELICOPTERO_H
-#define HELICOPTERO_H
+#ifndef LUTADOR_H
+#define LUTADOR_H
 
 #include <GL/glut.h>
 #include <math.h>
@@ -42,7 +42,11 @@ public:
     int pernaIndo = true;
     float velocidade;
     float anguloCanhaoYaw, anguloCanhaoPitch;
-    GLuint textura;
+    GLuint texturaPele;
+    GLuint texturaLuva;
+    GLuint texturaCabeca;
+    GLuint texturaCamisa;
+    GLuint texturaBermuda;
     Ponto getPosicao() { return area.posicao; };
     Ponto getDirecao();
     Ponto getProximaPosicao(GLdouble timeDiff);
@@ -90,4 +94,4 @@ public:
 };
 //void displayCabeca(GLuint textureSun);
 
-#endif // HELICOPTERO_H
+#endif // LUTADOR_H

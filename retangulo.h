@@ -1,5 +1,5 @@
-#ifndef RECT_H
-#define RECT_H
+#ifndef RETANGULO_H
+#define RETANGULO_H
 
 #include <vector>
 #include <GL/glut.h>
@@ -30,4 +30,4 @@ public:
     // std::vector<Ponto> getVertices();
 };
 
-#endif // RECT_H
+#endif // RETANGULO_H

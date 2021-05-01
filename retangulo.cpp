@@ -88,7 +88,7 @@ void Retangulo::DrawArestas()
 
     //  glPointSize(strokeLargura);
     glBegin(GL_LINE_LOOP);
-    Cores c = Cores(0.0,0.0,0.0);
+    Cores c = Cores(1.0,1.0,1.0);
     glColor3f(c.getCorR(), c.getCorG(), c.getCorB());
     for (Ponto v : vertices)
         glVertex2f(v.getX(), v.getY());

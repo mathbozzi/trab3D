@@ -73,7 +73,7 @@ void Jogo::DrawMiniMapa(float _w, float _h)
 
 void Jogo::DrawArena()
 {
-    int alturaArena = jogador.area.raio * 7;
+    int alturaArena = jogador.area.raio * 6;
     // Textura *texturaParede = &texturas["posto"];
 
     glPushMatrix();
@@ -90,7 +90,7 @@ void Jogo::DrawArena()
             ceu = arena;
             ceu.posicao.setZ(-alturaArena); // sinal negativo significa inversão da Normal
             // ceu.fatorRepeticaoTextura = 1;
-            ceu.Draw(this->texturaCeu, {1, 1, 1});
+            ceu.Draw(this->texturaCeuDia, {1, 1, 1});
         }
         glPopMatrix();
 
@@ -99,7 +99,7 @@ void Jogo::DrawArena()
         {
             Retangulo parede1 = Retangulo(-alturaArena, 0, alturaArena, arena.altura);
             glRotatef(90, 0, 1, 0);
-            parede1.Draw(this->texturaParede, {0, 1, 1});
+            parede1.Draw(this->texturaParede3, {0, 1, 1});
         }
         glPopMatrix();
 
@@ -107,7 +107,7 @@ void Jogo::DrawArena()
         {
             Retangulo parede2 = Retangulo(0, -alturaArena, arena.largura, alturaArena);
             glRotatef(-90, 1, 0, 0);
-            parede2.Draw(this->texturaParede, {0, 1, 1});
+            parede2.Draw(this->texturaParede2, {0, 1, 1});
         }
         glPopMatrix();
 
@@ -116,7 +116,7 @@ void Jogo::DrawArena()
             Retangulo parede3 = Retangulo(0, 0, alturaArena, arena.altura);
             glTranslatef(arena.largura, 0, 0);
             glRotatef(-90, 0, 1, 0);
-            parede3.Draw(this->texturaParede, {0, 1, 1});
+            parede3.Draw(this->texturaParede1, {0, 1, 1});
         }
         glPopMatrix();
 
@@ -125,7 +125,7 @@ void Jogo::DrawArena()
             Retangulo parede4 = Retangulo(0, 0, arena.largura, alturaArena);
             glTranslatef(0, arena.altura, 0);
             glRotatef(90, 1, 0, 0);
-            parede4.Draw(this->texturaParede, {0, 1, 1});
+            parede4.Draw(this->texturaParede4, {0, 1, 1});
         }
         glPopMatrix();
 
