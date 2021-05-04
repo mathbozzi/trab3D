@@ -23,9 +23,12 @@ float velocidadeLutador = 0.2;
 float velocidadeOponente = 0.1;
 int xAntigo;
 int yAntigo = 0;
-int botaoPress = 0;
+int botaoDirPress = 0;
 bool flagSoco = false;
+bool flagSoco2 = true;
+bool socoOponente = false;
 int contaSocoLutador = 0;
+int contaSocoOponente = 0;
 static char pontos[100];
 void *font = GLUT_BITMAP_9_BY_15;
 
@@ -185,7 +188,7 @@ void display(void)
     else
     {
         jogo.DrawMiniMapa(width, height);
-        sprintf(pontos, "Lutador: %2d x %2d Oponente", contaSocoLutador, 0);
+        sprintf(pontos, "Lutador: %2d x %2d Oponente", contaSocoLutador, contaSocoOponente);
         char *pontuacao = pontos;
         PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
 
@@ -224,6 +227,48 @@ void reshape(int w, int h)
     height = h;
 }
 
+void verificaSeAcertouSoco(Ponto p, Ponto o)
+{
+    double dist = calculaDistancia(p, o);
+
+    cout << dist << endl;
+    cout << jogo.jogador.area.raio / (jogo.jogador.area.raio * 0.275) + jogo.oponente.area.raio / 2.0 << endl;
+    if (dist >= jogo.jogador.area.raio / (jogo.jogador.area.raio * 0.275) + jogo.oponente.area.raio / 2.0) // mudar aqui
+    {
+        flagSoco = true;
+    }
+    else
+    {
+        if (flagSoco)
+        {
+            contaSocoLutador += 1;
+            flagSoco = false;
+        }
+    }
+    // cout << contaSocoLutador << endl;
+}
+
+void verificaSeAcertouSocoOponente(Ponto p, Ponto o)
+{
+    double dist = calculaDistancia(p, o);
+
+    // cout << dist << endl;
+    // cout << jogo.oponente.area.raio / (jogo.oponente.area.raio * 0.275) + jogo.oponente.area.raio / 2.0 << endl;
+    if (dist >= jogo.oponente.area.raio / (jogo.oponente.area.raio * 0.275) + jogo.jogador.area.raio / 2.0) // mudar aqui
+    {
+        flagSoco2 = true;
+    }
+    else
+    {
+        if (flagSoco2)
+        {
+            contaSocoOponente += 1;
+            flagSoco2 = false;
+        }
+    }
+    // cout << contaSocoLutador << endl;
+}
+
 void idle()
 {
     static GLdouble previousTime = 0;
@@ -249,60 +294,20 @@ void idle()
     }
 
     // verifica se o oponente ganhou
-
-    // interação dos tiros
-    // for (unsigned int i = 0; i < jogo.tiros.size(); i++) {
-
-    //     // remove os tiros que não estão dentro da janela, senão apenas os move
-    //     if (jogo.estaDentro(jogo.tiros[i])) jogo.tiros[i].Mover(timeDifference);
-    //     else {
-    //         jogo.tiros.erase(jogo.tiros.begin() + i);
-    //         cout << "1 tiro saiu da tela! Restam " << jogo.tiros.size() << " tiros na jogo..." << endl;
-    //     }
-    //
-    //     // verifica se algum inimigo foi atingido pelos tiros do jogador
-    //     for (unsigned int j = 0; j < jogo.inimigos.size(); j++) {
-    //         if (jogo.tiros[i].id_jogador == "Jogador" && jogo.inimigos[j].area.estaDentro(jogo.tiros[i].posicao) && jogo.inimigos[j].estaVoando()){
-    //             jogo.inimigos.erase(jogo.inimigos.begin() + j);
-    //             cout << "1 inimigo foi destruido! Restam " << jogo.inimigos.size() << " inimigos na jogo..." << endl;
-    //             jogo.tiros.erase(jogo.tiros.begin() + i);
-    //         }
-    //     }
-    //
-    //     // verifica se algum tiro inimigo acertou o jogador e declara derrota
-    //     if (jogo.tiros[i].id_jogador == "Inimigo" && jogo.jogador.area.estaDentro(jogo.tiros[i].posicao) && jogo.jogador.estaVoando()){
-    //         jogo.lutaAtual = oponenteGanhou;
-    //         cout << "Você foi atingido por um tiro inimigo!" << endl;
-    //         // mostra o tiro que acertou o jogador em vermelho
-    //         jogo.tiros[i].setCor(Cor("darkred"));
-    //     }
-    // }
-
-    // ação de resgate
-    // for (unsigned int i = 0; i < jogo.objetosResgate.size(); i++) {
-    //     if (jogo.jogador.resgatar(jogo.objetosResgate[i])) {
-    //         jogo.objetosResgate.erase(jogo.objetosResgate.begin() + i);
-    //         cout << "1 objeto foi resgatado! Restam " << jogo.objetosResgate.size() << " objetos na jogo..." << endl;
-    //     }
-    // }
-
-    //jogo.jogador.girarHelice();
-    //for (unsigned int i = 0; i < jogo.inimigos.size(); i++) jogo.inimigos[i].girarHelice();
-
-    // jogo.oponente.moverFrente(timeDifference);
+    if (contaSocoOponente == 10)
+    {
+        jogo.lutaAtual = oponenteGanhou;
+        return;
+    }
 
     if (keystates['a'])
-        // jogo.jogador.girarEsquerda();
         jogo.jogador.angulo -= 1;
     if (keystates['d'])
-        // jogo.jogador.girarDireita();
         jogo.jogador.angulo += 1;
     if (keystates['w'])
         jogo.jogador.moverFrente(timeDifference);
     if (keystates['s'])
         jogo.jogador.moverTras(timeDifference);
-    //if (keystates['-']) jogo.jogador.descer();
-    //if (keystates['+'] && jogo.jogador.area.posicao.z < (jogo.jogador.area.raio * 5) - TAMANHO_LUTADORES) jogo.jogador.subir();
 
     // colisao: jogador com os limites da jogo, resposta: impede passagem
     Ponto jogadorNovoP = jogo.jogador.getPosicao();
@@ -316,7 +321,6 @@ void idle()
     if (jogadorNovoP.getY() > jogo.arena.altura - jogadorRaio)
         jogo.jogador.area.posicao.setY(jogo.arena.altura - jogadorRaio);
 
-    // colisao: oponente com os limites da jogo, resposta: impede passagem
     Ponto oponenteNovoP = jogo.oponente.getPosicao();
     int oponenteRaio = jogo.oponente.area.raio;
     if (oponenteNovoP.getX() < oponenteRaio)
@@ -330,16 +334,88 @@ void idle()
 
     // colisao: entre personagens
     Circulo cOponente = jogo.oponente.area;
-    if (jogo.jogador.area.estaTocando(cOponente))
+    if (jogo.jogador.area.estaTocando(cOponente) && !keystates['s'])
     {
         jogo.jogador.moverTras(timeDifference);
     }
+    else if (jogo.jogador.area.estaTocando(cOponente) && keystates['s'])
+    {
+        jogo.jogador.moverFrente(timeDifference);
+    }
+    // Circulo cJogador = jogo.jogador.area;
+    // if (jogo.oponente.area.estaTocando(cJogador))
+    // {
+    //     jogo.oponente.moverTras(timeDifference);
+    // }
+    jogo.oponente.theta1 = 15;
+    jogo.oponente.theta2 = 90;
+    jogo.oponente.theta3 = 15;
+    jogo.oponente.theta4 = 90;
+
+    if (!jogo.movOponente)
+    {
+        return;
+    }
+
+    Ponto pinit = Ponto(0, 0, 0);
+    pinit.setX(jogo.oponente.area.posicao.getX() - jogo.jogador.area.posicao.getX());
+    pinit.setY(jogo.oponente.area.posicao.getY() - jogo.jogador.area.posicao.getY());
+
+    double angulorad = atan2(pinit.getY(), pinit.getX());
+    double angulograu = (angulorad * 180) / M_PI;
+    jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);
+    jogo.oponente.moverFrente(timeDifference);
+
     Circulo cJogador = jogo.jogador.area;
     if (jogo.oponente.area.estaTocando(cJogador))
     {
         jogo.oponente.moverTras(timeDifference);
-    }
 
+        if (!socoOponente)
+        {
+            socoOponente = true;
+
+            unsigned seed = time(0);
+            srand(seed);
+            int i = ((int)width / 2 * 0.4) + rand() % ((int)width / 2);
+            if (i > ((int)width / 2))
+            {
+                i = ((int)width / 2);
+            }
+            unsigned seed2 = time(0);
+            srand(seed2);
+            int x = rand() % 2;
+            if (x % 2 == 0)
+            {
+                {
+                    jogo.oponente.theta1 = (15 + i * (65 / (width / 2.0)));
+                    jogo.oponente.theta2 = (90 + i * (-55 / (width / 2.0)));
+                    //tentar fazer um loop devagar
+                    Ponto pSocoDir = jogo.oponente.verificaSocoDir();
+                    Ponto pontoCabecaJogador = jogo.jogador.getPosicao();
+                    pontoCabecaJogador = {pontoCabecaJogador.getX(), pontoCabecaJogador.getY(), pontoCabecaJogador.getZ() * (float)4.5};
+                    verificaSeAcertouSocoOponente(pSocoDir, pontoCabecaJogador);
+                }
+                jogo.oponente.theta3 = 15;
+                jogo.oponente.theta4 = 90;
+            }
+            else
+            {
+                {
+                    jogo.oponente.theta3 = (15 + i*1.5 * (65 / (height / 2.0)));
+                    jogo.oponente.theta4 = (90 - i * (55 / (height / 2.0)));
+                    Ponto pSocoEsq = jogo.oponente.verificaSocoEsq();
+                    Ponto pontoCabecaJogador = jogo.jogador.getPosicao();
+                    pontoCabecaJogador = {pontoCabecaJogador.getX(), pontoCabecaJogador.getY(), pontoCabecaJogador.getZ() * (float)4.5};
+                    verificaSeAcertouSocoOponente(pSocoEsq, pontoCabecaJogador);
+                }
+                jogo.oponente.theta1 = 15;
+                jogo.oponente.theta2 = 90;
+            }
+
+            socoOponente = false;
+        }
+    }
     // // desativa as ações dos inimigos para demonstrar algum funcionalidade
     // if (desativarOponente) {
     //     glutPostRedisplay();
@@ -398,27 +474,6 @@ void idle()
     glutPostRedisplay();
 }
 
-void verificaSeAcertouSoco(Ponto p, Ponto o)
-{
-    double dist = calculaDistancia(p, o);
-
-    cout << dist << endl;
-    cout << jogo.jogador.area.raio / (jogo.jogador.area.raio *0.275) + jogo.oponente.area.raio /2.0 << endl;
-    if (dist >= jogo.jogador.area.raio / (jogo.jogador.area.raio *0.275) + jogo.oponente.area.raio /2.0 ) // mudar aqui
-    {
-        flagSoco = true;
-    }
-    else
-    {
-        if (flagSoco)
-        {
-            contaSocoLutador += 1;
-            flagSoco = false;
-        }
-    }
-    // cout << contaSocoLutador << endl;
-}
-
 void mouse(int botao, int estado, int x, int y)
 {
     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
@@ -438,78 +493,67 @@ void mouse(int botao, int estado, int x, int y)
             jogo.jogador.theta4 = 90;
         }
     }
-
     if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN)
     {
         xAntigo = x;
         yAntigo = y;
-        botaoPress = 1;
+        botaoDirPress = 1;
     }
     if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
     {
-        botaoPress = 0;
+        botaoDirPress = 0;
     }
 }
-
-// void mouseMotion(int x, int y)
-// {
-//     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
-//         return;
-
-//     // if (x != mouseUltimoX) jogo.jogador.moverCanhao((x - mouseUltimoX)/2, 0);
-//     // if (y != mouseUltimoY) jogo.jogador.moverCanhao(0, (y - mouseUltimoY)/2);
-//     // atualiza o valor do ultimo x
-//     mouseUltimoX = x;
-//     mouseUltimoY = y;
-// }
 
 void movimentoBraco(int x, int y)
 {
     if (jogo.lutaAtual != jogoON && jogo.lutaAtual != jogoOFF)
         return;
 
-    int newX = x;
-    int newY = height - y;
-    if (x - xAntigo > 0)
+    if (!botaoDirPress)
     {
-        if (x - xAntigo <= width / 2.0)
+        int newX = x;
+        int newY = height - y;
+        if (x - xAntigo > 0)
         {
-            jogo.jogador.theta1 = (15 + (x - xAntigo) * (65 / (width / 2.0)));
-            jogo.jogador.theta2 = (90 + (x - xAntigo) * (-55 / (width / 2.0)));
-            Ponto pSocoDir = jogo.jogador.verificaSocoDir();
-            Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
-            pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
-            verificaSeAcertouSoco(pSocoDir, pontoCabecaOponente);
+            if (x - xAntigo <= width / 2.0)
+            {
+                jogo.jogador.theta1 = (15 + (x - xAntigo) * (65 / (width / 2.0)));
+                jogo.jogador.theta2 = (90 + (x - xAntigo) * (-55 / (width / 2.0)));
+                Ponto pSocoDir = jogo.jogador.verificaSocoDir();
+                Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
+                pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
+                verificaSeAcertouSoco(pSocoDir, pontoCabecaOponente);
+            }
+        }
+        else
+        {
+            if ((x - xAntigo >= (-height / 2.0)))
+            {
+                jogo.jogador.theta3 = (15 - (x - xAntigo) * (65 / (height / 2.0)));
+                jogo.jogador.theta4 = (90 + (x - xAntigo) * (55 / (height / 2.0)));
+                Ponto pSocoEsq = jogo.jogador.verificaSocoEsq();
+                Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
+                pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
+                verificaSeAcertouSoco(pSocoEsq, pontoCabecaOponente);
+            }
         }
     }
     else
     {
-        if ((x - xAntigo >= (-height / 2.0)))
-        {
-            jogo.jogador.theta3 = (15 - (x - xAntigo) * (65 / (height / 2.0)));
-            jogo.jogador.theta4 = (90 + (x - xAntigo) * (55 / (height / 2.0)));
-            Ponto pSocoEsq = jogo.jogador.verificaSocoEsq();
-            Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
-            pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
-            verificaSeAcertouSoco(pSocoEsq, pontoCabecaOponente);
-        }
+        jogo.camYaw -= x - xAntigo;
+        jogo.camPitch += y - yAntigo;
+
+        jogo.camPitch = (int)jogo.camPitch % 360;
+        if (jogo.camPitch > 150)
+            jogo.camPitch = 150;
+        // if (jogo.camPitch < 30)
+        //     jogo.camPitch = 30;
+        // jogo.camYaw = (int)jogo.camYaw % 360;
+
+        xAntigo = x;
+        yAntigo = y;
     }
-
-    if (!botaoPress)
-        return;
-
-    jogo.camYaw -= x - xAntigo;
-    jogo.camPitch += y - yAntigo;
-
-    jogo.camPitch = (int)jogo.camPitch % 360;
-    if (jogo.camPitch > 150)
-        jogo.camPitch = 150;
-    // if (jogo.camPitch < 30)
-    //     jogo.camPitch = 30;
-    // jogo.camYaw = (int)jogo.camYaw % 360;
-
-    xAntigo = x;
-    yAntigo = y;
 }
 
 void keyup(unsigned char key, int x, int y)
@@ -527,7 +571,7 @@ void keyboard(unsigned char key, int x, int y)
     switch (key)
     {
     case '1':
-        jogo.camera = cam1; 
+        jogo.camera = cam1;
         break;
     case '2':
         jogo.camera = cam2; // câmera no canhão
@@ -539,6 +583,9 @@ void keyboard(unsigned char key, int x, int y)
     break;
     case '4':
         jogo.camera = cam4; //
+        break;
+    case '6':
+        jogo.movOponente = !jogo.movOponente;
         break;
     case 't':
         if (textureEnabled)

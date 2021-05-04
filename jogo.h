@@ -33,6 +33,7 @@ public:
     // void DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
     bool mostrarCameraCockpit = false;
     bool ativaLuz0 = true;
+    bool movOponente = false;
     // bool holofote = false;
     // bool ativaLuz1 = true;
     // void DrawResultado();

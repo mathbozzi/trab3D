@@ -52,7 +52,6 @@ void Retangulo::Draw(GLuint textura, Cores cor)
 
     // vector<Ponto> vertices = getVertices();
 
-
     vector<Ponto> vertices;
     vertices.push_back(posicao);
     vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY(), posicao.getZ()));
@@ -61,20 +60,24 @@ void Retangulo::Draw(GLuint textura, Cores cor)
 
     double textureS = 1;
     glPushMatrix();
-    glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
-    // if (_textura != NULL)
-    glBindTexture(GL_TEXTURE_2D, textura);
-    glBegin(GL_POLYGON);
-    glNormal3f(0, 0, 1);
-    glTexCoord2f(0, 0);
-    glVertex3f(vertices[0].getX(), vertices[0].getY(), std::abs(vertices[0].getZ()));
-    glTexCoord2f(0, textureS);
-    glVertex3f(vertices[1].getX(), vertices[1].getY(), std::abs(vertices[1].getZ()));
-    glTexCoord2f(textureS, textureS);
-    glVertex3f(vertices[2].getX(), vertices[2].getY(), std::abs(vertices[2].getZ()));
-    glTexCoord2f(textureS, 0);
-    glVertex3f(vertices[3].getX(), vertices[3].getY(), std::abs(vertices[3].getZ()));
-    glEnd();
+    {
+        glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
+        glBindTexture(GL_TEXTURE_2D, textura);
+        glBegin(GL_QUADS);
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(0, 0);
+        glVertex3f(vertices[0].getX(), vertices[0].getY(), abs(vertices[0].getZ()));
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(0, textureS);
+        glVertex3f(vertices[1].getX(), vertices[1].getY(), abs(vertices[1].getZ()));
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(textureS, textureS);
+        glVertex3f(vertices[2].getX(), vertices[2].getY(), abs(vertices[2].getZ()));
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(textureS, 0);
+        glVertex3f(vertices[3].getX(), vertices[3].getY(), abs(vertices[3].getZ()));
+        glEnd();
+    }
     glPopMatrix();
 }
 

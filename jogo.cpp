@@ -74,7 +74,6 @@ void Jogo::DrawMiniMapa(float _w, float _h)
 void Jogo::DrawArena()
 {
     int alturaArena = jogador.area.raio * 6;
-    // Textura *texturaParede = &texturas["posto"];
 
     glPushMatrix();
     {
@@ -82,6 +81,8 @@ void Jogo::DrawArena()
         {
             // desenha o chão
             arena.posicao.setZ(0);
+            // glRotatef(180,0,0,1);
+            // glRotatef(180,-1,0,0);
             arena.Draw(this->texturaChao, {0, 0, 1}); // mudar Jogo
         }
         glPopMatrix();
@@ -344,6 +345,7 @@ void Jogo::defineLuz()
         glDisable(GL_LIGHT0);
         glDisable(GL_LIGHT1);
         glEnable(GL_LIGHT2);
+        glEnable(GL_LIGHT3);
         glPushMatrix();
         {
             // GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1};
@@ -359,15 +361,35 @@ void Jogo::defineLuz()
             glLightfv(GL_LIGHT2, GL_AMBIENT, light_ambient);
             glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
             glLightfv(GL_LIGHT2, GL_SPECULAR, light_specular);
-            glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 40);
+            glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 45);
             glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, spot_direction);
             glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, 2.0);
+        }
+        glPopMatrix();
+        glPushMatrix();
+        {
+
+            glTranslatef(this->oponente.area.posicao.getX(), this->oponente.area.posicao.getY(), jogador.area.raio * 6);
+            // glTranslatef(arena.largura / 2.0, arena.altura / 2.0, jogador.area.raio * 5);
+            GLfloat spot_direction[] = {0.0, 0.0, -1.0};
+            GLfloat light_ambient[] = {.6, .6, .6, 1.0};
+            GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
+            GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0};
+            GLfloat light_position2[] = {0.0, 0.0, 0.0, 1.0};
+            glLightfv(GL_LIGHT3, GL_POSITION, light_position2);
+            glLightfv(GL_LIGHT3, GL_AMBIENT, light_ambient);
+            glLightfv(GL_LIGHT3, GL_DIFFUSE, light_diffuse);
+            glLightfv(GL_LIGHT3, GL_SPECULAR, light_specular);
+            glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, 45);
+            glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, spot_direction);
+            glLightf(GL_LIGHT3, GL_SPOT_EXPONENT, 2.0);
         }
         glPopMatrix();
     }
     else
     {
         glDisable(GL_LIGHT2);
+        glDisable(GL_LIGHT3);
         glEnable(GL_LIGHT0);
         glEnable(GL_LIGHT1);
         GLfloat light_position[] = {0.0, 0.0, 0.0, 1.0};
@@ -375,12 +397,12 @@ void Jogo::defineLuz()
 
         glPushMatrix();
         {
-            // glPushAttrib(GL_ENABLE_BIT);
+            glPushAttrib(GL_ENABLE_BIT);
             glTranslatef(arena.largura / 2.0, arena.altura / 2.0, jogador.area.raio * 10);
             glLightfv(GL_LIGHT0, GL_POSITION, light_position);
             // glTranslatef(0, 0, -jogador.area.raio * 9);
             glLightfv(GL_LIGHT1, GL_AMBIENT, light_color);
-            // glPopAttrib();
+            glPopAttrib();
         }
         glPopMatrix();
     }
