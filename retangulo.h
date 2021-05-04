@@ -14,7 +14,7 @@ public:
     Retangulo(int x, int y, int width, int height/*, Cor cor = Cor(0.0f,0.0f,0.0f)*/);
     Ponto posicao = Ponto(0,0,0);
     // Cor cor;
-    std::string id;
+    // std::string id;
     int altura;
     int largura;
     // int strokeLargura;

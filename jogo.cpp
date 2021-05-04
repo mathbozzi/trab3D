@@ -18,8 +18,8 @@ void Jogo::Draw(bool cockpitPermanente)
 
     glPushMatrix();
     defineCamera(mostrarCameraCockpit);
-    defineLuz0();
-    defineLuz1();
+    defineLuz();
+    // defineLuz1();
 
     // desenhaOrigemDoSC();
 
@@ -78,11 +78,13 @@ void Jogo::DrawArena()
 
     glPushMatrix();
     {
-
-        // desenha o chão
-        arena.posicao.setZ(0);
-        // arena.cor = Cor("lightgray");
-        arena.Draw(this->texturaChao, {0, 0, 1}); // mudar Jogo
+        glPushMatrix();
+        {
+            // desenha o chão
+            arena.posicao.setZ(0);
+            arena.Draw(this->texturaChao, {0, 0, 1}); // mudar Jogo
+        }
+        glPopMatrix();
 
         // desenha o céu
         glPushMatrix();
@@ -128,12 +130,6 @@ void Jogo::DrawArena()
             parede4.Draw(this->texturaParede4, {0, 1, 1});
         }
         glPopMatrix();
-
-        //desenha o posto de abastecimento
-        // glPushMatrix();
-        // glTranslatef(0, 0, 0.2);
-        // postoAbastecimento.Draw(DRAW_3D, &texturas["posto"]);
-        // glPopMatrix();
     }
     glPopMatrix();
 }
@@ -144,22 +140,22 @@ void Jogo::DrawArena()
 //     jogador.desenharResgates(10, arena.altura - 50, nObjetos);
 // }
 
-void Jogo::DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura, bool desabilitarLuz)
-{
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, arena.largura, arena.altura, 0, -1, 1);
-    glPushAttrib(GL_ENABLE_BIT);
-    if (desabilitarLuz)
-        glDisable(GL_LIGHTING);
-    if (desabilitarTextura)
-        glDisable(GL_TEXTURE_2D);
-    (this->*funcao)();
-    glPopAttrib();
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-}
+// void Jogo::DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura, bool desabilitarLuz)
+// {
+//     glMatrixMode(GL_PROJECTION);
+//     glPushMatrix();
+//     glLoadIdentity();
+//     glOrtho(0, arena.largura, arena.altura, 0, -1, 1);
+//     glPushAttrib(GL_ENABLE_BIT);
+//     if (desabilitarLuz)
+//         glDisable(GL_LIGHTING);
+//     if (desabilitarTextura)
+//         glDisable(GL_TEXTURE_2D);
+//     (this->*funcao)();
+//     glPopAttrib();
+//     glPopMatrix();
+//     glMatrixMode(GL_MODELVIEW);
+// }
 
 // void Jogo::DrawResultado()
 // {
@@ -341,51 +337,78 @@ void Jogo::defineCamera(bool desenhaCockpit)
     glPopMatrix();
 }
 
-void Jogo::defineLuz0()
+void Jogo::defineLuz()
 {
     if (!ativaLuz0)
     {
         glDisable(GL_LIGHT0);
-        return;
-    }
-
-    glEnable(GL_LIGHT0);
-    GLfloat light_position[] = {0.0f, 0.0f, 0.0f, 1.0f};
-
-    glPushMatrix();
-    glPushAttrib(GL_ENABLE_BIT);
-
-    // move a luz para a posição desejada
-    glTranslatef(arena.largura / 2.0, arena.altura / 2.0, jogador.area.raio * 10);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-    glPopAttrib();
-    glPopMatrix();
-}
-
-void Jogo::defineLuz1()
-{
-    if (!ativaLuz1)
-    {
         glDisable(GL_LIGHT1);
-        return;
+        glEnable(GL_LIGHT2);
+        glPushMatrix();
+        {
+            // GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1};
+            // glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+            glTranslatef(this->jogador.area.posicao.getX(), this->jogador.area.posicao.getY(), jogador.area.raio * 6);
+            // glTranslatef(arena.largura / 2.0, arena.altura / 2.0, jogador.area.raio * 5);
+            GLfloat spot_direction[] = {0.0, 0.0, -1.0};
+            GLfloat light_ambient[] = {.6, .6, .6, 1.0};
+            GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
+            GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0};
+            GLfloat light_position2[] = {0.0, 0.0, 0.0, 1.0};
+            glLightfv(GL_LIGHT2, GL_POSITION, light_position2);
+            glLightfv(GL_LIGHT2, GL_AMBIENT, light_ambient);
+            glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
+            glLightfv(GL_LIGHT2, GL_SPECULAR, light_specular);
+            glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 40);
+            glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, spot_direction);
+            glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, 2.0);
+        }
+        glPopMatrix();
     }
+    else
+    {
+        glDisable(GL_LIGHT2);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT1);
+        GLfloat light_position[] = {0.0, 0.0, 0.0, 1.0};
+        GLfloat light_color[] = {1.0, 1.0, 1.0, 1.0};
 
-    glEnable(GL_LIGHT1);
-    GLfloat light_position[] = {0.0, 0.0, 0.0, 0.0};
-    GLfloat light_color[] = {1.0f, 1.0f, 1.0f, 1.0f}; // cor branca
-
-    glPushMatrix();
-    glPushAttrib(GL_ENABLE_BIT);
-
-    // move a luz para a posição desejada
-    glTranslatef(arena.largura / 2.0, arena.altura / 2.0, 10);
-    glLightfv(GL_LIGHT1, GL_AMBIENT, light_color);
-    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-
-    glPopAttrib();
-    glPopMatrix();
+        glPushMatrix();
+        {
+            // glPushAttrib(GL_ENABLE_BIT);
+            glTranslatef(arena.largura / 2.0, arena.altura / 2.0, jogador.area.raio * 10);
+            glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+            // glTranslatef(0, 0, -jogador.area.raio * 9);
+            glLightfv(GL_LIGHT1, GL_AMBIENT, light_color);
+            // glPopAttrib();
+        }
+        glPopMatrix();
+    }
 }
+
+// void Jogo::defineLuz1()
+// {
+//     if (!ativaLuz1)
+//     {
+//         glDisable(GL_LIGHT1);
+//         return;
+//     }
+
+//     glEnable(GL_LIGHT1);
+//     GLfloat light_position[] = {0.0, 0.0, 0.0, 0.0};
+//     GLfloat light_color[] = {1.0f, 1.0f, 1.0f, 1.0f}; // cor branca
+
+//     glPushMatrix();
+//     glPushAttrib(GL_ENABLE_BIT);
+
+//     // move a luz para a posição desejada
+//     glTranslatef(arena.largura / 2.0, arena.altura / 2.0, 10);
+//     glLightfv(GL_LIGHT1, GL_AMBIENT, light_color);
+//     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+
+//     glPopAttrib();
+//     glPopMatrix();
+// }
 
 // void Jogo::desenhaOrigemDoSC()
 // {

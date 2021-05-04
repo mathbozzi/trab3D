@@ -15,7 +15,7 @@ class Circulo
         Circulo(Ponto posicao, int raio);
         Ponto posicao = Ponto(0,0,0);
         // Cor cor;
-        std::string id;
+        // std::string id;
         int raio;
         // Textura textura;
 
@@ -26,7 +26,7 @@ class Circulo
         void Draw2d(Cores cor);
 
         // int numeroDePontos;
-        std::unique_ptr<OBJ> criaEsfera();
+        // std::unique_ptr<OBJ> criaEsfera();
         // void DrawEsfera();
     
 };

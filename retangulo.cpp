@@ -6,7 +6,7 @@ Retangulo::Retangulo()
 {
 }
 
-Retangulo::Retangulo(int x, int y, int width, int height/*, Cor cor*/)
+Retangulo::Retangulo(int x, int y, int width, int height /*, Cor cor*/)
 {
     this->posicao.setX(x);
     this->posicao.setY(y);
@@ -52,13 +52,14 @@ void Retangulo::Draw(GLuint textura, Cores cor)
 
     // vector<Ponto> vertices = getVertices();
 
+
     vector<Ponto> vertices;
     vertices.push_back(posicao);
     vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY(), posicao.getZ()));
     vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY() + altura, posicao.getZ()));
     vertices.push_back(Ponto(posicao.getX(), posicao.getY() + altura, posicao.getZ()));
 
-    double textureS = 1; 
+    double textureS = 1;
     glPushMatrix();
     glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
     // if (_textura != NULL)
@@ -88,7 +89,7 @@ void Retangulo::DrawArestas()
 
     //  glPointSize(strokeLargura);
     glBegin(GL_LINE_LOOP);
-    Cores c = Cores(1.0,1.0,1.0);
+    Cores c = Cores(1.0, 1.0, 1.0);
     glColor3f(c.getCorR(), c.getCorG(), c.getCorB());
     for (Ponto v : vertices)
         glVertex2f(v.getX(), v.getY());

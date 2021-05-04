@@ -40,7 +40,7 @@ int height = 500;
 void init()
 {
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
+    // glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
@@ -125,8 +125,7 @@ void display(void)
         jogo.DrawMiniMapa(width, height);
 
         int cameraAtual = jogo.camera;
-        jogo.camera = cam4; //camera do oponente
-        // projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        jogo.camera = cam4;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -135,11 +134,10 @@ void display(void)
             glViewport(0, height - 200, width, 200);
             glLoadIdentity();
         }
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        glScalef(1, -1, 1);
         jogo.Draw(true);
 
         jogo.camera = cameraAtual;
-        // projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -169,11 +167,10 @@ void display(void)
             glViewport(0, height - 200, width, 200);
             glLoadIdentity();
         }
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        glScalef(1, -1, 1);
         jogo.Draw(true);
 
         jogo.camera = cameraAtual;
-        // projecao(5, 1000, Retangulo(0, 0, width, height - 200), 90);
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -182,7 +179,7 @@ void display(void)
             glViewport(0, 0, width, height - 200);
             glLoadIdentity();
         }
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        glScalef(1, -1, 1);
         jogo.Draw();
     }
     else
@@ -202,7 +199,7 @@ void display(void)
             glViewport(0, height - 200, width, 200);
             glLoadIdentity();
         }
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        glScalef(1, -1, 1);
         jogo.Draw(true);
 
         jogo.camera = cameraAtual;
@@ -214,7 +211,7 @@ void display(void)
             glViewport(0, 0, width, height - 200);
             glLoadIdentity();
         }
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
+        glScalef(1, -1, 1);
         jogo.Draw();
     }
     glutSwapBuffers();
@@ -405,6 +402,8 @@ void verificaSeAcertouSoco(Ponto p, Ponto o)
 {
     double dist = calculaDistancia(p, o);
 
+    cout << dist << endl;
+    cout << jogo.jogador.area.raio / (jogo.jogador.area.raio *0.275) + jogo.oponente.area.raio /2.0 << endl;
     if (dist >= jogo.jogador.area.raio / (jogo.jogador.area.raio *0.275) + jogo.oponente.area.raio /2.0 ) // mudar aqui
     {
         flagSoco = true;
@@ -525,7 +524,6 @@ void keyboard(unsigned char key, int x, int y)
     static bool textureEnabled = true;
     static bool lightingEnabled = true;
     static bool smoothEnabled = true;
-
     switch (key)
     {
     case '1':
@@ -556,9 +554,10 @@ void keyboard(unsigned char key, int x, int y)
             glEnable(GL_LIGHTING);
         lightingEnabled = !lightingEnabled;
         break;
-    case 'j':
+    case 'n':
         jogo.ativaLuz0 = !jogo.ativaLuz0;
         break;
+
     // case 'k':
     //     jogo.ativaLuz1 = !jogo.ativaLuz1;
     //     break;
