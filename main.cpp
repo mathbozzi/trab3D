@@ -540,7 +540,6 @@ void keyPress(unsigned char key, int x, int y)
             int inc = jogo.camDistanciaJogador <= 5 ? 0 : 1;
             jogo.camDistanciaJogador -= inc * 2;
         }
-
         break;
     }
     case 27:
