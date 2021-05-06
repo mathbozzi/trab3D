@@ -61,7 +61,8 @@ void Ponto::setZ(float z)
 
 double calculaDistancia(Ponto p1, Ponto p2)
 {
-    return sqrt((p2.getX() - p1.getX()) * (p2.getX() - p1.getX()) + (p2.getY() - p1.getY()) * (p2.getY() - p1.getY()) + (p2.getZ() - p1.getZ()) * (p2.getZ() - p1.getZ()));
+    double dist = sqrt((p2.getX() - p1.getX()) * (p2.getX() - p1.getX()) + (p2.getY() - p1.getY()) * (p2.getY() - p1.getY()) + (p2.getZ() - p1.getZ()) * (p2.getZ() - p1.getZ()));
+    return dist;
 }
 
 void desenhaCubo()
@@ -85,7 +86,7 @@ void desenhaCubo()
     GLfloat v[8][3];
     GLint i;
 
-    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1.0/ 2;
+    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1.0 / 2;
     v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1.0 / 2;
     v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1.0 / 2;
     v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1.0 / 2;
@@ -94,18 +95,20 @@ void desenhaCubo()
 
     int textureS = 1;
 
-    for (i = 5; i >= 0; i--) 
+    for (i = 5; i >= 0; i--)
     {
         glBegin(GL_QUADS);
-        glNormal3fv(&n[i][0]);
-        glTexCoord2f(textureS, 0);
-        glVertex3fv(&v[faces[i][0]][0]);
-        glTexCoord2f(textureS, textureS);
-        glVertex3fv(&v[faces[i][1]][0]);
-        glTexCoord2f(0, textureS);
-        glVertex3fv(&v[faces[i][2]][0]);
-        glTexCoord2f(0, 0);
-        glVertex3fv(&v[faces[i][3]][0]);
+        {
+            glNormal3fv(&n[i][0]);
+            glTexCoord2f(textureS, 0);
+            glVertex3fv(&v[faces[i][0]][0]);
+            glTexCoord2f(textureS, textureS);
+            glVertex3fv(&v[faces[i][1]][0]);
+            glTexCoord2f(0, textureS);
+            glVertex3fv(&v[faces[i][2]][0]);
+            glTexCoord2f(0, 0);
+            glVertex3fv(&v[faces[i][3]][0]);
+        }
         glEnd();
     }
 }
@@ -225,33 +228,35 @@ void DrawAxes()
     GLfloat color_b[] = {0.0, 0.0, 1.0, 1.0};
 
     glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
+    {
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
 
-    //x axis
-    glPushMatrix();
-    glColor3fv(color_r);
-    glScalef(5, 0.3, 0.3);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(10.0);
-    glPopMatrix();
+        //x axis
+        glPushMatrix();
+        glColor3fv(color_r);
+        glScalef(5, 0.3, 0.3);
+        glTranslatef(0.5, 0, 0); // put in one end
+        glutSolidCube(10.0);
+        glPopMatrix();
 
-    //y axis
-    glPushMatrix();
-    glColor3fv(color_g);
-    glRotatef(90, 0, 0, 1);
-    glScalef(5, 0.3, 0.3);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(10.0);
-    glPopMatrix();
+        //y axis
+        glPushMatrix();
+        glColor3fv(color_g);
+        glRotatef(90, 0, 0, 1);
+        glScalef(5, 0.3, 0.3);
+        glTranslatef(0.5, 0, 0); // put in one end
+        glutSolidCube(10.0);
+        glPopMatrix();
 
-    //z axis
-    glPushMatrix();
-    glColor3fv(color_b);
-    glRotatef(-90, 0, 1, 0);
-    glScalef(5, 0.3, 0.3);
-    glTranslatef(0.5, 0, 0); // put in one end
-    glutSolidCube(10.0);
-    glPopMatrix();
+        //z axis
+        glPushMatrix();
+        glColor3fv(color_b);
+        glRotatef(-90, 0, 1, 0);
+        glScalef(5, 0.3, 0.3);
+        glTranslatef(0.5, 0, 0); // put in one end
+        glutSolidCube(10.0);
+        glPopMatrix();
+    }
     glPopAttrib();
 }

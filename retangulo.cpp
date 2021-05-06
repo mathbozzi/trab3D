@@ -6,57 +6,22 @@ Retangulo::Retangulo()
 {
 }
 
-Retangulo::Retangulo(int x, int y, int width, int height /*, Cor cor*/)
+Retangulo::Retangulo(int x, int y, int width, int height)
 {
-    this->posicao.setX(x);
-    this->posicao.setY(y);
-    this->posicao.setZ(0);
-    this->altura = height;
-    this->largura = width;
-    // this->cor = cor;
-    // strokeLargura = 1;
-    // strokeCor = Cor(127, 127, 127);
+    this->pos.setX(x);
+    this->pos.setY(y);
+    this->pos.setZ(0);
+    this->height = height;
+    this->width = width;
 }
 
-void Retangulo::Draw(GLuint textura, Cores cor)
+void Retangulo::desenhaRetangulo(GLuint textura, Cores cor)
 {
-    // if (_textura != NULL)
-    //     this->textura = *_textura;
-
-    // if (flag == DRAW_2D)
-    // {
-    //     vector<Ponto> vertices = getVertices();
-
-    //     // desenha o poligono
-    //     if (vertices.size() == 4)
-    //     {
-    //         glBegin(GL_POLYGON);
-    //         glColor3f(cor.r, cor.g, cor.b);
-    //         for (Ponto v : vertices)
-    //             glVertex2f(v.x, v.y);
-    //         glEnd();
-    //     }
-
-    //     // desenha as arestas
-    //     if (drawStroke && vertices.size() == 4)
-    //     {
-    //         glPointSize(strokeLargura);
-    //         glBegin(GL_LINE_LOOP);
-    //         glColor3f(strokeCor.r, strokeCor.g, strokeCor.b);
-    //         for (Ponto v : vertices)
-    //             glVertex2f(v.x, v.y);
-    //         glEnd();
-    //     }
-    // }
-    // else
-
-    // vector<Ponto> vertices = getVertices();
-
-    vector<Ponto> vertices;
-    vertices.push_back(posicao);
-    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY(), posicao.getZ()));
-    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY() + altura, posicao.getZ()));
-    vertices.push_back(Ponto(posicao.getX(), posicao.getY() + altura, posicao.getZ()));
+    vector<Ponto> v;
+    v.push_back(pos);
+    v.push_back(Ponto(pos.getX() + width, pos.getY(), pos.getZ()));
+    v.push_back(Ponto(pos.getX() + width, pos.getY() + height, pos.getZ()));
+    v.push_back(Ponto(pos.getX(), pos.getY() + height, pos.getZ()));
 
     double textureS = 1;
     glPushMatrix();
@@ -64,146 +29,36 @@ void Retangulo::Draw(GLuint textura, Cores cor)
         glColor3f(cor.getCorR(), cor.getCorG(), cor.getCorB());
         glBindTexture(GL_TEXTURE_2D, textura);
         glBegin(GL_QUADS);
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(0, 0);
-        glVertex3f(vertices[0].getX(), vertices[0].getY(), abs(vertices[0].getZ()));
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(0, textureS);
-        glVertex3f(vertices[1].getX(), vertices[1].getY(), abs(vertices[1].getZ()));
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(textureS, textureS);
-        glVertex3f(vertices[2].getX(), vertices[2].getY(), abs(vertices[2].getZ()));
-        glNormal3f(0, 0, 1);
-        glTexCoord2f(textureS, 0);
-        glVertex3f(vertices[3].getX(), vertices[3].getY(), abs(vertices[3].getZ()));
+        {
+            glNormal3f(0, 0, 1);
+            glTexCoord2f(0, 0);
+            glVertex3f(v[0].getX(), v[0].getY(), abs(v[0].getZ()));
+            glNormal3f(0, 0, 1);
+            glTexCoord2f(0, textureS);
+            glVertex3f(v[1].getX(), v[1].getY(), abs(v[1].getZ()));
+            glNormal3f(0, 0, 1);
+            glTexCoord2f(textureS, textureS);
+            glVertex3f(v[2].getX(), v[2].getY(), abs(v[2].getZ()));
+            glNormal3f(0, 0, 1);
+            glTexCoord2f(textureS, 0);
+            glVertex3f(v[3].getX(), v[3].getY(), abs(v[3].getZ()));
+        }
         glEnd();
     }
     glPopMatrix();
 }
 
-void Retangulo::DrawArestas()
+void Retangulo::desenhaRetMiniMapa()
 {
-    // vector<Ponto> vertices = getVertices();
-    vector<Ponto> vertices;
-    vertices.push_back(posicao);
-    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY(), posicao.getZ()));
-    vertices.push_back(Ponto(posicao.getX() + largura, posicao.getY() + altura, posicao.getZ()));
-    vertices.push_back(Ponto(posicao.getX(), posicao.getY() + altura, posicao.getZ()));
-
-    //  glPointSize(strokeLargura);
+    vector<Ponto> v;
+    v.push_back(pos);
+    v.push_back(Ponto(pos.getX() + width, pos.getY(), pos.getZ()));
+    v.push_back(Ponto(pos.getX() + width, pos.getY() + height, pos.getZ()));
+    v.push_back(Ponto(pos.getX(), pos.getY() + height, pos.getZ()));
     glBegin(GL_LINE_LOOP);
     Cores c = Cores(1.0, 1.0, 1.0);
     glColor3f(c.getCorR(), c.getCorG(), c.getCorB());
-    for (Ponto v : vertices)
+    for (Ponto v : v)
         glVertex2f(v.getX(), v.getY());
     glEnd();
 }
-
-// vector<Ponto> Retangulo::getVertices()
-// {
-//     vector<Ponto> vertices;
-//     vertices.push_back(posicao);
-//     vertices.push_back(Ponto(posicao.x + largura, posicao.y, posicao.z));
-//     vertices.push_back(Ponto(posicao.x + largura, posicao.y + altura, posicao.z));
-//     vertices.push_back(Ponto(posicao.x, posicao.y + altura, posicao.z));
-//     return vertices;
-// }
-
-bool Retangulo::estaDentro(Ponto p)
-{
-    bool h = (p.getX() >= posicao.getX() && p.getX() <= posicao.getX() + largura);
-    bool v = (p.getY() >= posicao.getY() && p.getY() <= posicao.getY() + altura);
-    return (h && v);
-}
-
-// void Retangulo::DrawCubo(Retangulo *r, float profundidade, float textureS)
-// {
-//     Ponto _posicao = r->posicao;
-//     float height = r->altura;
-//     float width = r->largura;
-//     int inverterNormal = 1;
-
-//     glPushMatrix();
-//     glTranslatef(0, 0, _posicao.z * inverterNormal);
-//     glColor3f(r->cor.getCorR(), r->cor.getCorG(), r->cor.getCorB());
-//     glBindTexture(GL_TEXTURE_2D, textureS);
-
-//     glBegin(GL_POLYGON); /* f1: front */
-//     glNormal3f(-1.0f * inverterNormal, 0.0f, 0.0f);
-
-//     glTexCoord2f(textureS, 0);
-//     glVertex3f(_posicao.x, _posicao.y, 0.0f);
-//     glTexCoord2f(textureS, textureS);
-//     glVertex3f(_posicao.x, _posicao.y, profundidade);
-//     glTexCoord2f(0, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y, profundidade);
-//     glTexCoord2f(0, 0);
-//     glVertex3f(_posicao.x + width, _posicao.y, 0.0f);
-//     glEnd();
-
-//     glBegin(GL_POLYGON); /* f2: bottom */
-//     glNormal3f(0.0f, 0.0f, -1.0f * inverterNormal);
-
-//     glTexCoord2f(textureS, 0);
-//     glVertex3f(_posicao.x, _posicao.y, 0.0f);
-//     glTexCoord2f(textureS, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y, 0.0f);
-//     glTexCoord2f(0, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y + height, 0.0f);
-//     glTexCoord2f(0, 0);
-//     glVertex3f(_posicao.x, _posicao.y + height, 0.0f);
-//     glEnd();
-
-//     glBegin(GL_POLYGON); /* f3:back */
-//     glNormal3f(1.0f * inverterNormal, 0.0f, 0.0f);
-
-//     glTexCoord2f(textureS, 0);
-//     glVertex3f(_posicao.x + width, _posicao.y + height, 0.0f);
-//     glTexCoord2f(textureS, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y + height, profundidade);
-//     glTexCoord2f(0, textureS);
-//     glVertex3f(_posicao.x, _posicao.y + height, profundidade);
-//     glTexCoord2f(0, 0);
-//     glVertex3f(_posicao.x, _posicao.y + height, 0.0f);
-//     glEnd();
-
-//     glBegin(GL_POLYGON); /* f4: top */
-//     glNormal3f(0.0f, 0.0f, 1.0f * inverterNormal);
-
-//     glTexCoord2f(textureS, 0);
-//     glVertex3f(_posicao.x + width, _posicao.y + height, profundidade);
-//     glTexCoord2f(textureS, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y, profundidade);
-//     glTexCoord2f(0, textureS);
-//     glVertex3f(_posicao.x, _posicao.y, profundidade);
-//     glTexCoord2f(0, 0);
-//     glVertex3f(_posicao.x, _posicao.y + height, profundidade);
-//     glEnd();
-
-//     glBegin(GL_POLYGON); /* f5: left */
-//     glNormal3f(0.0f, 1.0f * inverterNormal, 0.0f);
-
-//     glTexCoord2f(0, 0);
-//     glVertex3f(_posicao.x, _posicao.y, 0.0f);
-//     glTexCoord2f(textureS, 0);
-//     glVertex3f(_posicao.x, _posicao.y + height, 0.0f);
-//     glTexCoord2f(textureS, textureS);
-//     glVertex3f(_posicao.x, _posicao.y + height, profundidade);
-//     glTexCoord2f(0, textureS);
-//     glVertex3f(_posicao.x, _posicao.y, profundidade);
-//     glEnd();
-
-//     glBegin(GL_POLYGON); /* f6: right */
-//     glNormal3f(0.0f, -1.0f * inverterNormal, 0.0f);
-
-//     glTexCoord2f(textureS, 0);
-//     glVertex3f(_posicao.x + width, _posicao.y, 0.0f);
-//     glTexCoord2f(textureS, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y, profundidade);
-//     glTexCoord2f(0, textureS);
-//     glVertex3f(_posicao.x + width, _posicao.y + height, profundidade);
-//     glTexCoord2f(0, 0);
-//     glVertex3f(_posicao.x + width, _posicao.y + height, 0.0f);
-//     glEnd();
-//     glPopMatrix();
-// }

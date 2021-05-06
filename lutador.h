@@ -3,95 +3,39 @@
 
 #include <GL/glut.h>
 #include <math.h>
-
 #include "retangulo.h"
 #include "circulo.h"
-// #include "Tiro.h"
 #include "utils.h"
-
-/** CORES (RGB)
- * Verde claro:     155, 187, 89
- * Verde escuro:    99, 169, 117
- * Azul:            79, 129, 189
- */
-
-// #define TAMANHO_LUTADORES 1
-// #define HELICE_VEL_MAXIMA 3.0
-// #define HELICE_VEL_MINIMA 0.0
 
 class Lutador
 {
 public:
     Lutador();
-    void moverFrente(GLdouble timeDiff); // OK
-    void moverTras(GLdouble timeDiff);   // OK
-    // void girarDireita();                 // OK
-    // void girarEsquerda();                // OK
-    // void ajustarAngulo();
-    void desenharCorpo(Cores cor); // OK
-    void Draw(Cores cor);          // OK
-    Circulo area;
-    float angulo;
-    float theta1 = 15;
-    float theta2 = 90;
-    float theta3 = 15;
-    float theta4 = 90;
-    float thetaElevacao = 20;
-    float anguloPerna = 0;
-    int pernaVoltando = false;
-    int pernaIndo = true;
-    float velocidade;
-    float anguloCanhaoYaw, anguloCanhaoPitch;
+    Circulo aCirc;
     GLuint texturaPele;
     GLuint texturaLuva;
     GLuint texturaCabeca;
     GLuint texturaCamisa;
     GLuint texturaBermuda;
-    Ponto getPosicao() { return area.posicao; };
-    Ponto getDirecao();
-    Ponto getProximaPosicao(GLdouble timeDiff);
+    int pernaIndo = true;
+    int pernaVoltando = false;
+    float angulo;
+    float theta1 = 15;
+    float theta2 = 90;
+    float theta3 = 15;
+    float theta4 = 90;
+    float anguloPerna = 0;
+    float thetaElevacao = 20;
+    float velocidade;
+    void andaFrente(GLdouble time);
+    void andaTras(GLdouble time);
+    void desenharCorpo(Cores cor);
+    void desenhaLutador(Cores cor);
+    Ponto direcaoLutador();
     Ponto verificaSocoDir();
     Ponto verificaSocoEsq();
     Ponto translated(Ponto p, Ponto pAntigo);
     Ponto rotated(Ponto p, float angle);
-    Ponto rotatedZ(Ponto p, float angle);
-
-    // void getInfoCanhao(Ponto &pontaCanhao, Ponto &direcao);
-    // bool desenhaEsfera = false;
-
-    // float anguloHelice;
-    //void moverCanhao(int incrementoYaw, int incrementoPitch);
-    //Lutador(float _velocidadeHelice, float _velocidadeHelicoptero, float _velocidadeTiro);
-    //void girarHelice();              // OK
-    //void decolar();                  // OK
-    //void pousar();                   // OK
-    //void subir();                    // OK
-    //void descer();                   // OK
-    //void aumentarVelocidadeHelice(); // OK
-    //void diminuirVelocidadeHelice(); // OK
-    //void mirar(Ponto alvo);
-    //Tiro atirar();
-    //bool estaVoando();                           // OK
-    //void consumirCombustivel(GLdouble timeDiff); // OK
-    //void reabastercer();                         // OK
-    //bool resgatar(Circulo objeto);                // OK
-    //double getNivelCombustivel();                // OK
-    // desenho
-    //void desenharCombustivel(float _posicaoX, float _posicaoY, int _numeroDeMostradores);                 // OK
-    //void desenharResgates(float _posicaoX, float _posicaoY, int _nObjetos);                               // OK
-    //void desenharHelice(Textura *textura);                                                                // OK
-    //void desenharCanhao(Textura *textura);                                                                // OK
-    // void desenharEsfera() { desenhaEsfera = !desenhaEsfera; }                                             // OK
-    //std::string id;
-    //float tempoMaximoDeVoo, tempoAtualDeVoo;
-    //int objetosResgatados;
-    // Cores corCorpo;
-    //Textura texturaCorpo;
-    // Textura texturaCorpo, texturaHelice, texturaCanhao;
-    //float velocidadeHelice;
-    //bool voando;
-    // bool draw3d = false;
 };
-//void displayCabeca(GLuint textureSun);
 
 #endif // LUTADOR_H

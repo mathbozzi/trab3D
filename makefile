@@ -1,5 +1,8 @@
-all:
-	g++ -std=c++11 main.cpp tinyxml2.cpp jogo.cpp circulo.cpp utils.cpp retangulo.cpp input.cpp lutador.cpp imageloader.cpp -o trabalhocg -lGL -lGLU -lglut 
+all: compile 
+
+compile:
+	g++ -c tinyxml2.cpp
+	g++ -o trabalhocg *.cpp -lGL -lGLU -lglut
 
 clean:
-	rm -rf trabalhocg
+	@rm -f *.o trabalhocg

@@ -2,60 +2,36 @@
 #define JOGO_H
 
 #include <iostream>
-#include <map>
 #include <cmath>
 #include "utils.h"
 #include "retangulo.h"
 #include "circulo.h"
 #include "lutador.h"
 
-
 class Jogo
 {
 public:
     Jogo();
-    Retangulo arena;
+    Retangulo ring;
     Retangulo ceu;
     Lutador jogador;
     Lutador oponente;
-    GLuint texturaChao, texturaParede1, texturaParede2,texturaParede3,texturaParede4, texturaCeuDia,texturaCeuNoite;
-    int camera;
+    GLuint texturaChao, texturaParede1, texturaParede2,
+        texturaParede3, texturaParede4, texturaEsChao, texturaParedeEs1, texturaParedeEs2,
+        texturaParedeEs3, texturaParedeEs4, texturaEsCeuDia, texturaCeuDia, texturaCeuNoite;
     int lutaAtual;
-    double camYaw;
-    double camPitch;
-    double camDistanciaJogador;
-    void defineCamera(bool desenhaCockpit = false);
-    void defineLuz();
-    // void defineLuz1();
-    void Draw(bool cockpitPermanente = false);
-    void DrawArena();
-    void DrawMiniMapa(float _w, float _h);
-    // void DrawOrtho(void (Jogo::*funcao)(), bool desabilitarTextura = true, bool desabilitarLuz = true);
-    bool mostrarCameraCockpit = false;
-    bool ativaLuz0 = true;
+    int camera;
+    bool luz = true;
+    bool cenario = true;
     bool movOponente = false;
-    // bool holofote = false;
-    // bool ativaLuz1 = true;
-    // void DrawResultado();
-    // bool mostrarMinimapa = false;
-    // double velHelicoptero;
-
-
-    // void desenhaOrigemDoSC();
-    //std::map<std::string, Cor> mapaCorID;
-
-    // int nObjetos;
-    // int nInimigos;
-    // double frequenciaTiro; // tiros por milissegundos
-    //double getIntervaloEntreTiros() { return 1.0 / frequenciaTiro; };
-
-    //void DrawIndicadores();
-    //void MostraDados();
-    // void ImprimeElemento(Cor corElemento);
-    //void exibeResultado();
-    // bool estaDentro(Tiro tiro);
-
-    // double velTiro;
+    double camRotacao;
+    double camSubida;
+    double camDistanciaJogador;
+    void luzes();
+    void cameras();
+    void desenhaJogo();
+    void desenhaRing();
+    void desenhaMiniMapa(float width, float height);
 };
 
 #endif // JOGO_H

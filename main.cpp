@@ -1,49 +1,39 @@
 #include <iostream>
-//#include <limits>
 #include <stdlib.h>
 #include <time.h>
-
 #include <GL/glut.h>
 #include "tinyxml2.h"
-//#include "input.h"
 #include "jogo.h"
 #include "retangulo.h"
 #include "circulo.h"
-//#include "Tiro.h"
 #include "utils.h"
 #include "imageloader.h"
 
 using namespace std;
 using namespace tinyxml2;
 
-bool keystates[256];
+void *font = GLUT_BITMAP_9_BY_15;
+static char pontos[100];
+int keyStatus[256];
 
 Jogo jogo;
-float velocidadeLutador = 0.2;
-float velocidadeOponente = 0.1;
+int contaSocoLutador = 0;
+int contaSocoOponente = 0;
 int xAntigo;
 int yAntigo = 0;
 int botaoDirPress = 0;
+int width = 500;
+int height = 500;
 bool flagSoco = false;
 bool flagSoco2 = true;
 bool socoOponente = false;
-int contaSocoLutador = 0;
-int contaSocoOponente = 0;
-static char pontos[100];
-void *font = GLUT_BITMAP_9_BY_15;
-
-//bool isDrawn = false;
-//bool desativarOponente = false;
-// int mouseUltimoX;
-// int mouseUltimoY;
-
-int width = 500;
-int height = 500;
+float velocidadeLutador = 0.2;
+float velocidadeOponente = 0.1;
+double tamanhozFar;
 
 void init()
 {
     glEnable(GL_DEPTH_TEST);
-    // glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
@@ -58,16 +48,21 @@ void init()
     jogo.oponente.texturaBermuda = LoadTextureRAW("textura/bermudaOponente.bmp");
     jogo.oponente.texturaPele = LoadTextureRAW("textura/pele.bmp");
     jogo.oponente.texturaLuva = LoadTextureRAW("textura/luva2.bmp");
-    jogo.texturaParede1 = LoadTextureRAW("textura/candrade.bmp");
-    jogo.texturaParede2 = LoadTextureRAW("textura/candrade2.bmp");
-    jogo.texturaParede3 = LoadTextureRAW("textura/candrade3.bmp");
-    jogo.texturaParede4 = LoadTextureRAW("textura/candrade4.bmp");
-    jogo.texturaChao = LoadTextureRAW("textura/gramaca.bmp");
-    jogo.texturaCeuDia = LoadTextureRAW("textura/nublado.bmp");
+    jogo.texturaParede1 = LoadTextureRAW("textura/pbatalha.bmp");
+    jogo.texturaParede2 = LoadTextureRAW("textura/pbatalha2.bmp");
+    jogo.texturaParede3 = LoadTextureRAW("textura/pbatalha3.bmp");
+    jogo.texturaParede4 = LoadTextureRAW("textura/pbatalha4.bmp");
+    jogo.texturaChao = LoadTextureRAW("textura/chaodbz.bmp");
+    jogo.texturaCeuDia = LoadTextureRAW("textura/ceudbz.bmp");
+    jogo.texturaParedeEs1 = LoadTextureRAW("textura/candrade.bmp");
+    jogo.texturaParedeEs2 = LoadTextureRAW("textura/candrade2.bmp");
+    jogo.texturaParedeEs3 = LoadTextureRAW("textura/candrade3.bmp");
+    jogo.texturaParedeEs4 = LoadTextureRAW("textura/candrade4.bmp");
+    jogo.texturaEsChao = LoadTextureRAW("textura/gramaca.bmp");
+    jogo.texturaEsCeuDia = LoadTextureRAW("textura/nublado.bmp");
     jogo.texturaCeuNoite = LoadTextureRAW("textura/stars1.bmp");
 }
 
-// codigo lab terra e sol
 void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char *text, double r, double g, double b)
 {
     //Push to recover original attributes
@@ -86,7 +81,7 @@ void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char *text, double r, do
     }
     glPopAttrib();
 }
-// codigo lab terra e sol
+
 void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, double b)
 {
     //Draw text considering a 2D space (disable all 3d features)
@@ -100,20 +95,6 @@ void PrintText(GLfloat x, GLfloat y, const char *text, double r, double g, doubl
     glMatrixMode(GL_MODELVIEW);
 }
 
-// void projecao(double _near, double _far, Retangulo viewport, double angulo)
-// {
-//     glMatrixMode(GL_PROJECTION);
-
-//     glLoadIdentity();
-//     double _ratio = viewport.largura / viewport.altura;
-//     gluPerspective(angulo, _ratio, _near, _far);
-
-//     glMatrixMode(GL_MODELVIEW);
-
-//     glViewport(viewport.posicao.getX(), viewport.posicao.getY(), viewport.largura, viewport.altura);
-//     glLoadIdentity();
-// }
-
 void display(void)
 {
     glClearColor(1, 1, 1, 1.0);
@@ -122,100 +103,99 @@ void display(void)
 
     if (jogo.lutaAtual == jogadorGanhou)
     {
+        jogo.desenhaMiniMapa(width, height);
         sprintf(pontos, "VOCE GANHOU! PARABENS! :D");
         char *pontuacao = pontos;
         PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
-        jogo.DrawMiniMapa(width, height);
 
-        int cameraAtual = jogo.camera;
+        int cam = jogo.camera;
         jogo.camera = cam4;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(70, width / 200, 5, 1000);
+            gluPerspective(70, width / 200, 1, tamanhozFar);
             glMatrixMode(GL_MODELVIEW);
             glViewport(0, height - 200, width, 200);
             glLoadIdentity();
         }
         glScalef(1, -1, 1);
-        jogo.Draw(true);
+        jogo.desenhaJogo();
 
-        jogo.camera = cameraAtual;
+        jogo.camera = cam;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(90, width / (height - 200), 5, 1000);
+            gluPerspective(90, width / (height - 200), 1, tamanhozFar);
             glMatrixMode(GL_MODELVIEW);
             glViewport(0, 0, width, height - 200);
             glLoadIdentity();
         }
-        glScalef(1, -1, 1); // meu Y é invertido, por causa do 2D que usei como base
-        jogo.Draw();
+        glScalef(1, -1, 1);
+        jogo.desenhaJogo();
     }
     else if (jogo.lutaAtual == oponenteGanhou)
     {
+        jogo.desenhaMiniMapa(width, height);
         sprintf(pontos, "VOCE PERDEU! TENTE NOVAMENTE! :C");
         char *pontuacao = pontos;
         PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
-        jogo.DrawMiniMapa(width, height);
 
-        int cameraAtual = jogo.camera;
-        jogo.camera = cam4; //camera do oponente
-        // projecao(5, 1000, Retangulo(0, height - 200, width, 200), 70);
+        int cam = jogo.camera;
+        jogo.camera = cam4;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(70, width / 200, 5, 1000);
+            gluPerspective(70, width / 200, 1, tamanhozFar);
             glMatrixMode(GL_MODELVIEW);
             glViewport(0, height - 200, width, 200);
             glLoadIdentity();
         }
         glScalef(1, -1, 1);
-        jogo.Draw(true);
+        jogo.desenhaJogo();
 
-        jogo.camera = cameraAtual;
+        jogo.camera = cam;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(90, width / (height - 200), 5, 1000);
+            gluPerspective(90, width / (height - 200), 1, tamanhozFar);
             glMatrixMode(GL_MODELVIEW);
             glViewport(0, 0, width, height - 200);
             glLoadIdentity();
         }
         glScalef(1, -1, 1);
-        jogo.Draw();
+        jogo.desenhaJogo();
     }
     else
     {
-        jogo.DrawMiniMapa(width, height);
+        jogo.desenhaMiniMapa(width, height);
         sprintf(pontos, "Lutador: %2d x %2d Oponente", contaSocoLutador, contaSocoOponente);
         char *pontuacao = pontos;
         PrintText(0.05, 0.05, pontuacao, 1, 1, 1);
 
-        int cameraAtual = jogo.camera;
+        int cam = jogo.camera;
         jogo.camera = cam4;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(70, width / 200, 5, 1000);
+            gluPerspective(70, width / 200, 1, tamanhozFar);
             glMatrixMode(GL_MODELVIEW);
             glViewport(0, height - 200, width, 200);
             glLoadIdentity();
         }
         glScalef(1, -1, 1);
-        jogo.Draw(true);
+        jogo.desenhaJogo();
 
-        jogo.camera = cameraAtual;
+        jogo.camera = cam;
         {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            gluPerspective(90, width / (height - 200), 5, 1000);
+            gluPerspective(90, width / (height - 200), 1, tamanhozFar);
             glMatrixMode(GL_MODELVIEW);
             glViewport(0, 0, width, height - 200);
             glLoadIdentity();
         }
         glScalef(1, -1, 1);
-        jogo.Draw();
+        jogo.desenhaJogo();
     }
     glutSwapBuffers();
     glutPostRedisplay();
@@ -231,9 +211,7 @@ void verificaSeAcertouSoco(Ponto p, Ponto o)
 {
     double dist = calculaDistancia(p, o);
 
-    cout << dist << endl;
-    cout << jogo.jogador.area.raio / (jogo.jogador.area.raio * 0.275) + jogo.oponente.area.raio / 2.0 << endl;
-    if (dist >= jogo.jogador.area.raio / (jogo.jogador.area.raio * 0.275) + jogo.oponente.area.raio / 2.0) // mudar aqui
+    if (dist >= jogo.jogador.aCirc.raio / (jogo.jogador.aCirc.raio * 0.275) + jogo.oponente.aCirc.raio / 2.0)
     {
         flagSoco = true;
     }
@@ -245,16 +223,13 @@ void verificaSeAcertouSoco(Ponto p, Ponto o)
             flagSoco = false;
         }
     }
-    // cout << contaSocoLutador << endl;
 }
 
 void verificaSeAcertouSocoOponente(Ponto p, Ponto o)
 {
     double dist = calculaDistancia(p, o);
 
-    // cout << dist << endl;
-    // cout << jogo.oponente.area.raio / (jogo.oponente.area.raio * 0.275) + jogo.oponente.area.raio / 2.0 << endl;
-    if (dist >= jogo.oponente.area.raio / (jogo.oponente.area.raio * 0.275) + jogo.jogador.area.raio / 2.0) // mudar aqui
+    if (dist >= jogo.oponente.aCirc.raio / (jogo.oponente.aCirc.raio * 0.275) + jogo.jogador.aCirc.raio / 2.0)
     {
         flagSoco2 = true;
     }
@@ -266,7 +241,6 @@ void verificaSeAcertouSocoOponente(Ponto p, Ponto o)
             flagSoco2 = false;
         }
     }
-    // cout << contaSocoLutador << endl;
 }
 
 void idle()
@@ -275,78 +249,66 @@ void idle()
     GLdouble currentTime;
     GLdouble timeDifference;
 
-    // Elapsed time from the initiation of the game.
     currentTime = glutGet(GLUT_ELAPSED_TIME);
-    timeDifference = currentTime - previousTime; // Elapsed time from the previous frame.
-    previousTime = currentTime;                  //Update previous time
+    timeDifference = currentTime - previousTime;
+    previousTime = currentTime;
 
-    //para o jogo
     if (jogo.lutaAtual != jogoON)
     {
         glutPostRedisplay();
         return;
     }
-    // verifica se o jogador ganhou
-    if (contaSocoLutador == 10)
+    if (contaSocoLutador >= 10)
     {
         jogo.lutaAtual = jogadorGanhou;
         return;
     }
-
-    // verifica se o oponente ganhou
-    if (contaSocoOponente == 10)
+    if (contaSocoOponente >= 10)
     {
         jogo.lutaAtual = oponenteGanhou;
         return;
     }
 
-    if (keystates['a'])
+    if (keyStatus['A'] == 1 || keyStatus['a'] == 1)
         jogo.jogador.angulo -= 1;
-    if (keystates['d'])
+    if (keyStatus['D'] == 1 || keyStatus['d'] == 1)
         jogo.jogador.angulo += 1;
-    if (keystates['w'])
-        jogo.jogador.moverFrente(timeDifference);
-    if (keystates['s'])
-        jogo.jogador.moverTras(timeDifference);
+    if (keyStatus['W'] == 1 || keyStatus['w'] == 1)
+        jogo.jogador.andaFrente(timeDifference);
+    if (keyStatus['S'] == 1 || keyStatus['s'] == 1)
+        jogo.jogador.andaTras(timeDifference);
 
-    // colisao: jogador com os limites da jogo, resposta: impede passagem
-    Ponto jogadorNovoP = jogo.jogador.getPosicao();
-    int jogadorRaio = jogo.jogador.area.raio;
+    Ponto jogadorNovoP = jogo.jogador.aCirc.posicao;
+    int jogadorRaio = jogo.jogador.aCirc.raio;
     if (jogadorNovoP.getX() < jogadorRaio)
-        jogo.jogador.area.posicao.setX(jogadorRaio);
-    if (jogadorNovoP.getX() > jogo.arena.largura - jogadorRaio)
-        jogo.jogador.area.posicao.setX(jogo.arena.largura - jogadorRaio);
+        jogo.jogador.aCirc.posicao.setX(jogadorRaio);
+    if (jogadorNovoP.getX() > jogo.ring.width - jogadorRaio)
+        jogo.jogador.aCirc.posicao.setX(jogo.ring.width - jogadorRaio);
     if (jogadorNovoP.getY() < jogadorRaio)
-        jogo.jogador.area.posicao.setY(jogadorRaio);
-    if (jogadorNovoP.getY() > jogo.arena.altura - jogadorRaio)
-        jogo.jogador.area.posicao.setY(jogo.arena.altura - jogadorRaio);
+        jogo.jogador.aCirc.posicao.setY(jogadorRaio);
+    if (jogadorNovoP.getY() > jogo.ring.height - jogadorRaio)
+        jogo.jogador.aCirc.posicao.setY(jogo.ring.height - jogadorRaio);
 
-    Ponto oponenteNovoP = jogo.oponente.getPosicao();
-    int oponenteRaio = jogo.oponente.area.raio;
+    Ponto oponenteNovoP = jogo.oponente.aCirc.posicao;
+    int oponenteRaio = jogo.oponente.aCirc.raio;
     if (oponenteNovoP.getX() < oponenteRaio)
-        jogo.oponente.area.posicao.setX(oponenteRaio);
-    if (oponenteNovoP.getX() > jogo.arena.largura - oponenteRaio)
-        jogo.oponente.area.posicao.setX(jogo.arena.largura - oponenteRaio);
+        jogo.oponente.aCirc.posicao.setX(oponenteRaio);
+    if (oponenteNovoP.getX() > jogo.ring.width - oponenteRaio)
+        jogo.oponente.aCirc.posicao.setX(jogo.ring.width - oponenteRaio);
     if (oponenteNovoP.getY() < oponenteRaio)
-        jogo.oponente.area.posicao.setY(oponenteRaio);
-    if (oponenteNovoP.getY() > jogo.arena.altura - oponenteRaio)
-        jogo.oponente.area.posicao.setY(jogo.arena.altura - oponenteRaio);
+        jogo.oponente.aCirc.posicao.setY(oponenteRaio);
+    if (oponenteNovoP.getY() > jogo.ring.height - oponenteRaio)
+        jogo.oponente.aCirc.posicao.setY(jogo.ring.height - oponenteRaio);
 
-    // colisao: entre personagens
-    Circulo cOponente = jogo.oponente.area;
-    if (jogo.jogador.area.estaTocando(cOponente) && !keystates['s'])
+    Circulo cOponente = jogo.oponente.aCirc;
+    if (jogo.jogador.aCirc.dentroArea(cOponente) && !(keyStatus['S'] == 1 || keyStatus['s'] == 1))
     {
-        jogo.jogador.moverTras(timeDifference);
+        jogo.jogador.andaTras(timeDifference);
     }
-    else if (jogo.jogador.area.estaTocando(cOponente) && keystates['s'])
+    else if (jogo.jogador.aCirc.dentroArea(cOponente) && (keyStatus['S'] == 1 || keyStatus['s'] == 1))
     {
-        jogo.jogador.moverFrente(timeDifference);
+        jogo.jogador.andaFrente(timeDifference);
     }
-    // Circulo cJogador = jogo.jogador.area;
-    // if (jogo.oponente.area.estaTocando(cJogador))
-    // {
-    //     jogo.oponente.moverTras(timeDifference);
-    // }
     jogo.oponente.theta1 = 15;
     jogo.oponente.theta2 = 90;
     jogo.oponente.theta3 = 15;
@@ -358,18 +320,18 @@ void idle()
     }
 
     Ponto pinit = Ponto(0, 0, 0);
-    pinit.setX(jogo.oponente.area.posicao.getX() - jogo.jogador.area.posicao.getX());
-    pinit.setY(jogo.oponente.area.posicao.getY() - jogo.jogador.area.posicao.getY());
+    pinit.setX(jogo.oponente.aCirc.posicao.getX() - jogo.jogador.aCirc.posicao.getX());
+    pinit.setY(jogo.oponente.aCirc.posicao.getY() - jogo.jogador.aCirc.posicao.getY());
 
     double angulorad = atan2(pinit.getY(), pinit.getX());
     double angulograu = (angulorad * 180) / M_PI;
     jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);
-    jogo.oponente.moverFrente(timeDifference);
+    jogo.oponente.andaFrente(timeDifference);
 
-    Circulo cJogador = jogo.jogador.area;
-    if (jogo.oponente.area.estaTocando(cJogador))
+    Circulo cJogador = jogo.jogador.aCirc;
+    if (jogo.oponente.aCirc.dentroArea(cJogador))
     {
-        jogo.oponente.moverTras(timeDifference);
+        jogo.oponente.andaTras(timeDifference);
 
         if (!socoOponente)
         {
@@ -392,7 +354,7 @@ void idle()
                     jogo.oponente.theta2 = (90 + i * (-55 / (width / 2.0)));
                     //tentar fazer um loop devagar
                     Ponto pSocoDir = jogo.oponente.verificaSocoDir();
-                    Ponto pontoCabecaJogador = jogo.jogador.getPosicao();
+                    Ponto pontoCabecaJogador = jogo.jogador.aCirc.posicao;
                     pontoCabecaJogador = {pontoCabecaJogador.getX(), pontoCabecaJogador.getY(), pontoCabecaJogador.getZ() * (float)4.5};
                     verificaSeAcertouSocoOponente(pSocoDir, pontoCabecaJogador);
                 }
@@ -402,75 +364,20 @@ void idle()
             else
             {
                 {
-                    jogo.oponente.theta3 = (15 + i*1.5 * (65 / (height / 2.0)));
+                    jogo.oponente.theta3 = (15 + i * 1.5 * (65 / (height / 2.0)));
                     jogo.oponente.theta4 = (90 - i * (55 / (height / 2.0)));
+                    //tentar fazer um loop devagar
                     Ponto pSocoEsq = jogo.oponente.verificaSocoEsq();
-                    Ponto pontoCabecaJogador = jogo.jogador.getPosicao();
+                    Ponto pontoCabecaJogador = jogo.jogador.aCirc.posicao;
                     pontoCabecaJogador = {pontoCabecaJogador.getX(), pontoCabecaJogador.getY(), pontoCabecaJogador.getZ() * (float)4.5};
                     verificaSeAcertouSocoOponente(pSocoEsq, pontoCabecaJogador);
                 }
                 jogo.oponente.theta1 = 15;
                 jogo.oponente.theta2 = 90;
             }
-
             socoOponente = false;
         }
     }
-    // // desativa as ações dos inimigos para demonstrar algum funcionalidade
-    // if (desativarOponente) {
-    //     glutPostRedisplay();
-    //     return;
-    // }
-
-    // // mover inimigos
-    // accTimeMover += timeDifference / 1000.0;
-    // bool mudarAngulo = false;
-    // if (accTimeMover >= INTERVALO_MUDANCA_ANGULO_INIMIGOS) {
-    //     mudarAngulo = true;
-    //     accTimeMover = 0;
-    // }
-    // accTimeAtirar += timeDifference;
-    // bool atirarNoJogador = false;
-    // if (accTimeAtirar >= jogo.getIntervaloEntreTiros()) {
-    //     atirarNoJogador = true;
-    //     accTimeAtirar = 0;
-    // }
-    // for (unsigned int i = 0; i < jogo.inimigos.size(); i++) {
-
-    //     if (mudarAngulo) jogo.inimigos[i].angulo += (rand() % 90) - 90;
-
-    //     Ponto novoP = jogo.inimigos[i].getProximaPosicao(timeDifference);
-    //     int _raio = jogo.inimigos[i].area.raio;
-
-    //     // colisao: limites da jogo, resposta: inverte ângulo no eixo relativo
-    //     if ((novoP.x < _raio) || (novoP.x > jogo.arena.largura - _raio)) {
-    //         jogo.inimigos[i].angulo = 180 - jogo.inimigos[i].angulo;
-    //     }
-    //     if ((novoP.y < _raio) || (novoP.y > jogo.arena.altura - _raio)) {
-    //         jogo.inimigos[i].angulo = 360 - jogo.inimigos[i].angulo;
-    //     }
-
-    //     // colisao: outros helicopteros, resposta: +180º
-    //     for (unsigned int j = 0; j < jogo.inimigos.size(); j++) {
-    //         double distanciaMinima = jogo.inimigos[i].area.raio + jogo.inimigos[j].area.raio;
-    //         if (i != j && calculaDistancia(jogo.inimigos[j].getProximaPosicao(timeDifference), novoP) < distanciaMinima){
-    //             jogo.inimigos[i].angulo = jogo.inimigos[i].angulo + 180;
-    //             break;
-    //         }
-    //     }
-    //     double distanciaMinima = jogo.jogador.area.raio + jogo.inimigos[i].area.raio;
-    //     if (calculaDistancia(jogo.jogador.getProximaPosicao(timeDifference), novoP) < distanciaMinima){
-    //         jogo.inimigos[i].angulo = jogo.inimigos[i].angulo + 180;
-    //     }
-
-    //     if (atirarNoJogador) {
-    //         jogo.inimigos[i].mirar(jogo.jogador.getPosicao());
-    //         jogo.tiros.push_back(jogo.inimigos[i].atirar());
-    //     }
-
-    //     jogo.inimigos[i].moverFrente(timeDifference);
-    // }
-
     glutPostRedisplay();
 }
 
@@ -493,15 +400,15 @@ void mouse(int botao, int estado, int x, int y)
             jogo.jogador.theta4 = 90;
         }
     }
+    if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
+    {
+        botaoDirPress = 0;
+    }
     if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN)
     {
         xAntigo = x;
         yAntigo = y;
         botaoDirPress = 1;
-    }
-    if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_UP)
-    {
-        botaoDirPress = 0;
     }
 }
 
@@ -521,7 +428,7 @@ void movimentoBraco(int x, int y)
                 jogo.jogador.theta1 = (15 + (x - xAntigo) * (65 / (width / 2.0)));
                 jogo.jogador.theta2 = (90 + (x - xAntigo) * (-55 / (width / 2.0)));
                 Ponto pSocoDir = jogo.jogador.verificaSocoDir();
-                Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
+                Ponto pontoCabecaOponente = jogo.oponente.aCirc.posicao;
                 pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
                 verificaSeAcertouSoco(pSocoDir, pontoCabecaOponente);
             }
@@ -533,7 +440,7 @@ void movimentoBraco(int x, int y)
                 jogo.jogador.theta3 = (15 - (x - xAntigo) * (65 / (height / 2.0)));
                 jogo.jogador.theta4 = (90 + (x - xAntigo) * (55 / (height / 2.0)));
                 Ponto pSocoEsq = jogo.jogador.verificaSocoEsq();
-                Ponto pontoCabecaOponente = jogo.oponente.getPosicao();
+                Ponto pontoCabecaOponente = jogo.oponente.aCirc.posicao;
                 pontoCabecaOponente = {pontoCabecaOponente.getX(), pontoCabecaOponente.getY(), pontoCabecaOponente.getZ() * (float)4.5};
                 verificaSeAcertouSoco(pSocoEsq, pontoCabecaOponente);
             }
@@ -541,30 +448,24 @@ void movimentoBraco(int x, int y)
     }
     else
     {
-        jogo.camYaw -= x - xAntigo;
-        jogo.camPitch += y - yAntigo;
-
-        jogo.camPitch = (int)jogo.camPitch % 360;
-        if (jogo.camPitch > 150)
-            jogo.camPitch = 150;
-        // if (jogo.camPitch < 30)
-        //     jogo.camPitch = 30;
-        // jogo.camYaw = (int)jogo.camYaw % 360;
-
+        jogo.camRotacao -= x - xAntigo;
+        jogo.camSubida += y - yAntigo;
+        jogo.camSubida = (int)jogo.camSubida % 360;
+        if (jogo.camSubida > 150)
+            jogo.camSubida = 150;
         xAntigo = x;
         yAntigo = y;
     }
 }
 
-void keyup(unsigned char key, int x, int y)
+void keyUp(unsigned char key, int x, int y)
 {
-    keystates[key] = false;
+    keyStatus[key] = 0;
 }
 
-void keyboard(unsigned char key, int x, int y)
+void keyPress(unsigned char key, int x, int y)
 {
-    keystates[key] = true;
-
+    keyStatus[key] = 1;
     static bool textureEnabled = true;
     static bool lightingEnabled = true;
     static bool smoothEnabled = true;
@@ -574,17 +475,17 @@ void keyboard(unsigned char key, int x, int y)
         jogo.camera = cam1;
         break;
     case '2':
-        jogo.camera = cam2; // câmera no canhão
+        jogo.camera = cam2;
         break;
     case '3':
     {
-        jogo.camera = cam3; // câmera que segue o jogador
+        jogo.camera = cam3;
     }
     break;
     case '4':
-        jogo.camera = cam4; //
+        jogo.camera = cam4;
         break;
-    case '6':
+    case 'm':
         jogo.movOponente = !jogo.movOponente;
         break;
     case 't':
@@ -601,13 +502,6 @@ void keyboard(unsigned char key, int x, int y)
             glEnable(GL_LIGHTING);
         lightingEnabled = !lightingEnabled;
         break;
-    case 'n':
-        jogo.ativaLuz0 = !jogo.ativaLuz0;
-        break;
-
-    // case 'k':
-    //     jogo.ativaLuz1 = !jogo.ativaLuz1;
-    //     break;
     case 'r':
         if (smoothEnabled)
             glShadeModel(GL_FLAT);
@@ -615,20 +509,26 @@ void keyboard(unsigned char key, int x, int y)
             glShadeModel(GL_SMOOTH);
         smoothEnabled = !smoothEnabled;
         break;
+    case 'n':
+        jogo.luz = !jogo.luz;
+        break;
+    case 'o':
+        jogo.cenario = !jogo.cenario;
+        break;
+    case 'b':
+        socoOponente = !socoOponente;
+        break;
     case 'p':
         if (jogo.lutaAtual == jogoOFF)
             jogo.lutaAtual = jogoON;
         else
             jogo.lutaAtual = jogoOFF;
         break;
-    case 'c':
-        jogo.mostrarCameraCockpit = !jogo.mostrarCameraCockpit;
-        break;
     case '+':
     {
         if (jogo.camera == cam3)
         {
-            int inc = jogo.camDistanciaJogador >= (jogo.jogador.area.raio * 4.65) ? 0 : 1;
+            int inc = jogo.camDistanciaJogador >= (jogo.jogador.aCirc.raio * 4.5) ? 0 : 1;
             jogo.camDistanciaJogador += inc * 2;
         }
         break;
@@ -643,12 +543,6 @@ void keyboard(unsigned char key, int x, int y)
 
         break;
     }
-    // case 'm':
-    //     jogo.mostrarMinimapa = !jogo.mostrarMinimapa;
-    //     break;
-    // case 'b':
-    //     desativarOponente = !desativarOponente;
-    //     break;
     case 27:
         exit(0);
         break;
@@ -674,7 +568,7 @@ void trataXML(const char *diretorio)
 
     elementos = arquivo_svg.FirstChild()->FirstChildElement();
 
-    Retangulo arena;
+    Retangulo ring;
     Circulo personagem;
     Circulo adversario;
 
@@ -695,8 +589,6 @@ void trataXML(const char *diretorio)
                 elementos->QueryIntAttribute("r", &adversario.raio);
                 adversario.posicao.setX(x);
                 adversario.posicao.setY(y);
-                // adversario.cor = Cor(cor);
-                // jogo.oponente.corCorpo = Cor(1.0,0.0,0.0);
             }
             else
             {
@@ -706,8 +598,6 @@ void trataXML(const char *diretorio)
                 elementos->QueryIntAttribute("r", &personagem.raio);
                 personagem.posicao.setX(x);
                 personagem.posicao.setY(y);
-                // personagem.cor = Cor(cor);
-                // jogo.jogador.corCorpo = Cor(0.0,1.0,0.0);
             }
         }
         else if (!ele.compare("rect"))
@@ -715,72 +605,41 @@ void trataXML(const char *diretorio)
             float x, y;
             elementos->QueryFloatAttribute("x", &x);
             elementos->QueryFloatAttribute("y", &y);
-            elementos->QueryIntAttribute("width", &arena.largura);
-            elementos->QueryIntAttribute("height", &arena.altura);
-            arena.posicao.setX(x);
-            arena.posicao.setY(y);
+            elementos->QueryIntAttribute("width", &ring.width);
+            elementos->QueryIntAttribute("height", &ring.height);
+            ring.pos.setX(x);
+            ring.pos.setY(y);
             cor = elementos->FindAttribute("fill")->Value();
-
-            // arena.cor = Cor(0.0,0.0,1.0);
         }
     }
 
-    personagem.posicao.setX(personagem.posicao.getX() - arena.posicao.getX());
-    personagem.posicao.setY(personagem.posicao.getY() - arena.posicao.getY());
-    adversario.posicao.setX(adversario.posicao.getX() - arena.posicao.getX());
-    adversario.posicao.setY(adversario.posicao.getY() - arena.posicao.getY());
+    if (ring.width >= ring.height)
+    {
+        tamanhozFar = 1.5 * ring.width;
+    }
+    else
+    {
+        tamanhozFar = 1.5 * ring.height;
+    }
 
-    arena.posicao.setX(0);
-    arena.posicao.setY(0);
+    personagem.posicao.setX(personagem.posicao.getX() - ring.pos.getX());
+    personagem.posicao.setY(personagem.posicao.getY() - ring.pos.getY());
+    adversario.posicao.setX(adversario.posicao.getX() - ring.pos.getX());
+    adversario.posicao.setY(adversario.posicao.getY() - ring.pos.getY());
 
-    // monta a jogo
-    jogo.arena = arena;
-    jogo.camDistanciaJogador = 4.65 * (personagem.raio);
+    ring.pos.setX(0);
+    ring.pos.setY(0);
+    jogo.ring = ring;
 
-    //jogo.postoAbastecimento = postoAbastecimento;
-    //jogo.objetosResgate = objetosResgate;
+    jogo.camDistanciaJogador = 4.5 * (personagem.raio);
 
     personagem.posicao.setZ(personagem.raio / 2.0);
-    jogo.jogador.area = personagem;
-    //jogo.jogador.id = personagem.id;
+    jogo.jogador.aCirc = personagem;
     jogo.jogador.velocidade = velocidadeLutador;
-    // printf("%f\n",jogo.jogador.area.raio/2.0);
-    // printf("%f\n", TAMANHO_LUTADORES / 2.0);
-    // printf("%f\n",areaJogador.posicao.z);
-    // areaJogador.posicao.z = jogo.jogador.area.raio/2.0;
-
-    //jogo.jogador.velocidadeTiro = _velTiro;
-    //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
-    // jogo.jogador.corCorpo = Cor("lightgreen");
 
     adversario.posicao.setZ(personagem.raio / 2.0);
-    jogo.oponente.area = adversario;
-    //jogo.oponente.id = adversario.id;
+    jogo.oponente.aCirc = adversario;
     jogo.oponente.velocidade = velocidadeOponente;
-    // areaOponente.posicao.z = jogo.oponente.area.raio/2.0;
-
-    // //jogo.jogador.velocidadeTiro = _velTiro;
-    // //jogo.jogador.tempoMaximoDeVoo = _tempoDeVoo;
-    // jogo.oponente.corCorpo = Cor("darkgreen");
-
-    // personagem.posicao.x = (personagem.posicao.x - arena.largura/2);
-    // personagem.posicao.y = -(-arena.altura/2 + personagem.posicao.y);
-    // jogo.jogador.angulo = 0.0;
-    // // personagem.theta1 = -45;
-    // // personagem.theta2 = 135;
-    // // personagem.theta3 = -45;
-    // // personagem.theta4 = 135;
-
-    // adversario.posicao.x = (adversario.posicao.x - arena.largura/2);
-    // adversario.posicao.y = -(-arena.altura/2 + adversario.posicao.y);
-    // jogo.oponente.angulo = 0.0;
-    // adversario.p.x = (adversario.p.x - jogo.width / 2);
-    // adversario.p.y = -(-jogo.height / 2 + adversario.p.y);
-    // adversario.ang = 0.0;
-    // adversario.theta1 = -45;
-    // adversario.theta2 = 135;
-    // adversario.theta3 = -45;
-    // adversario.theta4 = 135;
 
     Ponto pinit = Ponto(0, 0, 0);
     pinit.setX(adversario.posicao.getX() - personagem.posicao.getX());
@@ -790,8 +649,7 @@ void trataXML(const char *diretorio)
     double angulograu = (angulorad * 180) / M_PI;
     jogo.jogador.angulo = angulograu;
     jogo.oponente.angulo = -((180 - angulograu) * 2) - (angulograu + 180);
-
-    jogo.camYaw = angulograu + 90;
+    jogo.camRotacao = angulograu;
 
     srand(time(NULL));
 }
@@ -799,29 +657,20 @@ void trataXML(const char *diretorio)
 // ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ MAIN ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
 int main(int argc, char **argv)
 {
-
     trataXML(argv[1]);
-
-    // glut init
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(width, height + 200);
     glutInitWindowPosition(300, 100);
     glutCreateWindow("RING");
     init();
-
-    // event 'binding'
     glutDisplayFunc(display);
-    glutKeyboardFunc(keyboard);
-    glutKeyboardUpFunc(keyup);
+    glutKeyboardFunc(keyPress);
+    glutKeyboardUpFunc(keyUp);
     glutMouseFunc(mouse);
     glutIdleFunc(idle);
-    // glutPassiveMotionFunc(mouseMotion);
     glutMotionFunc(movimentoBraco);
     glutReshapeFunc(reshape);
-
-    // glut main loop
     glutMainLoop();
-    // }
     return 0;
 }
